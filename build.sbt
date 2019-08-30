@@ -62,6 +62,8 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 //++++++++++++++++++++++++++++++++++++ AWS ++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 lazy val `aws-core-deps` = Seq(
+  catsCore,
+  catsEffect,
   pureharmCorePhantom,
   pureharmCoreAnomaly,
   pureharmEffectsCats,
@@ -83,6 +85,9 @@ lazy val `aws-core` = project
 //#############################################################################
 lazy val `aws-s3-deps` =
   `aws-core-deps` ++ Seq(
+    catsCore,
+    catsEffect,
+    pureConfig,
     monixCatnap,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
@@ -112,6 +117,9 @@ lazy val `aws-s3` = project
 
 lazy val `aws-cloudfront-deps` =
   `aws-core-deps` ++ `aws-s3-deps` ++ Seq(
+    catsCore,
+    catsEffect,
+    pureConfig,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
     pureharmEffectsCats,
