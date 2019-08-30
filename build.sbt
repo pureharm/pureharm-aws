@@ -89,6 +89,7 @@ lazy val `aws-s3-deps` =
     pureharmEffectsCats,
     pureharmConfig,
     amazonS3V2,
+    scalaTest      % Test,
     log4cats       % Test,
     logbackClassic % Test,
   )
@@ -110,7 +111,17 @@ lazy val `aws-s3` = project
 //#############################################################################
 
 lazy val `aws-cloudfront-deps` =
-  `aws-core-deps` ++ `aws-s3-deps` ++ Seq()
+  `aws-core-deps` ++ `aws-s3-deps` ++ Seq(
+    pureharmCoreAnomaly,
+    pureharmCorePhantom,
+    pureharmEffectsCats,
+    pureharmConfig,
+    amazonCloudFront,
+    scalaTest      % Test,
+    log4cats       % Test,
+    http4sClient   % Test,
+    logbackClassic % Test,
+  )
 
 lazy val `aws-cloudfront` = project
   .settings(PublishingSettings.sonatypeSettings)
@@ -153,16 +164,20 @@ lazy val `aws-logs` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.2-M19"    //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.2"        //https://github.com/scala/scala-collection-compat/releases
-lazy val shapelessVersion:       String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
-lazy val catsVersion:            String = "2.0.0-RC2"    //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion:      String = "2.0.0-RC2"    //https://github.com/typelevel/cats-effect/releases
-lazy val monixVersion:           String = "3.0.0-RC3"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.0-RC3"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val logbackVersion:         String = "1.2.3"        //https://github.com/qos-ch/logback/releases
-lazy val pureconfigVersion:      String = "0.11.1"       //https://github.com/pureconfig/pureconfig/releases
-lazy val scalaTestVersion:       String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
+lazy val pureharmVersion:        String = "0.0.2-M19" //https://github.com/busymachines/pureharm/releases
+lazy val scalaCollCompatVersion: String = "2.1.2"     //https://github.com/scala/scala-collection-compat/releases
+lazy val shapelessVersion:       String = "2.3.3"     //https://github.com/milessabin/shapeless/releases
+lazy val catsVersion:            String = "2.0.0-RC2" //https://github.com/typelevel/cats/releases
+lazy val catsEffectVersion:      String = "2.0.0-RC2" //https://github.com/typelevel/cats-effect/releases
+lazy val monixVersion:           String = "3.0.0-RC3" //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.0.0-RC3" //https://github.com/ChristopherDavenport/log4cats/releases
+
+lazy val pureconfigVersion: String = "0.11.1" //https://github.com/pureconfig/pureconfig/releases
+
+//these are used only for testing
+lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:    String = "0.21.0-M3"    //https://github.com/http4s/http4s/releases
+lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
 
 lazy val awsJavaSdkVersion:   String = "1.11.590" //java — https://github.com/aws/aws-sdk-java/releases
 lazy val awsJavaSdkV2Version: String = "2.7.3"    //java — https://github.com/aws/aws-sdk-java-v2/releases
@@ -219,11 +234,15 @@ lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion wit
 //https://github.com/milessabin/shapeless/releases
 lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion withSources ()
 
+//used only for testing
+//https://github.com/http4s/http4s/releases
+lazy val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4sVersion withSources ()
+
 //#############################################################################
 //################################ AMAZON V1 — ################################
 //#############################################################################
-//https://github.com/aws/aws-sdk-java/releases
 
+//https://github.com/aws/aws-sdk-java/releases
 lazy val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkVersion withSources ()
 lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkVersion withSources ()
 
