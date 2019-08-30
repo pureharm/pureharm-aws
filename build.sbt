@@ -187,8 +187,8 @@ lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/l
 lazy val http4sVersion:    String = "0.21.0-M3"    //https://github.com/http4s/http4s/releases
 lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
 
-lazy val awsJavaSdkVersion:   String = "1.11.590" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version: String = "2.7.3"    //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val awsJavaSdkVersion:   String = "1.11.622" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version: String = "2.7.35"   //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //#############################################################################
 //################################### SCALA ###################################
