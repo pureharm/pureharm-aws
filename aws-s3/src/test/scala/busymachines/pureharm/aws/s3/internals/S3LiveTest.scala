@@ -5,6 +5,7 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.aws.s3._
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   *
@@ -17,18 +18,21 @@ import busymachines.pureharm.aws.s3._
   * @since 22 May 2019
   *
   */
-//TODO: replace w/ a scalatest that we can ignore
-object S3AppTest extends PureharmIOApp {
+@org.scalatest.Ignore
+final class S3LiveTest extends AnyFunSuite {
   private val UTF_8 = java.nio.charset.StandardCharsets.UTF_8
+  private val ioRuntime:   Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-cf-test")
+  implicit private val cs: ContextShift[IO]                     = ioRuntime.value._1
+
   implicit val l: StructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
-  override val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-test")
-
-  private val configR = Resource.liftF(S3Config.default[IO])
-
-  implicit val ioEC: ExecutionContextCT = UnsafePools.cached("s3-test")
-
-  implicit private val shifter: BlockingShifter[IO] = BlockingShifter.fromExecutionContext(ioEC)(contextShift)
+  private val s3clientR: Resource[IO, (S3Config, AmazonS3Client[IO])] =
+    for {
+      config     <- S3Config.defaultR[IO]
+      blockingEC <- Pools.cached[IO]("aws-block")
+      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
+      s3Client <- AmazonS3Client.resource[IO](config)
+    } yield (config, s3Client)
 
   private val f1S3Key: S3FileKey =
     S3FileKey("folder", "subfolder", "file.txt").right.get
@@ -37,20 +41,8 @@ object S3AppTest extends PureharmIOApp {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8),
   )
 
-  override def run(args: List[String]): IO[ExitCode] = {
-    (testClient >>
-      l.info("FINISHED!") >>
-      ExitCode.Success.pure[IO]).handleErrorWith(e => l.error(e)(s"failed w/: $e").as(ExitCode.Error))
-
-  }
-
-  private def testClient: IO[Unit] = {
-    val r = for {
-      config <- configR
-      client <- AmazonS3Client.resource[IO](config)
-    } yield (config, client)
-
-    r.use {
+  test("s3 upload + get + delete") {
+    val testIO = s3clientR.use {
       case (config, client) =>
         for {
           _ <- l.info(s"acquired client resource: ${client.toString}")
@@ -74,5 +66,8 @@ object S3AppTest extends PureharmIOApp {
             .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
         } yield ()
     }
+
+    testIO.unsafeRunSync()
   }
+
 }
