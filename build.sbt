@@ -62,6 +62,7 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 //++++++++++++++++++++++++++++++++++++ AWS ++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 lazy val `aws-core-deps` = Seq(
+  pureharmCorePhantom,
   pureharmCoreAnomaly,
   pureharmEffectsCats,
   amazonRegionsV2,
@@ -81,7 +82,16 @@ lazy val `aws-core` = project
 
 //#############################################################################
 lazy val `aws-s3-deps` =
-  `aws-core-deps` ++ Seq()
+  `aws-core-deps` ++ Seq(
+    monixCatnap,
+    pureharmCoreAnomaly,
+    pureharmCorePhantom,
+    pureharmEffectsCats,
+    pureharmConfig,
+    amazonS3V2,
+    log4cats       % Test,
+    logbackClassic % Test,
+  )
 
 lazy val `aws-s3` = project
   .settings(PublishingSettings.sonatypeSettings)
@@ -148,6 +158,7 @@ lazy val scalaCollCompatVersion: String = "2.1.2"        //https://github.com/sc
 lazy val shapelessVersion:       String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
 lazy val catsVersion:            String = "2.0.0-RC2"    //https://github.com/typelevel/cats/releases
 lazy val catsEffectVersion:      String = "2.0.0-RC2"    //https://github.com/typelevel/cats-effect/releases
+lazy val monixVersion:           String = "3.0.0-RC3"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.0-RC3"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val logbackVersion:         String = "1.2.3"        //https://github.com/qos-ch/logback/releases
 lazy val pureconfigVersion:      String = "0.11.1"       //https://github.com/pureconfig/pureconfig/releases
@@ -200,6 +211,10 @@ lazy val cats: Seq[ModuleID] = Seq(
 
 //https://github.com/typelevel/cats-effect/releases
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
+
+//https://github.com/monix/monix/releases
+//we use this to interop with Java Futures from AWS stuff
+lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion withSources ()
 
 //https://github.com/milessabin/shapeless/releases
 lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion withSources ()
