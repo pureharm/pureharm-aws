@@ -55,7 +55,7 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
     `aws-core`,
     `aws-s3`,
     `aws-cloudfront`,
-    `aws-logs`,
+    `aws-logger`,
   )
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -149,15 +149,27 @@ lazy val `aws-cloudfront` = project
 
 //#############################################################################
 
-lazy val `aws-logs-deps` =
-  `aws-core-deps` ++ Seq()
+lazy val `aws-logger-deps` =
+  `aws-core-deps` ++ Seq(
+    catsCore,
+    catsEffect,
+    pureConfig,
+    pureharmCoreAnomaly,
+    pureharmCorePhantom,
+    pureharmEffectsCats,
+    pureharmConfig,
+    amazonLogs,
+    log4cats,
+    scalaTest      % Test,
+    logbackClassic % Test,
+  )
 
-lazy val `aws-logs` = project
+lazy val `aws-logger` = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
-    name := "pureharm-aws-logs",
-    libraryDependencies ++= `aws-logs-deps`.distinct,
+    name := "pureharm-aws-logger",
+    libraryDependencies ++= `aws-logger-deps`.distinct,
   )
   .dependsOn(
     `aws-core`,
