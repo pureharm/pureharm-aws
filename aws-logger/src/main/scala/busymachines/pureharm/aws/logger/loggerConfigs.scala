@@ -29,7 +29,7 @@ import scala.concurrent.duration.FiniteDuration
   *        ---
   */
 sealed trait AWSLoggerConfig extends Product with Serializable {
-  def enabled:    Boolean
+  def enabled:    AWSLoggingEnabled
   def cloudwatch: Option[CloudWatchLoggerConfig]
 }
 
@@ -37,12 +37,12 @@ final case class EnabledAWSLoggerConfig(
   someCloudwatch: CloudWatchLoggerConfig,
 ) extends AWSLoggerConfig {
   override val cloudwatch: Option[CloudWatchLoggerConfig] = Option(someCloudwatch)
-  override val enabled:    Boolean                        = true
+  override val enabled:    AWSLoggingEnabled              = AWSLoggingEnabled.True
 }
 
 case object DisabledAWSLoggerConfig extends AWSLoggerConfig {
   override val cloudwatch: Option[CloudWatchLoggerConfig] = Option.empty
-  override val enabled:    Boolean                        = false
+  override val enabled:    AWSLoggingEnabled              = AWSLoggingEnabled.False
 }
 
 /**
