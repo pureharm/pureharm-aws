@@ -26,6 +26,8 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.concurrent.duration._
 
 /**
+  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+  *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-logger/src/test/resources/reference.conf``
   * for the environment variables that are used by this test.
@@ -44,18 +46,19 @@ final class AWSLoggerLiveTest extends AnyFunSuite {
   implicit private val cs:    ContextShift[IO] = ioRuntime.value._1
   implicit private val timer: Timer[IO]        = ioRuntime.value._2
 
+  private val localLogger = Slf4jLogger.getLogger[IO]
+
   private val fixture: Resource[IO, AWSLoggerFactory[IO]] = for {
+    config     <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
     blockingEC <- Pools.cached[IO]("aws-logger-block")
     implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
-    config  <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
-    _       <- Resource.liftF(IO(println(config)))
     logFact <- AWSLoggerFactory.resource[IO](config)
+    _       <- cs.shift.to[Resource[IO, ?]] //shifting so that first parts of test are not run on scalatest-threads
   } yield logFact
 
   test("... should send logs to AWS cloud") {
     val testIO = fixture.use { loggerFactory: AWSLoggerFactory[IO] =>
       for {
-        localLogger  <- Slf4jLogger.create[IO]
         randomNumber <- IO(Math.abs(scala.util.Random.nextLong()))
         _            <- localLogger.info(s"LOCAL — look manually for number '$randomNumber' in aws cloudwatch logs")
         logger       <- loggerFactory.getLogger(localLogger).pure[IO]
