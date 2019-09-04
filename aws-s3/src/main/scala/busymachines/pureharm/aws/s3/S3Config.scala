@@ -27,9 +27,9 @@ import busymachines.pureharm.effects._
   */
 
 final case class S3Config(
-  s3AccessKeyId:         S3AccessKeyID,
-  secretAccessKey:       S3SecretAccessKey,
   region:                AmazonRegion,
+  accessKeyID:           S3AccessKeyID,
+  secretAccessKey:       S3SecretAccessKey,
   bucket:                S3Bucket,
   apiCallAttemptTimeout: S3ApiCallAttemptTimeout,
   apiCallTimeout:        S3ApiCallTimeout,
@@ -37,9 +37,11 @@ final case class S3Config(
 )
 
 import busymachines.pureharm.config._
-import busymachines.pureharm.config.implicits._
 
 object S3Config extends ConfigLoader[S3Config] {
+  import busymachines.pureharm.config.implicits._
+  import busymachines.pureharm.aws.core.implicits._
+
   implicit val AmazonRequestHeaderReader: ConfigReader[AmazonRequestHeader] = semiauto.deriveReader[AmazonRequestHeader]
   implicit override val configReader:     ConfigReader[S3Config]            = semiauto.deriveReader[S3Config]
   override def default[F[_]: Sync]: F[S3Config] = this.load("pureharm.aws.s3")

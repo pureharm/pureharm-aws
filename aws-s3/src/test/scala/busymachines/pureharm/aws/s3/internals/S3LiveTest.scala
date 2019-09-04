@@ -45,7 +45,7 @@ final class S3LiveTest extends AnyFunSuite {
 
   private val s3clientR: Resource[IO, (S3Config, AmazonS3Client[IO])] =
     for {
-      config     <- S3Config.defaultR[IO]
+      config     <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       blockingEC <- Pools.cached[IO]("aws-block")
       implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
       s3Client <- AmazonS3Client.resource[IO](config)
