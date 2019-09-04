@@ -38,7 +38,7 @@ import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
   *
   */
 final private[logger] class AWSRemoteLoggerImpl[F[_]] private[logger] (
-  private val config:      AWSLoggerConfig,
+  private val config:      CloudWatchLoggerConfig,
   private val localLogger: SelfAwareStructuredLogger[F],
   private val remote:      AWSRemoteLoggerImpl.AWSHelper[F],
 )(
@@ -123,7 +123,7 @@ private[logger] object AWSRemoteLoggerImpl {
   import com.amazonaws.services.logs.AWSLogsAsync
 
   def apply[F[_]: Concurrent: Timer: BlockingShifter](
-    config:      AWSLoggerConfig,
+    config:      CloudWatchLoggerConfig,
     localLogger: SelfAwareStructuredLogger[F],
     awsLogs:     AWSLogsAsync,
   ): AWSRemoteLoggerImpl[F] = {
@@ -148,7 +148,7 @@ private[logger] object AWSRemoteLoggerImpl {
   import scala.jdk.CollectionConverters._
 
   final private[logger] class AWSHelper[F[_]: Timer](
-    private val config:     AWSLoggerConfig,
+    private val config:     CloudWatchLoggerConfig,
     private val logger:     SelfAwareStructuredLogger[F],
     private val awsLogs:    AWSLogsAsync,
   )(implicit private val F: Concurrent[F], private val shifter: BlockingShifter[F]) {
@@ -185,45 +185,41 @@ private[logger] object AWSRemoteLoggerImpl {
       * anything to be improved here.
       */
     private def logToClouds(logs: List[InputLogEvent]): F[Unit] = {
-      if (config.logsToCloudEnabled) {
-        val logF: F[Unit] =
-          for {
-            logDesc  <- describeLogStreams
-            tokenOpt <- getUploadSequenceToken(logDesc)
-            plrq: PutLogEventsRequest = tokenOpt match {
-              case Some(tk) =>
-                new PutLogEventsRequest(config.logsGroupName, config.logsStreamName, logs.asJava)
-                  .withSequenceToken(tk)
-              case None =>
-                new PutLogEventsRequest(config.logsGroupName, config.logsStreamName, logs.asJava)
-                  .withSequenceToken(null) //java :'(!
-            }
-            _ <- putLogsOnCloud(plrq).void
-          } yield ()
+      val logF: F[Unit] =
+        for {
+          logDesc  <- describeLogStreams
+          tokenOpt <- getUploadSequenceToken(logDesc)
+          plrq: PutLogEventsRequest = tokenOpt match {
+            case Some(tk) =>
+              new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
+                .withSequenceToken(tk)
+            case None =>
+              new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
+                .withSequenceToken(null) //java :'(!
+          }
+          _ <- putLogsOnCloud(plrq).void
+        } yield ()
 
-        val nonFailingF = logF.timeout(config.logTimeout).recoverWith {
-          case NonFatal(e) => logger.trace(e)("Failed to log to AWS Cloud Watch!")
-        }
-
-        //This is where the magic happens!
-        //N.B. we start a fiber off of logF to ensure
-        //forkAndForget semantics, and the shifter ensures
-        //that the fiber shifts the work on the blocking IO pool
-        shifter.blockOn(nonFailingF.start).void
+      val nonFailingF = logF.timeout(config.timeout).recoverWith {
+        case NonFatal(e) => logger.trace(e)("Failed to log to AWS Cloud Watch!")
       }
-      else
-        F.unit
+
+      //This is where the magic happens!
+      //N.B. we start a fiber off of logF to ensure
+      //forkAndForget semantics, and the shifter ensures
+      //that the fiber shifts the work on the blocking IO pool
+      shifter.blockOn(nonFailingF.start).void
     }
 
     private def describeLogStreams: F[DescribeLogStreamsResult] = {
       val req = new DescribeLogStreamsRequest()
-        .withLogGroupName(config.logsGroupName)
-        .withLogStreamNamePrefix(config.logsStreamName)
+        .withLogGroupName(config.groupName)
+        .withLogStreamNamePrefix(config.streamName)
       F.delay(awsLogs.describeLogStreams(req))
     }
 
     private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]] = F.delay {
-      lsr.getLogStreams.asScala.find(_.getLogStreamName == config.logsStreamName).map(_.getUploadSequenceToken)
+      lsr.getLogStreams.asScala.find(_.getLogStreamName == config.streamName).map(_.getUploadSequenceToken)
     }
 
     //TODO: maybe put the next sequence token in an MVar and take it from there...

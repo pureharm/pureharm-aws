@@ -43,16 +43,16 @@ object AWSLoggerFactory {
   def resource[F[_]: Concurrent: Timer: BlockingShifter](
     config: AWSLoggerConfig,
   ): Resource[F, AWSLoggerFactory[F]] = {
-    if (config.logsToCloudEnabled) {
-      for {
-        awsLogs <- awsLogsResource(config)
-      } yield new AWSLoggerFactoryImpl[F](
-        awsLogs = awsLogs,
-        config  = config,
-      ): AWSLoggerFactory[F]
-    }
-    else {
-      dummyLFResource
+
+    config match {
+      case enabled: EnabledAWSLoggerConfig =>
+        for {
+          awsLogs <- awsLogsResource(enabled.someCloudwatch)
+        } yield new AWSLoggerFactoryImpl[F](
+          awsLogs = awsLogs,
+          config  = enabled.someCloudwatch,
+        ): AWSLoggerFactory[F]
+      case DisabledAWSLoggerConfig => dummyLFResource
     }
   }
 
@@ -62,12 +62,12 @@ object AWSLoggerFactory {
   import com.amazonaws.services.logs.AWSLogsAsyncClientBuilder
   import com.amazonaws.services.logs.AWSLogsAsync
 
-  private def awsLogsResource[F[_]: Sync](c: AWSLoggerConfig): Resource[F, AWSLogsAsync] = {
+  private def awsLogsResource[F[_]: Sync](c: CloudWatchLoggerConfig): Resource[F, AWSLogsAsync] = {
     Resource.make(awsLogsAsync(c))((b: AWSLogsAsync) => Sync[F].delay(b.shutdown()))
   }
 
-  private def awsLogsAsync[F[_]: Sync](c: AWSLoggerConfig): F[AWSLogsAsync] = Sync[F].delay {
-    lazy val awsCredentials         = new BasicAWSCredentials(c.logsAccessKeyID, c.logsSecretAccessKey)
+  private def awsLogsAsync[F[_]: Sync](c: CloudWatchLoggerConfig): F[AWSLogsAsync] = Sync[F].delay {
+    lazy val awsCredentials         = new BasicAWSCredentials(c.accessKeyID, c.secretAccessKey)
     lazy val aWSCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials)
     val lc = AWSLogsAsyncClientBuilder
       .standard()
@@ -87,7 +87,7 @@ object AWSLoggerFactory {
 
   private class AWSLoggerFactoryImpl[F[_]: Concurrent: Timer: BlockingShifter](
     private val awsLogs: AWSLogsAsync,
-    private val config:  AWSLoggerConfig,
+    private val config:  CloudWatchLoggerConfig,
   ) extends AWSLoggerFactory[F] {
     import busymachines.pureharm.aws.logger.internals.AWSRemoteLoggerImpl
 

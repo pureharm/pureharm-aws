@@ -15,7 +15,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package busymachines.pureharm.aws.s3.internals
+package busymachines.pureharm.aws.s3
 
 import io.chrisdavenport.log4cats.StructuredLogger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
@@ -26,8 +26,11 @@ import org.scalatest.funsuite.AnyFunSuite
 
 /**
   *
+  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+  *
   * Before running this ensure that you actually have the proper local environment
-  * variables. See the reference.conf of this module for needs configuring.
+  * variables. See the ``pureharm-aws/aws-s3/src/test/resources/reference.conf``
+  * for the environment variables that are used by this test.
   *
   * We can't commit to github the proper configuration to make this run.
   *
@@ -45,7 +48,7 @@ final class S3LiveTest extends AnyFunSuite {
 
   private val s3clientR: Resource[IO, (S3Config, AmazonS3Client[IO])] =
     for {
-      config     <- S3Config.defaultR[IO]
+      config     <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       blockingEC <- Pools.cached[IO]("aws-block")
       implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
       s3Client <- AmazonS3Client.resource[IO](config)

@@ -35,7 +35,7 @@ private[s3] object PureJavaS3 {
 
   def buildClient(config: S3Config): S3AsyncClient = {
     val awsCredentials: AwsBasicCredentials = AwsBasicCredentials.create(
-      config.s3AccessKeyId,
+      config.accessKeyID,
       config.secretAccessKey,
     )
 

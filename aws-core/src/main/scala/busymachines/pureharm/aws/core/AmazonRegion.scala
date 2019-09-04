@@ -20,6 +20,7 @@ package busymachines.pureharm.aws.core
 import busymachines.pureharm.phantom._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
+import busymachines.pureharm.config._
 
 /**
   *
@@ -38,7 +39,12 @@ object AmazonRegion extends SafePhantomType[Throwable, String] {
   override def check(value: String): Attempt[String] =
     if (validRegionStrings.contains(value))
       Attempt.pure(value)
-    else Attempt.raiseError(InvalidAmazonS3RegionIA(value))
+    else Attempt.raiseError(InvalidAmazonRegionIA(value))
 
   private[aws] def toSDKRegion(ar: AmazonRegion.Type): Region = Region.of(ar)
+
+  import pureconfig.error._
+
+  implicit val pureharmAmazonRegionConfigReader: ConfigReader[AmazonRegion.Type] =
+    ConfigReader[String].emap(value => this.apply(value).leftMap(ExceptionThrown.apply))
 }

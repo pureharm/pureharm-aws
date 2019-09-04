@@ -14,14 +14,13 @@ import scala.concurrent.duration._
 
 /**
   *
-  * IGNORED BY DEFAULT
-  * Intended to be a live test,
-  * make sure that you have set up your local environment variables with a
-  * working cloudfront configuration.
+  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
-  * See:
-  * shared-utils/aws-cloudfront/src/test/resources/reference.conf
-  * For the environment variables in question
+  * Before running this ensure that you actually have the proper local environment
+  * variables. See the ``pureharm-aws/aws-cloudfront/src/test/resources/reference.conf``
+  * for the environment variables that are used by this test.
+  *
+  * We can't commit to github the proper configuration to make this run.
   *
   * GIVEN $REGION=?eu-west-1 or whatever
   * The idea is:
@@ -88,6 +87,7 @@ final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
       cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
       _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
       cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, ?]]
+      _           <- cs.shift.to[Resource[IO, ?]] //shifting so that logs are not run on scalatest threads
     } yield (blazeClient, config, s3Client, cfClient)
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey("aws_live_test", "subfolder", "google_murray_bookchin.txt").liftTo[IO]

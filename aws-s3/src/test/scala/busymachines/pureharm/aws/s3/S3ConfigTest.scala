@@ -15,8 +15,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package busymachines.pureharm.aws.logger
+package busymachines.pureharm.aws.s3
 
+import busymachines.pureharm.config.ConfigAggregateAnomalies
 import busymachines.pureharm.effects._
 import org.scalatest.Matchers
 import org.scalatest.funsuite.AnyFunSuite
@@ -27,11 +28,25 @@ import org.scalatest.funsuite.AnyFunSuite
   * @since 14 May 2019
   *
   */
-final class LoadAWSConfigTest extends AnyFunSuite with Matchers {
+final class S3ConfigTest extends AnyFunSuite with Matchers {
 
-  test("... read config from local test reference.conf") {
+  test("... read config from 'production' reference.conf") {
     noException shouldBe thrownBy {
-      AWSLoggerConfig.default[IO].unsafeRunSync()
+      S3Config.default[IO].unsafeRunSync()
     }
   }
+
+  test("... test-1 — read correct s3 config") {
+    noException shouldBe thrownBy {
+      S3Config.fromNamespace[IO]("test-config.pureharm.aws.test-1.s3").unsafeRunSync()
+    }
+  }
+
+  test("... test-2 — invalid amazon region") {
+    val exp = the[ConfigAggregateAnomalies] thrownBy {
+      S3Config.fromNamespace[IO]("test-config.pureharm.aws.test-2.s3").unsafeRunSync()
+    }
+    assert(exp.getLocalizedMessage.contains("Invalid Amazon region"))
+  }
+
 }
