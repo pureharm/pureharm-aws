@@ -26,6 +26,11 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.concurrent.duration._
 
 /**
+  * Before running this ensure that you actually have the proper local environment
+  * variables. See the ``pureharm-aws/aws-logger/src/test/resources/reference.conf``
+  * for the environment variables that are used by this test.
+  *
+  * We can't commit to github the proper configuration to make this run.
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 04 Sep 2019
