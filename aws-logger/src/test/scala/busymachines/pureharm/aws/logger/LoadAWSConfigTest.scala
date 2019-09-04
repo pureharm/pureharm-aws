@@ -31,7 +31,14 @@ final class LoadAWSConfigTest extends AnyFunSuite with Matchers {
 
   test("... read config from local test reference.conf") {
     noException shouldBe thrownBy {
+      AWSLoggerConfig.fromNamespace[IO]("test-config.pureharm.aws.logger").unsafeRunSync()
+    }
+  }
+
+  test("... read config from default reference.conf") {
+    noException shouldBe thrownBy {
       AWSLoggerConfig.default[IO].unsafeRunSync()
     }
   }
+
 }
