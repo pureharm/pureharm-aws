@@ -56,7 +56,7 @@ final case class CloudWatchLoggerConfig(
   region:          AmazonRegion,
   accessKeyID:     CloudWatchAccessKeyID,
   secretAccessKey: CloudWatchSecretAccessKey,
-  logsGroupName:   String,
+  groupName:       CloudWatchGroupName,
   logsStreamName:  String,
 )
 

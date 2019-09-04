@@ -26,4 +26,7 @@ package object logger {
 
   object CloudWatchSecretAccessKey extends PhantomType[String]
   type CloudWatchSecretAccessKey = CloudWatchSecretAccessKey.Type
+
+  object CloudWatchGroupName extends PhantomType[String]
+  type CloudWatchGroupName = CloudWatchGroupName.Type
 }

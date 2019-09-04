@@ -191,10 +191,10 @@ private[logger] object AWSRemoteLoggerImpl {
           tokenOpt <- getUploadSequenceToken(logDesc)
           plrq: PutLogEventsRequest = tokenOpt match {
             case Some(tk) =>
-              new PutLogEventsRequest(config.logsGroupName, config.logsStreamName, logs.asJava)
+              new PutLogEventsRequest(config.groupName, config.logsStreamName, logs.asJava)
                 .withSequenceToken(tk)
             case None =>
-              new PutLogEventsRequest(config.logsGroupName, config.logsStreamName, logs.asJava)
+              new PutLogEventsRequest(config.groupName, config.logsStreamName, logs.asJava)
                 .withSequenceToken(null) //java :'(!
           }
           _ <- putLogsOnCloud(plrq).void
@@ -213,7 +213,7 @@ private[logger] object AWSRemoteLoggerImpl {
 
     private def describeLogStreams: F[DescribeLogStreamsResult] = {
       val req = new DescribeLogStreamsRequest()
-        .withLogGroupName(config.logsGroupName)
+        .withLogGroupName(config.groupName)
         .withLogStreamNamePrefix(config.logsStreamName)
       F.delay(awsLogs.describeLogStreams(req))
     }
