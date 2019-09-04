@@ -17,6 +17,7 @@
   */
 package busymachines.pureharm.aws.logger
 
+import busymachines.pureharm.config.ConfigAggregateAnomalies
 import busymachines.pureharm.effects._
 import org.scalatest.Matchers
 import org.scalatest.funsuite.AnyFunSuite
@@ -51,12 +52,19 @@ final class LoadAWSConfigTest extends AnyFunSuite with Matchers {
     }
   }
 
-  test("... test-2 — just enabled = false") {
+  test("... test-3 — just enabled = false") {
     noException shouldBe thrownBy {
       val c = AWSLoggerConfig.fromNamespace[IO]("test-config.test-3.pureharm.aws.logger").unsafeRunSync()
       assert(!c.enabled)
       assert(c.cloudwatch.isEmpty)
     }
+  }
+
+  test("... test-4 — invalid amazon region — enabled = false") {
+    val exp = the[ConfigAggregateAnomalies] thrownBy {
+      AWSLoggerConfig.fromNamespace[IO]("test-config.test-4.pureharm.aws.logger").unsafeRunSync()
+    }
+    assert(exp.getLocalizedMessage.contains("Invalid Amazon region"))
   }
 
 }

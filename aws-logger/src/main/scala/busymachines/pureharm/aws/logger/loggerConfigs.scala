@@ -17,6 +17,7 @@
   */
 package busymachines.pureharm.aws.logger
 
+import busymachines.pureharm.aws.core._
 import busymachines.pureharm.config._
 import busymachines.pureharm.effects._
 
@@ -51,7 +52,7 @@ case object DisabledAWSLoggerConfig extends AWSLoggerConfig {
   *   if a log cannot be sent within this time to AWS, then timeout.
   */
 final case class CloudWatchLoggerConfig(
-  region:              String,
+  region:              AmazonRegion,
   logTimeout:          FiniteDuration,
   logsAccessKeyID:     String,
   logsSecretAccessKey: String,
@@ -60,6 +61,7 @@ final case class CloudWatchLoggerConfig(
 )
 
 object CloudWatchLoggerConfig {
+  import busymachines.pureharm.aws.core.implicits._
   implicit val cloudWatchConfigReader: ConfigReader[CloudWatchLoggerConfig] =
     semiauto.deriveReader[CloudWatchLoggerConfig]
 }
