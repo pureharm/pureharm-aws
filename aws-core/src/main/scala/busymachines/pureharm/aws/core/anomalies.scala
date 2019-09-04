@@ -24,7 +24,7 @@ import busymachines.pureharm.anomaly._
   * @since 10 Jul 2019
   *
   */
-final case class InvalidAmazonS3RegionIA(r: String) extends InvalidInputAnomaly(s"Invalid Amazon region: $r") {
+final case class InvalidAmazonRegionIA(r: String) extends InvalidInputAnomaly(s"Invalid Amazon region: $r") {
   override val id: AnomalyID = InvalidAmazonRegionID
 }
 case object InvalidAmazonRegionID extends AnomalyID { override val name: String = "PH_AWS_CORE_001" }

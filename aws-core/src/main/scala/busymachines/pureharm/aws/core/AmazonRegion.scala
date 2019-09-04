@@ -39,7 +39,7 @@ object AmazonRegion extends SafePhantomType[Throwable, String] {
   override def check(value: String): Attempt[String] =
     if (validRegionStrings.contains(value))
       Attempt.pure(value)
-    else Attempt.raiseError(InvalidAmazonS3RegionIA(value))
+    else Attempt.raiseError(InvalidAmazonRegionIA(value))
 
   private[aws] def toSDKRegion(ar: AmazonRegion.Type): Region = Region.of(ar)
 
