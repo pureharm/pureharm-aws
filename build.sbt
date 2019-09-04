@@ -64,9 +64,11 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 lazy val `aws-core-deps` = Seq(
   catsCore,
   catsEffect,
+  pureConfig,
   pureharmCorePhantom,
   pureharmCoreAnomaly,
   pureharmEffectsCats,
+  pureharmConfig,
   amazonRegionsV2,
 )
 
