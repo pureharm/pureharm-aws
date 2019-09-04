@@ -21,7 +21,6 @@ import io.chrisdavenport.log4cats.StructuredLogger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
-import busymachines.pureharm.aws.s3._
 import org.scalatest.funsuite.AnyFunSuite
 
 /**
