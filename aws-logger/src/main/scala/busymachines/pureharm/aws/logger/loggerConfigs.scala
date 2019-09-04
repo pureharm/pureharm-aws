@@ -52,12 +52,12 @@ case object DisabledAWSLoggerConfig extends AWSLoggerConfig {
   *  the amazon region of the CloudWatch you are configuring
   */
 final case class CloudWatchLoggerConfig(
-  timeout:             CloudWatchTimeoutDuration,
-  region:              AmazonRegion,
-  logsAccessKeyID:     String,
-  logsSecretAccessKey: String,
-  logsGroupName:       String,
-  logsStreamName:      String,
+  timeout:         CloudWatchTimeoutDuration,
+  region:          AmazonRegion,
+  accessKeyID:     CloudWatchAccessKeyID,
+  secretAccessKey: CloudWatchSecretAccessKey,
+  logsGroupName:   String,
+  logsStreamName:  String,
 )
 
 object CloudWatchLoggerConfig {

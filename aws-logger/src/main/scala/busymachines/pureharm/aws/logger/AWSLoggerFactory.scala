@@ -67,7 +67,7 @@ object AWSLoggerFactory {
   }
 
   private def awsLogsAsync[F[_]: Sync](c: CloudWatchLoggerConfig): F[AWSLogsAsync] = Sync[F].delay {
-    lazy val awsCredentials         = new BasicAWSCredentials(c.logsAccessKeyID, c.logsSecretAccessKey)
+    lazy val awsCredentials         = new BasicAWSCredentials(c.accessKeyID, c.secretAccessKey)
     lazy val aWSCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials)
     val lc = AWSLogsAsyncClientBuilder
       .standard()

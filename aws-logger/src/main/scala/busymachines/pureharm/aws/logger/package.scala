@@ -20,4 +20,10 @@ package object logger {
 
   object CloudWatchTimeoutDuration extends PhantomType[FiniteDuration]
   type CloudWatchTimeoutDuration = CloudWatchTimeoutDuration.Type
+
+  object CloudWatchAccessKeyID extends PhantomType[String]
+  type CloudWatchAccessKeyID = CloudWatchAccessKeyID.Type
+
+  object CloudWatchSecretAccessKey extends PhantomType[String]
+  type CloudWatchSecretAccessKey = CloudWatchSecretAccessKey.Type
 }

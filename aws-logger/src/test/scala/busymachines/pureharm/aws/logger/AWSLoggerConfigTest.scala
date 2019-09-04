@@ -28,7 +28,7 @@ import org.scalatest.funsuite.AnyFunSuite
   * @since 14 May 2019
   *
   */
-final class LoadAWSConfigTest extends AnyFunSuite with Matchers {
+final class AWSLoggerConfigTest extends AnyFunSuite with Matchers {
 
   test("... read config from 'production' reference.conf") {
     noException shouldBe thrownBy {
