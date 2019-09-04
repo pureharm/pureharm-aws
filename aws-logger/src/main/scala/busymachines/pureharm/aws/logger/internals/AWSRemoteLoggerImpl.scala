@@ -200,7 +200,7 @@ private[logger] object AWSRemoteLoggerImpl {
           _ <- putLogsOnCloud(plrq).void
         } yield ()
 
-      val nonFailingF = logF.timeout(config.logTimeout).recoverWith {
+      val nonFailingF = logF.timeout(config.timeout).recoverWith {
         case NonFatal(e) => logger.trace(e)("Failed to log to AWS Cloud Watch!")
       }
 
