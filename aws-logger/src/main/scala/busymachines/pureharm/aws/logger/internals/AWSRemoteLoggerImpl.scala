@@ -191,10 +191,10 @@ private[logger] object AWSRemoteLoggerImpl {
           tokenOpt <- getUploadSequenceToken(logDesc)
           plrq: PutLogEventsRequest = tokenOpt match {
             case Some(tk) =>
-              new PutLogEventsRequest(config.groupName, config.logsStreamName, logs.asJava)
+              new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
                 .withSequenceToken(tk)
             case None =>
-              new PutLogEventsRequest(config.groupName, config.logsStreamName, logs.asJava)
+              new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
                 .withSequenceToken(null) //java :'(!
           }
           _ <- putLogsOnCloud(plrq).void
@@ -214,12 +214,12 @@ private[logger] object AWSRemoteLoggerImpl {
     private def describeLogStreams: F[DescribeLogStreamsResult] = {
       val req = new DescribeLogStreamsRequest()
         .withLogGroupName(config.groupName)
-        .withLogStreamNamePrefix(config.logsStreamName)
+        .withLogStreamNamePrefix(config.streamName)
       F.delay(awsLogs.describeLogStreams(req))
     }
 
     private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]] = F.delay {
-      lsr.getLogStreams.asScala.find(_.getLogStreamName == config.logsStreamName).map(_.getUploadSequenceToken)
+      lsr.getLogStreams.asScala.find(_.getLogStreamName == config.streamName).map(_.getUploadSequenceToken)
     }
 
     //TODO: maybe put the next sequence token in an MVar and take it from there...

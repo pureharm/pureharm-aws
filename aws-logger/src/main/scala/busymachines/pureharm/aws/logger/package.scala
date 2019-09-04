@@ -29,4 +29,7 @@ package object logger {
 
   object CloudWatchGroupName extends PhantomType[String]
   type CloudWatchGroupName = CloudWatchGroupName.Type
+
+  object CloudWatchStreamName extends PhantomType[String]
+  type CloudWatchStreamName = CloudWatchStreamName.Type
 }

@@ -57,7 +57,7 @@ final case class CloudWatchLoggerConfig(
   accessKeyID:     CloudWatchAccessKeyID,
   secretAccessKey: CloudWatchSecretAccessKey,
   groupName:       CloudWatchGroupName,
-  logsStreamName:  String,
+  streamName:      CloudWatchStreamName,
 )
 
 object CloudWatchLoggerConfig {
