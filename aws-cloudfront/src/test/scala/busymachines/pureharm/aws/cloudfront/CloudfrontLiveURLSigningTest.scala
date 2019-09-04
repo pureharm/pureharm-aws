@@ -22,10 +22,6 @@ import scala.concurrent.duration._
   *
   * We can't commit to github the proper configuration to make this run.
   *
-  * See:
-  * shared-utils/aws-cloudfront/src/test/resources/reference.conf
-  * For the environment variables in question
-  *
   * GIVEN $REGION=?eu-west-1 or whatever
   * The idea is:
   * 1. You need an S3 bucket without public access, call it $S3_BUCKET

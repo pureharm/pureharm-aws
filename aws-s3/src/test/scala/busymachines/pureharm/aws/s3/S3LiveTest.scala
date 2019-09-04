@@ -26,6 +26,8 @@ import org.scalatest.funsuite.AnyFunSuite
 
 /**
   *
+  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+  *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-s3/src/test/resources/reference.conf``
   * for the environment variables that are used by this test.
