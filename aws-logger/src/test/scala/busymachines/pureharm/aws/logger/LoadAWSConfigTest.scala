@@ -29,15 +29,33 @@ import org.scalatest.funsuite.AnyFunSuite
   */
 final class LoadAWSConfigTest extends AnyFunSuite with Matchers {
 
-  test("... read config from local test reference.conf") {
+  test("... read config from 'production' reference.conf") {
     noException shouldBe thrownBy {
-      AWSLoggerConfig.fromNamespace[IO]("test-config.pureharm.aws.logger").unsafeRunSync()
+      AWSLoggerConfig.default[IO].unsafeRunSync()
     }
   }
 
-  test("... read config from default reference.conf") {
+  test("... test-1 — read fully formed value — enabled = true") {
     noException shouldBe thrownBy {
-      AWSLoggerConfig.default[IO].unsafeRunSync()
+      val c = AWSLoggerConfig.fromNamespace[IO]("test-config.test-1.pureharm.aws.logger").unsafeRunSync()
+      assert(c.enabled)
+      assert(c.cloudwatch.isDefined)
+    }
+  }
+
+  test("... test-2 — fully formed value — enabled = false") {
+    noException shouldBe thrownBy {
+      val c = AWSLoggerConfig.fromNamespace[IO]("test-config.test-2.pureharm.aws.logger").unsafeRunSync()
+      assert(!c.enabled)
+      assert(c.cloudwatch.isEmpty)
+    }
+  }
+
+  test("... test-2 — just enabled = false") {
+    noException shouldBe thrownBy {
+      val c = AWSLoggerConfig.fromNamespace[IO]("test-config.test-3.pureharm.aws.logger").unsafeRunSync()
+      assert(!c.enabled)
+      assert(c.cloudwatch.isEmpty)
     }
   }
 

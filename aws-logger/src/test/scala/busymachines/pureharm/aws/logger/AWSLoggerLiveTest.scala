@@ -20,7 +20,6 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
 import org.scalatest.funsuite.AnyFunSuite
@@ -40,8 +39,6 @@ final class AWSLoggerLiveTest extends AnyFunSuite {
   implicit private val cs:    ContextShift[IO] = ioRuntime.value._1
   implicit private val timer: Timer[IO]        = ioRuntime.value._2
 
-  implicit private val l: Logger[IO] = Slf4jLogger.getLogger[IO]
-
   private val fixture: Resource[IO, AWSLoggerFactory[IO]] = for {
     blockingEC <- Pools.cached[IO]("aws-logger-block")
     implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
@@ -53,13 +50,15 @@ final class AWSLoggerLiveTest extends AnyFunSuite {
   test("... should send logs to AWS cloud") {
     val testIO = fixture.use { loggerFactory: AWSLoggerFactory[IO] =>
       for {
-        localLogger <- Slf4jLogger.create[IO]
-        logger      <- loggerFactory.getLogger(localLogger).pure[IO]
-        _           <- logger.trace("pureharm — logger test — trace")
-        _           <- logger.debug("pureharm — logger test — debug")
-        _           <- logger.info("pureharm — logger test — info")
-        _           <- logger.warn("pureharm — logger test — warn")
-        _           <- logger.error("pureharm — logger test — error")
+        localLogger  <- Slf4jLogger.create[IO]
+        randomNumber <- IO(Math.abs(scala.util.Random.nextLong()))
+        _            <- localLogger.info(s"LOCAL — look manually for number '$randomNumber' in aws cloudwatch logs")
+        logger       <- loggerFactory.getLogger(localLogger).pure[IO]
+        _            <- logger.trace(s"pureharm — logger test $randomNumber — trace")
+        _            <- logger.debug(s"pureharm — logger test $randomNumber — debug")
+        _            <- logger.info(s"pureharm — logger test $randomNumber — info")
+        _            <- logger.warn(s"pureharm — logger test $randomNumber — warn")
+        _            <- logger.error(s"pureharm — logger test $randomNumber — error")
         _ <- withClue("we fork and forget sending logs to amazon, so hence the wait") {
           Timer[IO].sleep(2.seconds)
         }
