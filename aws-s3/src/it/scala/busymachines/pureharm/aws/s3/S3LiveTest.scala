@@ -37,7 +37,6 @@ import org.scalatest.funsuite.AnyFunSuite
   * @since 22 May 2019
   *
   */
-@org.scalatest.Ignore
 final class S3LiveTest extends AnyFunSuite {
   private val UTF_8 = java.nio.charset.StandardCharsets.UTF_8
   private val ioRuntime:   Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-cf-test")

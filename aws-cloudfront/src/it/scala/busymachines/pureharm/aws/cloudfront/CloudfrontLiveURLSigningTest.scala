@@ -68,7 +68,6 @@ import scala.concurrent.duration._
   * @since 19 Jul 2019
   *
   */
-@org.scalatest.Ignore
 final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
 
   private val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-cf-test")
