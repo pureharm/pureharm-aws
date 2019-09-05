@@ -39,6 +39,7 @@ addCommandAlias("ci", ";scalafmtCheck;rebuild-update;test")
 addCommandAlias("ci-quick", ";scalafmtCheck;build;test")
 addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
 addCommandAlias("doRelease", ";rebuild-update;publishSigned;sonatypeRelease")
+addCommandAlias("it", "IntegrationTest / test")
 
 addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 
@@ -96,12 +97,14 @@ lazy val `aws-s3-deps` =
     pureharmEffectsCats,
     pureharmConfig,
     amazonS3V2,
-    scalaTest      % Test,
-    log4cats       % Test,
-    logbackClassic % Test,
+    scalaTest      % ITT,
+    log4cats       % ITT,
+    logbackClassic % ITT,
   )
 
 lazy val `aws-s3` = project
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
@@ -127,13 +130,15 @@ lazy val `aws-cloudfront-deps` =
     pureharmEffectsCats,
     pureharmConfig,
     amazonCloudFront,
-    scalaTest      % Test,
-    log4cats       % Test,
-    http4sClient   % Test,
-    logbackClassic % Test,
+    scalaTest      % ITT,
+    log4cats       % ITT,
+    http4sClient   % ITT,
+    logbackClassic % ITT,
   )
 
 lazy val `aws-cloudfront` = project
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
@@ -162,11 +167,13 @@ lazy val `aws-logger-deps` =
     pureharmConfig,
     amazonLogs,
     log4cats,
-    scalaTest      % Test,
-    logbackClassic % Test,
+    scalaTest      % ITT,
+    logbackClassic % ITT,
   )
 
 lazy val `aws-logger` = project
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
@@ -320,3 +327,8 @@ def fullDependency(p: Project): ClasspathDependency = p % "compile->compile;test
   * in production build they don't require to be used together.
   */
 def asTestingDependency(p: Project): ClasspathDependency = p % "test -> compile"
+
+/**
+ * Used to mark a dependency as needed in both integration tests, and tests 
+ */
+def ITT: String = "it,test"
