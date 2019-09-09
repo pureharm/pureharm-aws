@@ -210,7 +210,7 @@ lazy val http4sVersion:    String = "0.21.0-M3"    //https://github.com/http4s/h
 lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
 
 lazy val awsJavaSdkVersion:   String = "1.11.625" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version: String = "2.8.1"   //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val awsJavaSdkV2Version: String = "2.8.1"    //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //#############################################################################
 //################################### SCALA ###################################
@@ -241,18 +241,6 @@ lazy val pureharmConfig:           ModuleID = pureharm("config")            with
 
 //https://github.com/typelevel/cats/releases
 lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion withSources ()
-lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion withSources ()
-lazy val catsKernel:  ModuleID = "org.typelevel" %% "cats-kernel"  % catsVersion withSources ()
-lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion withSources ()
-lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion withSources ()
-
-lazy val cats: Seq[ModuleID] = Seq(
-  catsCore,
-  catsMacros,
-  catsKernel,
-  catsLaws,
-  catsTestkit % Test,
-)
 
 //https://github.com/typelevel/cats-effect/releases
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
@@ -330,6 +318,6 @@ def fullDependency(p: Project): ClasspathDependency = p % "compile->compile;test
 def asTestingDependency(p: Project): ClasspathDependency = p % "test -> compile"
 
 /**
- * Used to mark a dependency as needed in both integration tests, and tests 
- */
+  * Used to mark a dependency as needed in both integration tests, and tests
+  */
 def ITT: String = "it,test"
