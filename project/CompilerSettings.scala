@@ -25,9 +25,9 @@ import Keys._
   *
   */
 object CompilerSettings {
-  lazy val scala2_12:        String = "2.12.9"
+  lazy val scala2_12:        String = "2.12.10"
   lazy val scala2_13:        String = "2.13.0"
-  lazy val mainScalaVersion: String = scala2_12
+  lazy val mainScalaVersion: String = scala2_13
 
   def compilerSettings: Seq[Setting[_]] =
     Seq(

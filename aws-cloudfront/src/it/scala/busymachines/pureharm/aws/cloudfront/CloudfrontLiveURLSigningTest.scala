@@ -80,13 +80,13 @@ final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
     for {
       config     <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       blockingEC <- Pools.cached[IO]("aws-block")
-      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
+      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, *]]
       blazeClient <- BlazeClientBuilder[IO](blockingEC).withResponseHeaderTimeout(10.seconds).resource
       s3Client    <- AmazonS3Client.resource[IO](config)
       cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
       _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
-      cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, ?]]
-      _           <- cs.shift.to[Resource[IO, ?]] //shifting so that logs are not run on scalatest threads
+      cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, *]]
+      _           <- cs.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
     } yield (blazeClient, config, s3Client, cfClient)
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey("aws_live_test", "subfolder", "google_murray_bookchin.txt").liftTo[IO]
@@ -108,7 +108,7 @@ final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
 
           checkingFile <- s3Client.get(s3Config.bucket, s3Key)
           _            <- l.info(s"Fetched file from s3: $s3Key")
-          _            <- IO(assert(fileContent.deep == checkingFile.deep)).onErrorF(l.info("checking file via S3 get failed"))
+          _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
           _            <- l.info(s"File from s3 is all OK: $s3Key")
 
           signedURL <- cfSigner.signS3KeyCanned(s3Key)
@@ -118,11 +118,10 @@ final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
           }
           _ <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
           _ <- l.info(s"Expected #${fileContent.size} bytes")
-          _ <- IO(assert(fileContent.deep.toList == bytesFromSigned))
+          _ <- IO(assert(fileContent.toList == bytesFromSigned))
             .onErrorF(l.info("comparison failed for bytes from URL"))
         } yield ()
     }
-
     test.unsafeRunSync()
   }
 }

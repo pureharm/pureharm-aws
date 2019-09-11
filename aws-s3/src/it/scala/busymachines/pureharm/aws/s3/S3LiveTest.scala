@@ -48,7 +48,7 @@ final class S3LiveTest extends AnyFunSuite {
     for {
       config     <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       blockingEC <- Pools.cached[IO]("aws-block")
-      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
+      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, *]]
       s3Client <- AmazonS3Client.resource[IO](config)
     } yield (config, s3Client)
 
@@ -72,7 +72,7 @@ final class S3LiveTest extends AnyFunSuite {
           got <- client.get(config.bucket, f1S3Key)
           _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
           _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
-          _   <- IO(assert(f1_contents.deep == got.deep)).onErrorF(l.info("comparison failed :(("))
+          _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
 
           _ <- l.info("---- deleting file ----")
           _ <- client.delete(config.bucket, f1S3Key)
