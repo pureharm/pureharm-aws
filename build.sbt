@@ -201,16 +201,14 @@ lazy val catsEffectVersion:      String = "2.0.0"     //https://github.com/typel
 lazy val fs2Version:             String = "2.0.0"     //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.0.0"     //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.0"     //https://github.com/ChristopherDavenport/log4cats/releases
-
-lazy val pureconfigVersion: String = "0.11.1" //https://github.com/pureconfig/pureconfig/releases
+lazy val pureconfigVersion:      String = "0.11.1"    //https://github.com/pureconfig/pureconfig/releases
+lazy val awsJavaSdkVersion:      String = "1.11.629"  //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.8.5"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
 lazy val http4sVersion:    String = "0.21.0-M4"    //https://github.com/http4s/http4s/releases
 lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
-
-lazy val awsJavaSdkVersion:   String = "1.11.629" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version: String = "2.8.5"    //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //#############################################################################
 //################################### SCALA ###################################
