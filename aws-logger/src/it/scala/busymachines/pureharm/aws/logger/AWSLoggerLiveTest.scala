@@ -51,9 +51,9 @@ final class AWSLoggerLiveTest extends AnyFunSuite {
   private val fixture: Resource[IO, AWSLoggerFactory[IO]] = for {
     config     <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
     blockingEC <- Pools.cached[IO]("aws-logger-block")
-    implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, ?]]
+    implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, *]]
     logFact <- AWSLoggerFactory.resource[IO](config)
-    _       <- cs.shift.to[Resource[IO, ?]] //shifting so that first parts of test are not run on scalatest-threads
+    _       <- cs.shift.to[Resource[IO, *]] //shifting so that first parts of test are not run on scalatest-threads
   } yield logFact
 
   test("... should send logs to AWS cloud") {
