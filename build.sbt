@@ -199,7 +199,7 @@ lazy val shapelessVersion:       String = "2.3.3"     //https://github.com/miles
 lazy val catsVersion:            String = "2.0.0"     //https://github.com/typelevel/cats/releases
 lazy val catsEffectVersion:      String = "2.0.0"     //https://github.com/typelevel/cats-effect/releases
 lazy val fs2Version:             String = "1.1.0-M2"  //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val monixVersion:           String = "3.0.0-RC5" //https://github.com/monix/monix/releases
+lazy val monixVersion:           String = "3.0.0"     //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.0"     //https://github.com/ChristopherDavenport/log4cats/releases
 
 lazy val pureconfigVersion: String = "0.11.1" //https://github.com/pureconfig/pureconfig/releases
