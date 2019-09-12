@@ -27,9 +27,5 @@ object Settings {
     Seq(
       organization := organizationName,
       homepage     := Some(url(pureharmHomepage)),
-      resolvers ++= Seq(
-        Resolver.bintrayRepo("busymachines", "maven-releases"),
-        Resolver.bintrayRepo("busymachines", "maven-snapshots"),
-      ),
     ) ++ CompilerSettings.compilerSettings
 }

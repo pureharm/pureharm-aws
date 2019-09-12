@@ -34,12 +34,12 @@
 
 addCommandAlias("build", ";compile;Test/compile")
 addCommandAlias("rebuild", ";clean;compile;Test/compile")
-addCommandAlias("it", "IntegrationTest / test")
 addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
-addCommandAlias("ci", ";scalafmtCheck;rebuild-update;test;it")
+addCommandAlias("ci", ";scalafmtCheck;rebuild-update;test")
 addCommandAlias("ci-quick", ";scalafmtCheck;build;test")
 addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
-addCommandAlias("doRelease", ";rebuild-update;publish;bintrayRelease")
+addCommandAlias("doRelease", ";rebuild-update;publishSigned;sonatypeRelease")
+addCommandAlias("it", "IntegrationTest / test")
 
 addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 
@@ -74,14 +74,16 @@ lazy val `aws-core-deps` = Seq(
 )
 
 lazy val `aws-core` = project
-  .settings(PublishingSettings.bintraySettings)
+  .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-core",
     libraryDependencies ++= `aws-core-deps`.distinct,
   )
-  .dependsOn()
-  .aggregate()
+  .dependsOn(
+    )
+  .aggregate(
+    )
 
 //#############################################################################
 lazy val `aws-s3-deps` =
@@ -103,7 +105,7 @@ lazy val `aws-s3-deps` =
 lazy val `aws-s3` = project
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.bintraySettings)
+  .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-s3",
@@ -137,7 +139,7 @@ lazy val `aws-cloudfront-deps` =
 lazy val `aws-cloudfront` = project
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.bintraySettings)
+  .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-cloudfront",
@@ -172,7 +174,7 @@ lazy val `aws-logger-deps` =
 lazy val `aws-logger` = project
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.bintraySettings)
+  .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-logger",
@@ -191,17 +193,17 @@ lazy val `aws-logger` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.2"    //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.2"    //https://github.com/scala/scala-collection-compat/releases
-lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
-lazy val catsVersion:            String = "2.0.0"    //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion:      String = "2.0.0"    //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version:             String = "2.0.0"    //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val monixVersion:           String = "3.0.0"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val pureconfigVersion:      String = "0.11.1"   //https://github.com/pureconfig/pureconfig/releases
-lazy val awsJavaSdkVersion:      String = "1.11.629" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.8.5"    //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val pureharmVersion:        String = "0.0.2-RC1" //https://github.com/busymachines/pureharm/releases
+lazy val scalaCollCompatVersion: String = "2.1.2"     //https://github.com/scala/scala-collection-compat/releases
+lazy val shapelessVersion:       String = "2.3.3"     //https://github.com/milessabin/shapeless/releases
+lazy val catsVersion:            String = "2.0.0"     //https://github.com/typelevel/cats/releases
+lazy val catsEffectVersion:      String = "2.0.0"     //https://github.com/typelevel/cats-effect/releases
+lazy val fs2Version:             String = "2.0.0"     //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val monixVersion:           String = "3.0.0"     //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.0.0"     //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val pureconfigVersion:      String = "0.11.1"    //https://github.com/pureconfig/pureconfig/releases
+lazy val awsJavaSdkVersion:      String = "1.11.629"  //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.8.5"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
@@ -236,7 +238,7 @@ lazy val pureharmConfig:           ModuleID = pureharm("config")            with
 //#############################################################################
 
 //https://github.com/typelevel/cats/releases
-lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % catsVersion withSources ()
+lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion withSources ()
 
 //https://github.com/typelevel/cats-effect/releases
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
