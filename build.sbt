@@ -32,14 +32,20 @@
 //#############################################################################
 //#############################################################################
 
+addCommandAlias("it", "IntegrationTest / test")
+addCommandAlias("recompile", ";clean;update;compile")
 addCommandAlias("build", ";compile;Test/compile")
 addCommandAlias("rebuild", ";clean;compile;Test/compile")
 addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
 addCommandAlias("ci", ";scalafmtCheck;rebuild-update;test")
 addCommandAlias("ci-quick", ";scalafmtCheck;build;test")
 addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
-addCommandAlias("doRelease", ";rebuild-update;publishSigned;sonatypeRelease")
-addCommandAlias("it", "IntegrationTest / test")
+
+addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
+addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
+addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
+//we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
+addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
 
 addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 
