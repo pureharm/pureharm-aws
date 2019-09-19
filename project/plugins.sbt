@@ -49,5 +49,5 @@
     * https://github.com/scalameta/sbt-scalafmt/releases
     *
     */
-  addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.4") //https://github.com/scalameta/sbt-scalafmt/releases
+  addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.5") //https://github.com/scalameta/sbt-scalafmt/releases
   
