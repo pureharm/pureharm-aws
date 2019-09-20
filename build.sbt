@@ -32,22 +32,23 @@
 //#############################################################################
 //#############################################################################
 
-addCommandAlias("it", "IntegrationTest / test")
-addCommandAlias("recompile", ";clean;update;compile")
-addCommandAlias("build", ";compile;Test/compile")
-addCommandAlias("rebuild", ";clean;compile;Test/compile")
+// format: off
+addCommandAlias("it",             "IntegrationTest / test")
+addCommandAlias("recompile",      ";clean;update;compile")
+addCommandAlias("build",          ";compile;Test/compile")
+addCommandAlias("rebuild",        ";clean;compile;Test/compile")
 addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
-addCommandAlias("ci", ";scalafmtCheck;rebuild-update;test")
-addCommandAlias("ci-quick", ";scalafmtCheck;build;test")
-addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
+addCommandAlias("ci",             ";scalafmtCheck;rebuild-update;test;it")
+addCommandAlias("ci-quick",       ";scalafmtCheck;build;test;it")
+addCommandAlias("doLocal",        ";clean;update;compile;publishLocal")
 
 addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
-addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
-addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
-//we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
-addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
+addCommandAlias("do212Release",       s";++${CompilerSettings.scala2_12};cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias("do213Release",       s";++${CompilerSettings.scala2_13};cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias("doRelease",          ";do212Release;do213Release")
 
 addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
+// format: on
 
 //*****************************************************************************
 //*****************************************************************************
@@ -71,7 +72,6 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 lazy val `aws-core-deps` = Seq(
   catsCore,
   catsEffect,
-  pureConfig,
   pureharmCorePhantom,
   pureharmCoreAnomaly,
   pureharmEffectsCats,
@@ -96,7 +96,6 @@ lazy val `aws-s3-deps` =
   `aws-core-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     monixCatnap,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
@@ -130,7 +129,6 @@ lazy val `aws-cloudfront-deps` =
   `aws-core-deps` ++ `aws-s3-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
     pureharmEffectsCats,
@@ -166,7 +164,6 @@ lazy val `aws-logger-deps` =
   `aws-core-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
     pureharmEffectsCats,
@@ -199,17 +196,16 @@ lazy val `aws-logger` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.2"     //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.2"     //https://github.com/scala/scala-collection-compat/releases
-lazy val shapelessVersion:       String = "2.3.3"     //https://github.com/milessabin/shapeless/releases
-lazy val catsVersion:            String = "2.0.0"     //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion:      String = "2.0.0"     //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version:             String = "2.0.0"     //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val monixVersion:           String = "3.0.0"     //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.0"     //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val pureconfigVersion:      String = "0.11.1"    //https://github.com/pureconfig/pureconfig/releases
-lazy val awsJavaSdkVersion:      String = "1.11.634"  //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.9.2"     //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val pureharmVersion:        String = "0.0.3"    //https://github.com/busymachines/pureharm/releases
+lazy val scalaCollCompatVersion: String = "2.1.2"    //https://github.com/scala/scala-collection-compat/releases
+lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
+lazy val catsVersion:            String = "2.0.0"    //https://github.com/typelevel/cats/releases
+lazy val catsEffectVersion:      String = "2.0.0"    //https://github.com/typelevel/cats-effect/releases
+lazy val fs2Version:             String = "2.0.0"    //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val monixVersion:           String = "3.0.0"    //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.0.0"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:      String = "1.11.635" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.9.3"    //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
@@ -244,7 +240,7 @@ lazy val pureharmConfig:           ModuleID = pureharm("config")            with
 //#############################################################################
 
 //https://github.com/typelevel/cats/releases
-lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion withSources ()
+lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % catsVersion withSources ()
 
 //https://github.com/typelevel/cats-effect/releases
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
@@ -287,12 +283,6 @@ lazy val amazonS3V2 = "software.amazon.awssdk" % "s3" % awsJavaSdkV2Version with
 
 //https://github.com/scalatest/scalatest/releases
 lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % scalaTestVersion withSources ()
-
-//#############################################################################
-//################################## HELPERS ##################################
-//#############################################################################
-
-lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % pureconfigVersion withSources ()
 
 //#############################################################################
 //#################################  LOGGING ##################################

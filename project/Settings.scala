@@ -28,7 +28,7 @@ object Settings {
       organization := organizationName,
       homepage     := Some(url(pureharmHomepage)),
       resolvers ++= Seq(
-        Resolver.sonatypeRepo("releases"),
+        Resolver.sonatypeRepo("public"),
         Resolver.sonatypeRepo("snapshots"),
       ),
     ) ++ CompilerSettings.compilerSettings
