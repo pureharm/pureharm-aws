@@ -27,6 +27,16 @@ libraryDependencies ++= Seq(
 )
 ```
 
+### For the impatient
+
+Add these resolvers to your settings to quickly get freshly published versions:
+```
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("public"),
+  Resolver.sonatypeRepo("snapshots"),
+)
+```
+
 ## Usage
 Under construction. See [release notes](https://github.com/busymachines/pureharm-aws/releases) and tests for examples.
 
