@@ -71,7 +71,6 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 lazy val `aws-core-deps` = Seq(
   catsCore,
   catsEffect,
-  pureConfig,
   pureharmCorePhantom,
   pureharmCoreAnomaly,
   pureharmEffectsCats,
@@ -96,7 +95,6 @@ lazy val `aws-s3-deps` =
   `aws-core-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     monixCatnap,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
@@ -130,7 +128,6 @@ lazy val `aws-cloudfront-deps` =
   `aws-core-deps` ++ `aws-s3-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
     pureharmEffectsCats,
@@ -166,7 +163,6 @@ lazy val `aws-logger-deps` =
   `aws-core-deps` ++ Seq(
     catsCore,
     catsEffect,
-    pureConfig,
     pureharmCoreAnomaly,
     pureharmCorePhantom,
     pureharmEffectsCats,
@@ -207,7 +203,6 @@ lazy val catsEffectVersion:      String = "2.0.0"     //https://github.com/typel
 lazy val fs2Version:             String = "2.0.0"     //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.0.0"     //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.0"     //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val pureconfigVersion:      String = "0.11.1"    //https://github.com/pureconfig/pureconfig/releases
 lazy val awsJavaSdkVersion:      String = "1.11.635"  //java — https://github.com/aws/aws-sdk-java/releases
 lazy val awsJavaSdkV2Version:    String = "2.9.3"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
@@ -287,12 +282,6 @@ lazy val amazonS3V2 = "software.amazon.awssdk" % "s3" % awsJavaSdkV2Version with
 
 //https://github.com/scalatest/scalatest/releases
 lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % scalaTestVersion withSources ()
-
-//#############################################################################
-//################################## HELPERS ##################################
-//#############################################################################
-
-lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % pureconfigVersion withSources ()
 
 //#############################################################################
 //#################################  LOGGING ##################################
