@@ -55,8 +55,8 @@ object PublishingSettings {
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     scmInfo := Option(
       ScmInfo(
-        url("https://github.com/busymachines/pureharm"),
-        "scm:git@github.com:busymachines/pureharm.git",
+        url("https://github.com/busymachines/pureharm-aws"),
+        "scm:git@github.com:busymachines/pureharm-aws.git",
       ),
     ),
     developers := List(
