@@ -196,7 +196,7 @@ lazy val `aws-logger` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.3"    //https://github.com/busymachines/pureharm/releases
+lazy val pureharmVersion:        String = "0.0.4"    //https://github.com/busymachines/pureharm/releases
 lazy val scalaCollCompatVersion: String = "2.1.2"    //https://github.com/scala/scala-collection-compat/releases
 lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
 lazy val catsVersion:            String = "2.0.0"    //https://github.com/typelevel/cats/releases
