@@ -23,7 +23,7 @@
   *
   * https://github.com/xerial/sbt-sonatype/releases
   */
-  addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.7") //https://github.com/xerial/sbt-sonatype/releases
+  addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8") //https://github.com/xerial/sbt-sonatype/releases
 
   /**
     *
@@ -49,5 +49,5 @@
     * https://github.com/scalameta/sbt-scalafmt/releases
     *
     */
-  addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.5") //https://github.com/scalameta/sbt-scalafmt/releases
+  addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.7") //https://github.com/scalameta/sbt-scalafmt/releases
   

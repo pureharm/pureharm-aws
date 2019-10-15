@@ -196,20 +196,20 @@ lazy val `aws-logger` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.3"    //https://github.com/busymachines/pureharm/releases
+lazy val pureharmVersion:        String = "0.0.4"    //https://github.com/busymachines/pureharm/releases
 lazy val scalaCollCompatVersion: String = "2.1.2"    //https://github.com/scala/scala-collection-compat/releases
 lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
 lazy val catsVersion:            String = "2.0.0"    //https://github.com/typelevel/cats/releases
 lazy val catsEffectVersion:      String = "2.0.0"    //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version:             String = "2.0.0"    //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val fs2Version:             String = "2.0.1"    //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.0.0"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:      String = "1.11.635" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.9.3"    //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val awsJavaSdkVersion:      String = "1.11.652" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.9.20"   //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:    String = "0.21.0-M4"    //https://github.com/http4s/http4s/releases
+lazy val http4sVersion:    String = "0.21.0-M5"    //https://github.com/http4s/http4s/releases
 lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
 
 //#############################################################################

@@ -18,7 +18,6 @@
 import sbt._
 import sbt.Keys._
 import xerial.sbt.Sonatype.SonatypeKeys._
-import xerial.sbt.Sonatype._
 
 /**
   * All instructions for publishing to sonatype can be found on the sbt-plugin page:
@@ -56,8 +55,8 @@ object PublishingSettings {
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     scmInfo := Option(
       ScmInfo(
-        url("https://github.com/busymachines/pureharm"),
-        "scm:git@github.com:busymachines/pureharm.git",
+        url("https://github.com/busymachines/pureharm-aws"),
+        "scm:git@github.com:busymachines/pureharm-aws.git",
       ),
     ),
     developers := List(
