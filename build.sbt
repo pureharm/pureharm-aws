@@ -209,7 +209,7 @@ lazy val awsJavaSdkV2Version:    String = "2.9.20"   //java — https://github.c
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:    String = "0.21.0-M4"    //https://github.com/http4s/http4s/releases
+lazy val http4sVersion:    String = "0.21.0-M5"    //https://github.com/http4s/http4s/releases
 lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
 
 //#############################################################################
