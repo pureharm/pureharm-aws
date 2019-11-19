@@ -64,6 +64,7 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
     `aws-s3`,
     `aws-cloudfront`,
     `aws-logger`,
+    `aws-sns`,
   )
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -191,6 +192,39 @@ lazy val `aws-logger` = project
   )
 
 //#############################################################################
+
+lazy val `aws-sns-deps` =
+  `aws-core-deps` ++ Seq(
+    catsCore,
+    catsEffect,
+    pureharmCoreAnomaly,
+    pureharmCorePhantom,
+    pureharmEffectsCats,
+    pureharmConfig,
+    amazonSNS,
+    scalaTest      % ITT,
+    log4cats       % ITT,
+    http4sClient   % ITT,
+    logbackClassic % ITT,
+  )
+
+lazy val `aws-sns` = project
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(Settings.commonSettings)
+  .settings(
+    name := "pureharm-aws-sns",
+    libraryDependencies ++= `aws-sns-deps`.distinct,
+  )
+  .dependsOn(
+    `aws-core`,
+  )
+  .aggregate(
+    `aws-core`,
+  )
+
+//#############################################################################
 //#############################################################################
 //################################ DEPENDENCIES ###############################
 //#############################################################################
@@ -263,6 +297,7 @@ lazy val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4s
 //https://github.com/aws/aws-sdk-java/releases
 lazy val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkVersion withSources ()
 lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkVersion withSources ()
+lazy val amazonSNS        = "com.amazonaws" % "aws-java-sdk-sns"        % awsJavaSdkVersion withSources ()
 
 //#############################################################################
 //################################  AMAZON V2 ################################
