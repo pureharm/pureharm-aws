@@ -38,7 +38,7 @@ trait AmazonS3ClientForBucket[F[_]] {
 
   def downloadURL(key: S3FileKey): F[S3DownloadURL]
 
-  def list(prefix: S3KeyPrefix): F[List[S3FileKey]]
+  def list(prefix: S3PathPrefix): F[List[S3FileKey]]
 
   def exists(key: S3FileKey): F[Boolean]
 
