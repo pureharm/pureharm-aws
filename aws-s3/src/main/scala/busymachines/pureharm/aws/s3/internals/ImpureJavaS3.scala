@@ -86,6 +86,41 @@ private[s3] object ImpureJavaS3 {
     } yield ()
   }
 
+  def list[F[_]: Async](client: S3AsyncClient)(
+    bucket: S3Bucket,
+    prefix: S3KeyPrefix
+  ): F[List[S3FileKey]] = {
+    import scala.jdk.CollectionConverters._
+    for {
+      listReq <- ListObjectsRequest.builder().bucket(bucket).prefix(prefix).build().pure[F]
+      keys <- Interop.toF(Sync[F].delay(client.listObjects(listReq))).map(_.contents().asScala.toList.map(obj => S3FileKey.unsafe(obj.key())))
+    } yield keys
+  }
+
+  def exists[F[_]: Async](client: S3AsyncClient)(
+    bucket: S3Bucket,
+    key: S3FileKey
+  ): F[Boolean] =
+    for {
+      headReq <- HeadObjectRequest.builder().bucket(bucket).key(key).build().pure[F]
+      exists <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover { case _: S3Exception => false }
+    } yield exists
+
+  def copy[F[_]: Async](client: S3AsyncClient)(
+    fromBucket: S3Bucket,
+    fromKey: S3FileKey,
+    toBucket: S3Bucket,
+    toKey: S3FileKey
+  ): F[Unit] = {
+    import java.net.URLEncoder
+    import java.nio.charset.StandardCharsets
+    for {
+      urlEncodedSource <- Sync[F].delay(URLEncoder.encode(s"$fromBucket/$fromKey", StandardCharsets.UTF_8.toString))
+      copyReq <- CopyObjectRequest.builder().copySource(urlEncodedSource).bucket(toBucket).key(toKey).build().pure[F]
+      _ <- Interop.toF(Sync[F].delay(client.copyObject(copyReq)))
+    } yield ()
+  }
+
   private def asyncBytesTransformer[F[_]: Sync]: F[AsyncResponseTransformer[GetObjectResponse, S3BinaryContent]] =
     for {
       bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])

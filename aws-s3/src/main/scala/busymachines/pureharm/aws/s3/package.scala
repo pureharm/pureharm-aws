@@ -51,4 +51,7 @@ package object s3 {
 
   object S3DownloadURL extends PhantomType[String]
   type S3DownloadURL = S3DownloadURL.Type
+
+  object S3KeyPrefix extends PhantomType[String]
+  type S3KeyPrefix = S3KeyPrefix.Type
 }

@@ -37,4 +37,13 @@ trait AmazonS3ClientForBucket[F[_]] {
   def delete(key: S3FileKey): F[Unit]
 
   def downloadURL(key: S3FileKey): F[S3DownloadURL]
+
+  def list(prefix: S3KeyPrefix): F[List[S3FileKey]]
+
+  def exists(key: S3FileKey): F[Boolean]
+
+  def copy(fromKey: S3FileKey, toKey: S3FileKey): F[Unit]
+
+  def copy(fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit]
+
 }
