@@ -31,6 +31,8 @@ package object s3 {
 
   type S3FileKey = S3FileKey.Type
 
+  type S3Path = S3Path.Type
+
   object S3BinaryContent extends PhantomType[Array[Byte]]
   type S3BinaryContent = S3BinaryContent.Type
 
@@ -51,4 +53,5 @@ package object s3 {
 
   object S3DownloadURL extends PhantomType[String]
   type S3DownloadURL = S3DownloadURL.Type
+
 }
