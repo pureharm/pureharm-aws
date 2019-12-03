@@ -31,7 +31,7 @@ trait AmazonS3Client[F[_]] {
 
   def delete(bucket: S3Bucket, key: S3FileKey): F[Unit]
 
-  def list(bucket: S3Bucket, prefix: S3PathPrefix): F[List[S3FileKey]]
+  def list(bucket: S3Bucket, prefix: S3Path): F[List[S3FileKey]]
 
   def exists(bucket: S3Bucket, key: S3FileKey): F[Boolean]
 
@@ -112,7 +112,7 @@ object AmazonS3Client {
     override def delete(bucket: S3Bucket, key: S3FileKey): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.delete(s3Client)(bucket, key))
 
-    override def list(bucket: S3Bucket, prefix: S3PathPrefix): F[List[S3FileKey]] =
+    override def list(bucket: S3Bucket, prefix: S3Path): F[List[S3FileKey]] =
       shifter.blockOn(internals.ImpureJavaS3.list(s3Client)(bucket, prefix))
 
     override def exists(bucket: S3Bucket, key: S3FileKey): F[Boolean] =
@@ -139,7 +139,7 @@ object AmazonS3Client {
     override def downloadURL(key: S3FileKey): F[S3DownloadURL] =
       client.downloadURL(bucket, key)
 
-    override def list(prefix: S3PathPrefix): F[List[S3FileKey]] =
+    override def list(prefix: S3Path): F[List[S3FileKey]] =
       client.list(bucket, prefix)
 
     override def exists(key: S3FileKey): F[Boolean] =

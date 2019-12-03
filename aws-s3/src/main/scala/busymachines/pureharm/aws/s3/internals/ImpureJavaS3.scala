@@ -88,7 +88,7 @@ private[s3] object ImpureJavaS3 {
 
   def list[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
-    prefix: S3PathPrefix
+    prefix: S3Path
   ): F[List[S3FileKey]] = {
     import scala.jdk.CollectionConverters._
     for {
