@@ -17,10 +17,28 @@
   */
 package busymachines.pureharm.aws
 
+import busymachines.pureharm.phantom._
+
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Nov 2019
   *
   */
-package object sns {}
+package object sns {
+
+  object SNSDeviceToken extends PhantomType[String]
+
+  /**
+    * @see
+    *   Section "Token"
+    *   https://docs.aws.amazon.com/sns/latest/api/API_CreatePlatformEndpoint.html
+    */
+  type SNSDeviceToken = SNSDeviceToken.Type
+
+  object SNSEndpointARN extends PhantomType[String]
+  type SNSEndpointARN = SNSEndpointARN.Type
+
+  object SNSPlatformApplicationARN extends PhantomType[String]
+  type SNSPlatformApplicationARN = SNSPlatformApplicationARN.Type
+}

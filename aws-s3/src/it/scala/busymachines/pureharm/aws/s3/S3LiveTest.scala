@@ -53,10 +53,10 @@ final class S3LiveTest extends AnyFunSuite {
     } yield (config, s3Client)
 
   private val f1S3Key: S3FileKey =
-    S3FileKey("folder", "subfolder", "file.txt").right.get
+    S3FileKey("folder", "subfolder", "file.txt").unsafeGet()
 
   private val f2S3Key: S3FileKey =
-    S3FileKey("folder", "file_copy.txt").right.get
+    S3FileKey("folder", "file_copy.txt").unsafeGet()
 
   private val f1_contents: S3BinaryContent = S3BinaryContent(
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8),
@@ -109,26 +109,28 @@ final class S3LiveTest extends AnyFunSuite {
           exists <- client
             .exists(config.bucket, f2S3Key)
             .handleErrorWith(e => l.error(e)(s"EXISTS failed w/: $e").map(_ => false))
-          _   <- l.info(s"2 — after EXISTS — we got back: $exists")
-          _   <- l.info(s"2 — after EXISTS — we expect: true")
-          _   <- IO(assert(exists)).onErrorF(l.info("comparison failed :(("))
+          _ <- l.info(s"2 — after EXISTS — we got back: $exists")
+          _ <- l.info(s"2 — after EXISTS — we expect: true")
+          _ <- IO(assert(exists)).onErrorF(l.info("comparison failed :(("))
           _ <- l.info(s"3 - after EXISTS - trying LIST")
           listReqPrefix = S3Path.unsafe("folder")
           listResult <- client
-              .list(config.bucket, listReqPrefix)
-              .handleErrorWith(e => l.error(e)(s"LIST failed w/: $e").map(_ => List()))
-          _   <- l.info(s"3 — after LIST — we got back: ${listResult.mkString("[",",","]")}")
-          _   <- l.info(s"3 — after LIST — we expect: ${List(f1S3Key, f2S3Key).mkString("[",",","]")}")
-          _   <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key))).onErrorF(l.info("comparison failed :(("))
+            .list(config.bucket, listReqPrefix)
+            .handleErrorWith(e => l.error(e)(s"LIST failed w/: $e").map(_ => List()))
+          _ <- l.info(s"3 — after LIST — we got back: ${listResult.mkString("[", ",", "]")}")
+          _ <- l.info(s"3 — after LIST — we expect: ${List(f1S3Key, f2S3Key).mkString("[", ",", "]")}")
+          _ <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key))).onErrorF(l.info("comparison failed :(("))
           _ <- l.info("---- cleanup ----")
-          _ <- client.delete(config.bucket, f1S3Key)
+          _ <- client
+            .delete(config.bucket, f1S3Key)
             .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
-          _ <- client.delete(config.bucket, f2S3Key)
+          _ <- client
+            .delete(config.bucket, f2S3Key)
             .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
         } yield ()
-      }
-
-      testIO.unsafeRunSync()
     }
+
+    testIO.unsafeRunSync()
+  }
 
 }

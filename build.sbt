@@ -201,7 +201,7 @@ lazy val `aws-sns-deps` =
     pureharmCorePhantom,
     pureharmEffectsCats,
     pureharmConfig,
-    amazonSNS,
+    amazonSNSV2,
     scalaTest      % ITT,
     log4cats       % ITT,
     http4sClient   % ITT,
@@ -297,7 +297,6 @@ lazy val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4s
 //https://github.com/aws/aws-sdk-java/releases
 lazy val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkVersion withSources ()
 lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkVersion withSources ()
-lazy val amazonSNS        = "com.amazonaws" % "aws-java-sdk-sns"        % awsJavaSdkVersion withSources ()
 
 //#############################################################################
 //################################  AMAZON V2 ################################
@@ -311,6 +310,7 @@ lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Ve
   * - logs: uses shitty interop w/ slf4j. Way too much magic...
   */
 lazy val amazonS3V2 = "software.amazon.awssdk" % "s3" % awsJavaSdkV2Version withSources ()
+lazy val amazonSNSV2 = "software.amazon.awssdk" % "sns" % awsJavaSdkV2Version withSources ()
 
 //#############################################################################
 //################################## TESTING ##################################
