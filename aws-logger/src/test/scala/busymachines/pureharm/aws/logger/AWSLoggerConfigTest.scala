@@ -19,8 +19,8 @@ package busymachines.pureharm.aws.logger
 
 import busymachines.pureharm.config.ConfigAggregateAnomalies
 import busymachines.pureharm.effects._
-import org.scalatest.Matchers
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 /**
   *
