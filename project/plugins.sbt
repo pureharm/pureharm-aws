@@ -41,7 +41,7 @@ addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1") //https://github.com/sbt/sbt-
   *
   * https://github.com/sbt/sbt-release/releases
   */
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11") //https://github.com/sbt/sbt-release/releases
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.12") //https://github.com/sbt/sbt-release/releases
 
 /**
   * The best thing since sliced bread.
