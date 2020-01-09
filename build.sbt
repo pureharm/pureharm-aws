@@ -201,6 +201,7 @@ lazy val `aws-sns-deps` =
     pureharmCorePhantom,
     pureharmEffectsCats,
     pureharmConfig,
+    pureharmJsonCirce,
     amazonSNSV2,
     scalaTest      % ITT,
     log4cats       % ITT,

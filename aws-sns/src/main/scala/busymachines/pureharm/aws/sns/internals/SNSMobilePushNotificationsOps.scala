@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sns.model._
   * @since 29 Nov 2019
   *
   */
-private[internals] class SNSMobilePushNotificationsOps[F[_]](
+private[sns] class SNSMobilePushNotificationsOps[F[_]](
   private val jSNSClient: SnsClient,
 )(
   implicit

@@ -41,4 +41,23 @@ package object sns {
 
   object SNSPlatformApplicationARN extends PhantomType[String]
   type SNSPlatformApplicationARN = SNSPlatformApplicationARN.Type
+
+  object SNSAccessKeyID extends PhantomType[String]
+
+  /**
+    * Standard AWS AccessKeyID, of different type, so it's harder
+    * to accidentally mix up with the AccessKey used for S3,
+    * in case they have different values. Since these are read
+    * from a config, they can easily be set to have the same value,
+    * but our code ought to be agnostic of this knowledge.
+    */
+  type SNSAccessKeyID = SNSAccessKeyID.Type
+
+  object SNSSecretAccessKey extends PhantomType[String]
+
+  /**
+    * Standard AWS SecretAccessKey, same reasoning as behind
+    * [[SNSAccessKeyID]]
+    */
+  type SNSSecretAccessKey = SNSSecretAccessKey.Type
 }

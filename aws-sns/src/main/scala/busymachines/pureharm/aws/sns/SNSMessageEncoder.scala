@@ -10,9 +10,10 @@ trait SNSMessageEncoder[T] {
   def encode(t: T): String
 }
 
-object SNSMessageEncoder {
-
+object SNSMessageEncoder extends LowPrioritySNSMessageEncoderImplicits {
   def apply[T](implicit enc: SNSMessageEncoder[T]): SNSMessageEncoder[T] = enc
 
-  //TODO: maybe add implicit conversion from a circe JSON encoder, but that would mean we depend on circe directly.
+  implicit object SNSStringMessageEncoder extends SNSMessageEncoder[String] {
+    override def encode(t: String): String = t
+  }
 }
