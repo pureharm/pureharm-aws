@@ -1,4 +1,4 @@
-package busymachines.pureharm.aws.sns.internals
+package busymachines.pureharm.aws.sns
 
 /**
   *
@@ -6,22 +6,22 @@ package busymachines.pureharm.aws.sns.internals
   * @since 29 Nov 2019
   *
   */
-sealed private[internals] trait SNSPlatformEndpointHealthcheck extends Product with Serializable
+sealed trait SNSPlatformEndpointHealthcheck extends Product with Serializable
 
-private[internals] object SNSPlatformEndpointHealthcheck {
+object SNSPlatformEndpointHealthcheck {
   /**
     * @see
     *   https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html#mobile-platform-endpoint-sdk-examples
     */
-  private[internals] val TokenAttributeID = "Token"
+  private[sns] val TokenAttributeID = "Token"
   /**
     * @see
     *   https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html#mobile-platform-endpoint-sdk-examples
     */
-  private[internals] val EnabledAttributeID = "Enabled"
+  private[sns] val EnabledAttributeID = "Enabled"
 
   //facepalm
-  private[internals] val TrueString = "true"
+  private[sns] val TrueString = "true"
 
   case object Exists   extends SNSPlatformEndpointHealthcheck
   case object NotFound extends SNSPlatformEndpointHealthcheck

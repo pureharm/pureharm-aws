@@ -1,4 +1,4 @@
-package busymachines.pureharm.aws.sns.internals
+package busymachines.pureharm.aws.sns
 
 import busymachines.pureharm.aws.sns._
 import busymachines.pureharm.effects._
@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sns.model._
   * @since 29 Nov 2019
   *
   */
-private[sns] class SNSMobilePushNotificationsOps[F[_]](
+final class SNSMobilePushNotificationsOps[F[_]](
   private val jSNSClient: SnsClient,
 )(
   implicit
@@ -20,7 +20,7 @@ private[sns] class SNSMobilePushNotificationsOps[F[_]](
   private val blockingShifter: BlockingShifter[F],
 ) {
 
-  private[internals] def healthcheckSNSEndpoint(
+  def healthcheckSNSEndpoint(
     deviceToken: SNSDeviceToken,
     endpointARN: SNSEndpointARN,
   ): F[SNSPlatformEndpointHealthcheck] = {
@@ -35,7 +35,7 @@ private[sns] class SNSMobilePushNotificationsOps[F[_]](
       .recoverWith(healthcheckErrorParser)
   }
 
-  private[internals] def createEndpointARNForDeviceToken(
+  def createEndpointARNForDeviceToken(
     platformApplicationARN: SNSPlatformApplicationARN,
     deviceToken:            SNSDeviceToken,
   ): F[SNSEndpointARN] = {
@@ -51,7 +51,7 @@ private[sns] class SNSMobilePushNotificationsOps[F[_]](
       .recoverWith(createEndpointARNErrorParser)
   }
 
-  private[internals] def pushMessage[Message: SNSMessageEncoder](
+  def pushMessage[Message: SNSMessageEncoder](
     endpointARN: SNSEndpointARN,
     message:     Message,
   ): F[Unit] = {
@@ -116,4 +116,30 @@ private[sns] class SNSMobilePushNotificationsOps[F[_]](
     F.pure(SNSEndpointARN(cr.endpointArn()))
 
   private def publishErrorParser: PartialFunction[Throwable, F[Unit]] = PartialFunction.empty
+}
+
+object SNSMobilePushNotificationsOps {
+
+  import software.amazon.awssdk.auth.credentials._
+  import software.amazon.awssdk.services.sns._
+
+  def resource[F[_]: Concurrent: Timer: BlockingShifter, K](
+    config: SNSMobilePushConfig,
+  ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.liftF(this.create[F](config))
+
+  def create[F[_]: Sync: BlockingShifter](
+    config: SNSMobilePushConfig,
+  ): F[SNSMobilePushNotificationsOps[F]] = {
+    Sync[F]
+      .delay {
+        SnsClient
+          .builder()
+          .credentialsProvider(
+            StaticCredentialsProvider
+              .create(AwsBasicCredentials.create(config.accessKeyID, config.secretAccessKey)),
+          )
+          .build()
+      }
+      .map(jSNSClient => new SNSMobilePushNotificationsOps[F](jSNSClient))
+  }
 }
