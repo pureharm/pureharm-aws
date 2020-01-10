@@ -64,6 +64,7 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
     `aws-s3`,
     `aws-cloudfront`,
     `aws-logger`,
+    `aws-sns`,
   )
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -191,26 +192,60 @@ lazy val `aws-logger` = project
   )
 
 //#############################################################################
+
+lazy val `aws-sns-deps` =
+  `aws-core-deps` ++ Seq(
+    catsCore,
+    catsEffect,
+    pureharmCoreAnomaly,
+    pureharmCorePhantom,
+    pureharmEffectsCats,
+    pureharmConfig,
+    pureharmJsonCirce,
+    amazonSNSV2,
+    scalaTest      % ITT,
+    log4cats       % ITT,
+    http4sClient   % ITT,
+    logbackClassic % ITT,
+  )
+
+lazy val `aws-sns` = project
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(Settings.commonSettings)
+  .settings(
+    name := "pureharm-aws-sns",
+    libraryDependencies ++= `aws-sns-deps`.distinct,
+  )
+  .dependsOn(
+    `aws-core`,
+  )
+  .aggregate(
+    `aws-core`,
+  )
+
+//#############################################################################
 //#############################################################################
 //################################ DEPENDENCIES ###############################
 //#############################################################################
 //#############################################################################
 
 lazy val pureharmVersion:        String = "0.0.4"    //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.2"    //https://github.com/scala/scala-collection-compat/releases
+lazy val scalaCollCompatVersion: String = "2.1.3"    //https://github.com/scala/scala-collection-compat/releases
 lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
 lazy val catsVersion:            String = "2.0.0"    //https://github.com/typelevel/cats/releases
 lazy val catsEffectVersion:      String = "2.0.0"    //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version:             String = "2.0.1"    //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val monixVersion:           String = "3.0.0"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:      String = "1.11.652" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.9.20"   //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val fs2Version:             String = "2.1.0"    //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val monixVersion:           String = "3.1.0"    //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.0.1"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:      String = "1.11.700" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.10.42"  //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
-lazy val logbackVersion:   String = "1.2.3"        //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:    String = "0.21.0-M5"    //https://github.com/http4s/http4s/releases
-lazy val scalaTestVersion: String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
+lazy val logbackVersion:   String = "1.2.3"     //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:    String = "0.21.0-M6" //https://github.com/http4s/http4s/releases
+lazy val scalaTestVersion: String = "3.1.0"     //https://github.com/scalatest/scalatest/releases
 
 //#############################################################################
 //################################### SCALA ###################################
@@ -275,7 +310,8 @@ lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Ve
   * - cloudfront: cannot sign
   * - logs: uses shitty interop w/ slf4j. Way too much magic...
   */
-lazy val amazonS3V2 = "software.amazon.awssdk" % "s3" % awsJavaSdkV2Version withSources ()
+lazy val amazonS3V2  = "software.amazon.awssdk" % "s3"  % awsJavaSdkV2Version withSources ()
+lazy val amazonSNSV2 = "software.amazon.awssdk" % "sns" % awsJavaSdkV2Version withSources ()
 
 //#############################################################################
 //################################## TESTING ##################################
