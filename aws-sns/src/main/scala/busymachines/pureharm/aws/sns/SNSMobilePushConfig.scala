@@ -1,5 +1,6 @@
 package busymachines.pureharm.aws.sns
 
+import busymachines.pureharm.aws.core.AmazonRegion
 import pureconfig.ConfigReader
 
 import scala.concurrent.duration.FiniteDuration
@@ -11,8 +12,9 @@ import scala.concurrent.duration.FiniteDuration
   *
   */
 case class SNSMobilePushConfig(
-  accessKeyID:             SNSAccessKeyID,
-  secretAccessKey:         SNSSecretAccessKey,
+  accessKeyID:                SNSAccessKeyID,
+  secretAccessKey:            SNSSecretAccessKey,
+  region:                     AmazonRegion,
   applicationARN:             SNSPlatformApplicationARN,
   arnEndpointCreationRetries: Int,
   arnEndpointCreationTimeout: FiniteDuration,
