@@ -231,16 +231,16 @@ lazy val `aws-sns` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.4"    //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.4"    //https://github.com/scala/scala-collection-compat/releases
-lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
-lazy val catsVersion:            String = "2.1.0"    //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion:      String = "2.1.1"    //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version:             String = "2.2.2"    //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val monixVersion:           String = "3.1.0"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.1"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:      String = "1.11.729" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.10.71"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val pureharmVersion:        String = "0.0.5-RC2" //https://github.com/busymachines/pureharm/releases
+lazy val scalaCollCompatVersion: String = "2.1.4"     //https://github.com/scala/scala-collection-compat/releases
+lazy val shapelessVersion:       String = "2.3.3"     //https://github.com/milessabin/shapeless/releases
+lazy val catsVersion:            String = "2.1.0"     //https://github.com/typelevel/cats/releases
+lazy val catsEffectVersion:      String = "2.1.1"     //https://github.com/typelevel/cats-effect/releases
+lazy val fs2Version:             String = "2.2.2"     //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val monixVersion:           String = "3.1.0"     //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.0.1"     //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:      String = "1.11.729"  //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.10.71"   //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"  //https://github.com/qos-ch/logback/releases
