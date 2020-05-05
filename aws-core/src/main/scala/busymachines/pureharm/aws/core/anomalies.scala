@@ -18,6 +18,7 @@
 package busymachines.pureharm.aws.core
 
 import busymachines.pureharm.anomaly._
+
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs

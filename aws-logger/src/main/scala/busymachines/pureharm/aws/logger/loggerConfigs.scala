@@ -97,11 +97,13 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
   import busymachines.pureharm.config.implicits._
 
   private object impl {
+
     final private case class AWSLoggerConfigEnabledStatus(
       enabled: Boolean,
     )
 
     private object AWSLoggerConfigEnabledStatus {
+
       implicit val configReader: ConfigReader[AWSLoggerConfigEnabledStatus] =
         semiauto.deriveReader[AWSLoggerConfigEnabledStatus]
     }
@@ -111,6 +113,7 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
     )
 
     private object AWSLoggerConfigTemp {
+
       implicit val configReader: ConfigReader[AWSLoggerConfigTemp] =
         semiauto.deriveReader[AWSLoggerConfigTemp]
     }
@@ -127,6 +130,7 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
 
     private object DisabledAWSLoggerConfigReader extends ConfigReader[AWSLoggerConfig] {
       import pureconfig.ConfigCursor
+
       override def from(cur: ConfigCursor): ConfigReader.Result[AWSLoggerConfig] =
         Right(DisabledAWSLoggerConfig): ConfigReader.Result[AWSLoggerConfig]
     }
