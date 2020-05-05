@@ -29,7 +29,7 @@ object CloudfrontURLSigner {
     for {
       baseURL    <- impl.createBaseUrl(config.distributionDomain)(s3key).pure[F]
       privateKey <- impl.loadPrivateKey[F](config.privateKeyFilePath)
-      expiresAt  <- impl.computeExpirationDate[F](config.urlExpirationTime)
+      expiresAt  <- TimeUtil.computeExpirationDate[F](config.urlExpirationTime)
       signed <- impl.signCanned[F](
         privateKey = privateKey,
         keyPairID  = config.keyPairID,
@@ -71,15 +71,6 @@ object CloudfrontURLSigner {
       */
     def createBaseUrl(distributionDomain: CloudfrontDistributionDomain)(s3key: S3FileKey): String = {
       s"https://${distributionDomain.show}/${s3key.show}"
-    }
-
-    def computeExpirationDate[F[_]](expireIn: CloudfrontURLExpiration)(implicit F: Sync[F]): F[java.util.Date] = {
-      F.delay {
-        val deadline = expireIn.fromNow
-        val date     = new java.util.Date()
-        date.setTime(deadline.time.toMillis)
-        date
-      }
     }
 
     def signCanned[F[_]](
