@@ -2,8 +2,6 @@ package busymachines.pureharm.aws.cloudfront
 
 import busymachines.pureharm.effects._
 
-import scala.concurrent.duration.{Deadline, Duration, MILLISECONDS, NANOSECONDS}
-
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
