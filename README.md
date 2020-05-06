@@ -8,12 +8,13 @@ Currently the project is under heavy development, and is mostly driven by compan
 The available modules are:
 
 ```scala
-val pureharmAWSVersion: String = "0.0.4-M1" //https://github.com/busymachines/pureharm-aws/releases
+val pureharmAWSVersion: String = "0.0.4-M4" //https://github.com/busymachines/pureharm-aws/releases
 
 def pureharmAWS(m: String): ModuleID = "com.busymachines" %% s"pureharm-aws-$m" % pureharmAWSVersion
 
 val pureharmAWSCore:       ModuleID = pureharmAWS("core")       withSources ()
 val pureharmAWSS3:         ModuleID = pureharmAWS("s3")         withSources ()
+val pureharmAWSSNS:        ModuleID = pureharmAWS("sns")        withSources ()
 val pureharmAWSCloudfront: ModuleID = pureharmAWS("cloudfront") withSources ()
 val pureharmAWSLogger:     ModuleID = pureharmAWS("logger")     withSources ()
 
@@ -22,6 +23,7 @@ val pureharmAWSLogger:     ModuleID = pureharmAWS("logger")     withSources ()
 libraryDependencies ++= Seq(
   "com.busymachines" %% s"pureharm-aws-core"       % pureharmAWSVersion,
   "com.busymachines" %% s"pureharm-aws-s3"         % pureharmAWSVersion,
+  "com.busymachines" %% s"pureharm-aws-sns"        % pureharmAWSVersion,
   "com.busymachines" %% s"pureharm-aws-cloudfront" % pureharmAWSVersion,
   "com.busymachines" %% s"pureharm-aws-logger"     % pureharmAWSVersion,
 )

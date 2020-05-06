@@ -9,6 +9,7 @@ import busymachines.pureharm.config._
   *
   */
 object implicits {
+
   implicit val pureharmAmazonRegionConfigReader: ConfigReader[AmazonRegion.Type] =
     AmazonRegion.pureharmAmazonRegionConfigReader
 

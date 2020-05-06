@@ -81,6 +81,7 @@ object AWSLoggerFactory {
     Resource.pure(new DummyLoggerFactory[F])
 
   private class DummyLoggerFactory[F[_]](implicit private val F: Sync[F]) extends AWSLoggerFactory[F] {
+
     override def getLogger(localLogger: SelfAwareStructuredLogger[F]): AWSLogger[F] =
       new AWSLogger.DummyAWSLoggerImpl[F](localLogger)
   }
