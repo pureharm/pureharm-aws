@@ -21,7 +21,7 @@ class CloudfrontConfigLoaderTest extends AnyFunSuite {
         privateKeyFilePath = CloudfrontPrivateKeyFilePath("test-key"),
         keyPairID          = CloudfrontKeyPairID("test-key-pair-id"),
         urlExpirationTime  = CloudfrontURLExpiration(7.days),
-      ),
+      )
     )
   }
 }

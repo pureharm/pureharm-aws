@@ -41,9 +41,8 @@ object AWSLoggerFactory {
   def apply[F[_]](implicit inst: AWSLoggerFactory[F]): AWSLoggerFactory[F] = inst
 
   def resource[F[_]: Concurrent: Timer: BlockingShifter](
-    config: AWSLoggerConfig,
-  ): Resource[F, AWSLoggerFactory[F]] = {
-
+    config: AWSLoggerConfig
+  ): Resource[F, AWSLoggerFactory[F]] =
     config match {
       case enabled: EnabledAWSLoggerConfig =>
         for {
@@ -54,7 +53,6 @@ object AWSLoggerFactory {
         ): AWSLoggerFactory[F]
       case DisabledAWSLoggerConfig => dummyLFResource
     }
-  }
 
   def local[F[_]: Sync]: AWSLoggerFactory[F] = new DummyLoggerFactory[F]
 
@@ -62,14 +60,13 @@ object AWSLoggerFactory {
   import com.amazonaws.services.logs.AWSLogsAsyncClientBuilder
   import com.amazonaws.services.logs.AWSLogsAsync
 
-  private def awsLogsResource[F[_]: Sync](c: CloudWatchLoggerConfig): Resource[F, AWSLogsAsync] = {
+  private def awsLogsResource[F[_]: Sync](c: CloudWatchLoggerConfig): Resource[F, AWSLogsAsync] =
     Resource.make(awsLogsAsync(c))((b: AWSLogsAsync) => Sync[F].delay(b.shutdown()))
-  }
 
-  private def awsLogsAsync[F[_]: Sync](c: CloudWatchLoggerConfig): F[AWSLogsAsync] = Sync[F].delay {
+  private def awsLogsAsync[F[_]:    Sync](c: CloudWatchLoggerConfig): F[AWSLogsAsync]           = Sync[F].delay {
     lazy val awsCredentials         = new BasicAWSCredentials(c.accessKeyID, c.secretAccessKey)
     lazy val aWSCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials)
-    val lc = AWSLogsAsyncClientBuilder
+    val lc                          = AWSLogsAsyncClientBuilder
       .standard()
       .withRegion(c.region)
       .withCredentials(aWSCredentialsProvider)

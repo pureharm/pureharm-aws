@@ -27,13 +27,13 @@ import busymachines.pureharm.effects._
   * @since 09 Apr 2019
   *        ---
   */
-sealed trait AWSLoggerConfig extends Product with Serializable {
+sealed trait AWSLoggerConfig        extends Product with Serializable {
   def enabled:    AWSLoggingEnabled
   def cloudwatch: Option[CloudWatchLoggerConfig]
 }
 
 final case class EnabledAWSLoggerConfig(
-  someCloudwatch: CloudWatchLoggerConfig,
+  someCloudwatch: CloudWatchLoggerConfig
 ) extends AWSLoggerConfig {
   override val cloudwatch: Option[CloudWatchLoggerConfig] = Option(someCloudwatch)
   override val enabled:    AWSLoggingEnabled              = AWSLoggingEnabled.True
@@ -99,7 +99,7 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
   private object impl {
 
     final private case class AWSLoggerConfigEnabledStatus(
-      enabled: Boolean,
+      enabled: Boolean
     )
 
     private object AWSLoggerConfigEnabledStatus {
@@ -109,7 +109,7 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
     }
 
     final private case class AWSLoggerConfigTemp(
-      cloudwatch: CloudWatchLoggerConfig,
+      cloudwatch: CloudWatchLoggerConfig
     )
 
     private object AWSLoggerConfigTemp {
@@ -119,13 +119,14 @@ object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
     }
 
     implicit private[AWSLoggerConfig] val awsLoggerConfigReaderFallback: ConfigReader[AWSLoggerConfig] = for {
-      es <- AWSLoggerConfigEnabledStatus.configReader
-      config <- if (es.enabled) {
-        AWSLoggerConfigTemp.configReader.map(t => EnabledAWSLoggerConfig(t.cloudwatch): AWSLoggerConfig)
-      }
-      else {
-        DisabledAWSLoggerConfigReader
-      }
+      es     <- AWSLoggerConfigEnabledStatus.configReader
+      config <-
+        if (es.enabled) {
+          AWSLoggerConfigTemp.configReader.map(t => EnabledAWSLoggerConfig(t.cloudwatch): AWSLoggerConfig)
+        }
+        else {
+          DisabledAWSLoggerConfigReader
+        }
     } yield config
 
     private object DisabledAWSLoggerConfigReader extends ConfigReader[AWSLoggerConfig] {

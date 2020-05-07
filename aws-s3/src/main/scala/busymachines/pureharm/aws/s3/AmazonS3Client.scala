@@ -47,24 +47,18 @@ object AmazonS3Client {
   import busymachines.pureharm.effects.implicits._
 
   def resource[F[_]: BlockingShifter](
-    config:     S3Config,
-  )(implicit F: Async[F]): Resource[F, AmazonS3Client[F]] = {
+    config:     S3Config
+  )(implicit F: Async[F]): Resource[F, AmazonS3Client[F]] =
     for {
-      s3Client <- Resource.make(buildSDKClient(config).pure[F]) { c =>
-        F.delay(c.close())
-      }
+      s3Client <- Resource.make(buildSDKClient(config).pure[F])(c => F.delay(c.close()))
     } yield new AmazonS3ClientImpl(s3Client, config)
-  }
 
   def resourceWithFixedBucket[F[_]: BlockingShifter](
-    config:     S3Config,
-  )(implicit F: Async[F]): Resource[F, AmazonS3ClientForBucket[F]] = {
+    config:     S3Config
+  )(implicit F: Async[F]): Resource[F, AmazonS3ClientForBucket[F]] =
     for {
-      s3Client <- Resource.make(buildSDKClient(config).pure[F]) { c =>
-        F.delay(c.close())
-      }
+      s3Client <- Resource.make(buildSDKClient(config).pure[F])(c => F.delay(c.close()))
     } yield this.withFixedBucket[F](config.bucket, new AmazonS3ClientImpl[F](s3Client, config))
-  }
 
   /**
     * Please use [[resource]], there's no reasonable way to close the
@@ -88,13 +82,12 @@ object AmazonS3Client {
 
   import software.amazon.awssdk.services.s3.S3AsyncClient
 
-  private def buildSDKClient(config: S3Config): S3AsyncClient = {
+  private def buildSDKClient(config: S3Config): S3AsyncClient =
     internals.PureJavaS3.buildClient(config)
-  }
 
   private class AmazonS3ClientImpl[F[_]](
-    private val s3Client: S3AsyncClient,
-    private val config:   S3Config,
+    private val s3Client:         S3AsyncClient,
+    private val config:           S3Config,
   )(
     implicit private val F:       Async[F],
     implicit private val shifter: BlockingShifter[F],

@@ -44,7 +44,7 @@ object AWSLogger {
     * @since 09 Apr 2019
     *
     */
-  final private[logger] class AWSLoggerImpl[F[_]: Sync](
+  final private[logger] class AWSLoggerImpl[F[_]:      Sync](
     private val remote: AWSRemoteLoggerImpl[F],
     private val local:  SelfAwareStructuredLogger[F],
   ) extends AWSLogger[F] {
@@ -133,7 +133,7 @@ object AWSLogger {
     *
     */
   final private[logger] class DummyAWSLoggerImpl[F[_]: Sync](
-    private val local: SelfAwareStructuredLogger[F],
+    private val local: SelfAwareStructuredLogger[F]
   ) extends AWSLogger[F] {
 
     @inline override def trace(ctx: Map[String, String])(msg: => String): F[Unit] = local.trace(ctx)(msg)

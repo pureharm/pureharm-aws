@@ -14,9 +14,8 @@ import software.amazon.awssdk.services.sns.model._
   *
   */
 final class SNSMobilePushNotificationsOps[F[_]](
-  private val jSNSClient: SnsClient,
-)(
-  implicit
+  private val jSNSClient:      SnsClient
+)(implicit
   private val F:               Sync[F],
   private val blockingShifter: BlockingShifter[F],
 ) {
@@ -69,9 +68,9 @@ final class SNSMobilePushNotificationsOps[F[_]](
   }
 
   private def healthcheckResponseParser(
-    deviceToken: SNSDeviceToken,
+    deviceToken: SNSDeviceToken
   )(resp:        GetEndpointAttributesResponse): F[SNSPlatformEndpointHealthcheck] = {
-    val exists = Option(resp.attributes().get(SNSPlatformEndpointHealthcheck.TokenAttributeID))
+    val exists  = Option(resp.attributes().get(SNSPlatformEndpointHealthcheck.TokenAttributeID))
       .contains(SNSDeviceToken.despook(deviceToken))
     val enabled = Option(resp.attributes().get(SNSPlatformEndpointHealthcheck.TokenAttributeID))
       .exists(_.equalsIgnoreCase(SNSPlatformEndpointHealthcheck.TrueString))
@@ -84,7 +83,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     }
   }
 
-  private def healthcheckErrorParser: PartialFunction[Throwable, F[SNSPlatformEndpointHealthcheck]] = {
+  private def healthcheckErrorParser:       PartialFunction[Throwable, F[SNSPlatformEndpointHealthcheck]] = {
     case _: NotFoundException => F.pure(SNSPlatformEndpointHealthcheck.NotFound)
   }
 
@@ -92,7 +91,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     * The parsing of the exception is part of the official Amazon API docs... yeah ... not cool.
     * {{{https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html}}}
     */
-  private def createEndpointARNErrorParser: PartialFunction[Throwable, F[SNSEndpointARN]] = {
+  private def createEndpointARNErrorParser: PartialFunction[Throwable, F[SNSEndpointARN]]                 = {
     case ipe: InvalidParameterException =>
       val message = ipe.getMessage
       val matcher = endpointMatcherPattern.matcher(message)
@@ -125,23 +124,22 @@ object SNSMobilePushNotificationsOps {
   import software.amazon.awssdk.services.sns._
 
   def resource[F[_]: Concurrent: Timer: BlockingShifter, K](
-    config: SNSMobilePushConfig,
+    config: SNSMobilePushConfig
   ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.liftF(this.create[F](config))
 
   def create[F[_]: Sync: BlockingShifter](
-    config: SNSMobilePushConfig,
-  ): F[SNSMobilePushNotificationsOps[F]] = {
+    config: SNSMobilePushConfig
+  ): F[SNSMobilePushNotificationsOps[F]] =
     Sync[F]
       .delay {
         SnsClient
           .builder()
           .credentialsProvider(
             StaticCredentialsProvider
-              .create(AwsBasicCredentials.create(config.accessKeyID, config.secretAccessKey)),
+              .create(AwsBasicCredentials.create(config.accessKeyID, config.secretAccessKey))
           )
           .region(AmazonRegion.toSDKRegion(config.region))
           .build()
       }
       .map(jSNSClient => new SNSMobilePushNotificationsOps[F](jSNSClient))
-  }
 }

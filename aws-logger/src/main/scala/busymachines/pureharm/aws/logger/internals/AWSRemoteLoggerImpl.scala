@@ -126,13 +126,12 @@ private[logger] object AWSRemoteLoggerImpl {
     config:      CloudWatchLoggerConfig,
     localLogger: SelfAwareStructuredLogger[F],
     awsLogs:     AWSLogsAsync,
-  ): AWSRemoteLoggerImpl[F] = {
+  ): AWSRemoteLoggerImpl[F] =
     new AWSRemoteLoggerImpl(
       config      = config,
       localLogger = localLogger,
       remote      = new AWSHelper[F](config, localLogger, awsLogs),
     )
-  }
 
   sealed trait Level extends Product with Serializable
 
@@ -170,14 +169,13 @@ private[logger] object AWSRemoteLoggerImpl {
     //TODO: maybe this should put messages in a queue and only call logs2Cloud on a larger List
     //TODO: queue emptied at fixed size, or at fixed intervals
     //TODO: implement this in second iteration
-    private def logWithLevel(l: Level, message: String): F[Unit] = {
+    private def logWithLevel(l:   Level, message: String): F[Unit] =
       for {
         //TODO: create time module
         now <- F.delay(java.time.ZonedDateTime.now().toInstant.toEpochMilli)
         log = new InputLogEvent().withTimestamp(now).withMessage(s"[${l.productPrefix}] $message")
         _ <- logToClouds(List(log))
       } yield ()
-    }
 
     /**
       * FIXME: Super rough implementation. REVISE
@@ -193,11 +191,11 @@ private[logger] object AWSRemoteLoggerImpl {
             case Some(tk) =>
               new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
                 .withSequenceToken(tk)
-            case None =>
+            case None     =>
               new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
                 .withSequenceToken(null) //java :'(!
           }
-          _ <- putLogsOnCloud(plrq).void
+          _        <- putLogsOnCloud(plrq).void
         } yield ()
 
       val nonFailingF = logF.timeout(config.timeout).recoverWith {
@@ -218,15 +216,14 @@ private[logger] object AWSRemoteLoggerImpl {
       F.delay(awsLogs.describeLogStreams(req))
     }
 
-    private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]] = F.delay {
+    private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]]     = F.delay {
       lsr.getLogStreams.asScala.find(_.getLogStreamName == config.streamName).map(_.getUploadSequenceToken)
     }
 
     //TODO: maybe put the next sequence token in an MVar and take it from there...
     //TODO: but first you'd have to see if that's how the API is intended to be used...
-    private def putLogsOnCloud(plrq: PutLogEventsRequest): F[PutLogEventsResult] = {
+    private def putLogsOnCloud(plrq:        PutLogEventsRequest):      F[PutLogEventsResult] =
       F.delay(awsLogs.putLogEvents(plrq))
-    }
   }
 
 }

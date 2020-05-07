@@ -9,18 +9,18 @@ import busymachines.pureharm.anomaly._
   *
   */
 final case class CloudFrontKeyReadingCatastrophe(cause: Throwable)
-    extends InconsistentStateCatastrophe(
-      message  = s"Failed to read cloudfront private key because; $cause",
-      causedBy = Option(cause),
-    ) {
+  extends InconsistentStateCatastrophe(
+    message  = s"Failed to read cloudfront private key because; $cause",
+    causedBy = Option(cause),
+  ) {
   override val id: AnomalyID = CloudfrontAnomalyIDs.CloudFrontKeyReadingCatastropheID
 }
 
 final case class CloudFrontURLSigningCatastrophe(cause: Throwable)
-    extends InconsistentStateCatastrophe(
-      message  = s"Failed to sign cloudfront URL because; $cause",
-      causedBy = Option(cause),
-    ) {
+  extends InconsistentStateCatastrophe(
+    message  = s"Failed to sign cloudfront URL because; $cause",
+    causedBy = Option(cause),
+  ) {
   override val id: AnomalyID = CloudfrontAnomalyIDs.CloudFrontURLSigningCatastropheID
 }
 
