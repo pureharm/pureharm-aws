@@ -34,9 +34,8 @@ object S3FileKey extends SafePhantomType[Throwable, String] {
   private def randomString[F[_]: Sync]: F[String] =
     Sync[F].delay(Math.abs(scala.util.Random.nextLong()).toString.padTo(9, '0'))
 
-  def generate[F[_]: Sync]: F[this.Type] = {
+  def generate[F[_]: Sync]: F[this.Type] =
     randomString[F].map(r => this.unsafe(r))
-  }
 
   /**
     * @param extension
@@ -44,9 +43,8 @@ object S3FileKey extends SafePhantomType[Throwable, String] {
     * @return
     *   Randomly generated name w/ the given extension
     */
-  def generate[F[_]: Sync](extension: String): F[this.Type] = {
+  def generate[F[_]: Sync](extension: String): F[this.Type] =
     randomString[F].map(r => this.unsafe(s"$r.$extension"))
-  }
 
   def apply(fst: String, snd: String, rest: String*): Attempt[this.Type] =
     this.apply(s"$fst/$snd/${rest.mkString("", "/", "")}")

@@ -26,10 +26,10 @@ import busymachines.pureharm.anomaly._
   *
   */
 final case class InvalidPathIA(p: String, cause: Throwable)
-    extends InvalidInputAnomaly(
-      message  = s"Invalid path: '$p'. Cause: ${cause.getLocalizedMessage}",
-      causedBy = Option(cause),
-    ) {
+  extends InvalidInputAnomaly(
+    message  = s"Invalid path: '$p'. Cause: ${cause.getLocalizedMessage}",
+    causedBy = Option(cause),
+  ) {
   override val id: AnomalyID = S3AnomalyIDs.InvalidFilePathID
 }
 

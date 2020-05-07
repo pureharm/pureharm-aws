@@ -13,7 +13,7 @@ object SNSPlatformEndpointHealthcheck {
     * @see
     *   https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html#mobile-platform-endpoint-sdk-examples
     */
-  private[sns] val TokenAttributeID = "Token"
+  private[sns] val TokenAttributeID   = "Token"
   /**
     * @see
     *   https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html#mobile-platform-endpoint-sdk-examples

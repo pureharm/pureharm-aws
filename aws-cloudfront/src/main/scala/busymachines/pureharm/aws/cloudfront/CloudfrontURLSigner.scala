@@ -24,20 +24,19 @@ object CloudfrontURLSigner {
   import busymachines.pureharm.effects.implicits._
 
   def signS3KeyCanned[F[_]: Sync: BlockingShifter](
-    config: CloudfrontConfig,
-  )(s3key:  S3FileKey): F[CloudfrontSignedURL] = {
+    config: CloudfrontConfig
+  )(s3key:  S3FileKey): F[CloudfrontSignedURL] =
     for {
       baseURL    <- impl.createBaseUrl(config.distributionDomain)(s3key).pure[F]
       privateKey <- impl.loadPrivateKey[F](config.privateKeyFilePath)
       expiresAt  <- TimeUtil.computeExpirationDate[F](config.urlExpirationTime)
-      signed <- impl.signCanned[F](
+      signed     <- impl.signCanned[F](
         privateKey = privateKey,
         keyPairID  = config.keyPairID,
         baseURL    = baseURL,
         expiresAt  = expiresAt,
       )
     } yield CloudfrontSignedURL(signed)
-  }
 
   private[cloudfront] object impl {
     import java.security.PrivateKey
@@ -50,18 +49,16 @@ object CloudfrontURLSigner {
       * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
     def loadPrivateKey[F[_]](
-      key: CloudfrontPrivateKeyFilePath,
-    )(
-      implicit
+      key:     CloudfrontPrivateKeyFilePath
+    )(implicit
       F:       Sync[F],
       blocker: BlockingShifter[F],
-    ): F[PrivateKey] = {
+    ): F[PrivateKey] =
       //using this instead of blocker.delay, to ensure that the error is adapted
       //on the same thread loading the private key happens
       blocker.blockOn {
         F.delay(SignerUtils.loadPrivateKey(key)).adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
       }
-    }
 
     /**
       * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
@@ -69,9 +66,8 @@ object CloudfrontURLSigner {
       *
       * Which then has to be signed.
       */
-    def createBaseUrl(distributionDomain: CloudfrontDistributionDomain)(s3key: S3FileKey): String = {
+    def createBaseUrl(distributionDomain: CloudfrontDistributionDomain)(s3key: S3FileKey): String =
       s"https://${distributionDomain.show}/${s3key.show}"
-    }
 
     def signCanned[F[_]](
       privateKey: PrivateKey,
@@ -90,7 +86,7 @@ object CloudfrontURLSigner {
         .adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
 
     final class CloudfrontURLSignerImpl[F[_]](
-      private val config: CloudfrontConfig,
+      private val config:           CloudfrontConfig
     )(
       implicit private val F:       Sync[F],
       implicit private val blocker: BlockingShifter[F],

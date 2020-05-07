@@ -10,13 +10,12 @@ import busymachines.pureharm.effects._
   */
 object TimeUtil {
 
-  def computeExpirationDate[F[_]](expireIn: CloudfrontURLExpiration)(implicit F: Sync[F]): F[java.util.Date] = {
+  def computeExpirationDate[F[_]](expireIn: CloudfrontURLExpiration)(implicit F: Sync[F]): F[java.util.Date] =
     F.delay {
       val date   = new java.util.Date()
       val millis = date.getTime + expireIn.toMillis
       date.setTime(millis)
       date
     }
-  }
 
 }

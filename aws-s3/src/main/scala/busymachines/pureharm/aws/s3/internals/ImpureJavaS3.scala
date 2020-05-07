@@ -36,55 +36,50 @@ private[s3] object ImpureJavaS3 {
   import software.amazon.awssdk.services.s3.model._
 
   def put[F[_]](
-    client: S3AsyncClient,
+    client:  S3AsyncClient
   )(
     bucket:  S3Bucket,
     key:     S3FileKey,
     content: S3BinaryContent,
-  )(
-    implicit
-    F: Async[F],
-  ): F[S3FileKey] = {
-
+  )(implicit
+    F:       Async[F]
+  ): F[S3FileKey] =
     for {
       jpath <- S3FileKey.asJPath(key).liftTo[F]
-      mimeType = Mimetype.getInstance().getMimetype(jpath)
-      putRequest = PutObjectRequest
-        .builder()
-        .bucket(bucket)
-        .key(key)
-        .contentType(mimeType)
-        .build()
+      mimeType   = Mimetype.getInstance().getMimetype(jpath)
+      putRequest =
+        PutObjectRequest
+          .builder()
+          .bucket(bucket)
+          .key(key)
+          .contentType(mimeType)
+          .build()
 
       reqBody <- Sync[F].delay(AsyncRequestBody.fromBytes(content))
       ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].delay(
-        client.putObject(putRequest, reqBody),
+        client.putObject(putRequest, reqBody)
       )
-      _ <- Interop.toF(ff)
+      _       <- Interop.toF(ff)
     } yield key
-
-  }
 
   def get[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
     key:    S3FileKey,
-  ): F[S3BinaryContent] = {
+  ): F[S3BinaryContent] =
     for {
       transformer <- asyncBytesTransformer[F]
       getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
       content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
     } yield content
-  }
 
   def delete[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
     key:    S3FileKey,
-  ): F[Unit] = {
+  ): F[Unit] =
     for {
       delReq <- DeleteObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
       _      <- Interop.toF(Sync[F].delay(client.deleteObject(delReq)))
     } yield ()
-  }
 
   def list[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
@@ -93,9 +88,10 @@ private[s3] object ImpureJavaS3 {
     import scala.jdk.CollectionConverters._
     for {
       listReq <- ListObjectsRequest.builder().bucket(bucket).prefix(prefix).build().pure[F]
-      keys <- Interop
-        .toF(Sync[F].delay(client.listObjects(listReq)))
-        .map(_.contents().asScala.toList.map(obj => S3FileKey.unsafe(obj.key())))
+      keys    <-
+        Interop
+          .toF(Sync[F].delay(client.listObjects(listReq)))
+          .map(_.contents().asScala.toList.map(obj => S3FileKey.unsafe(obj.key())))
     } yield keys
   }
 
@@ -105,7 +101,7 @@ private[s3] object ImpureJavaS3 {
   ): F[Boolean] =
     for {
       headReq <- HeadObjectRequest.builder().bucket(bucket).key(key).build().pure[F]
-      exists <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover {
+      exists  <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover {
         case _: S3Exception => false
       }
     } yield exists
@@ -120,14 +116,15 @@ private[s3] object ImpureJavaS3 {
     import java.nio.charset.StandardCharsets
     for {
       urlEncodedSource <- Sync[F].delay(URLEncoder.encode(s"$fromBucket/$fromKey", StandardCharsets.UTF_8.toString))
-      copyReq <- CopyObjectRequest
-        .builder()
-        .copySource(urlEncodedSource)
-        .destinationBucket(toBucket)
-        .destinationKey(toKey)
-        .build()
-        .pure[F]
-      _ <- Interop.toF(Sync[F].delay(client.copyObject(copyReq)))
+      copyReq          <-
+        CopyObjectRequest
+          .builder()
+          .copySource(urlEncodedSource)
+          .destinationBucket(toBucket)
+          .destinationKey(toKey)
+          .build()
+          .pure[F]
+      _                <- Interop.toF(Sync[F].delay(client.copyObject(copyReq)))
     } yield ()
   }
 
@@ -137,14 +134,13 @@ private[s3] object ImpureJavaS3 {
     } yield new AsyncBytesTransformer(bf)
 
   private class AsyncBytesTransformer(
-    private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]],
+    private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]]
   ) extends AsyncResponseTransformer[GetObjectResponse, S3BinaryContent] {
     import java.nio.ByteBuffer
     import java.util.concurrent.CompletableFuture
 
-    override def prepare(): CompletableFuture[S3BinaryContent] = {
+    override def prepare(): CompletableFuture[S3BinaryContent] =
       impl.prepare().thenApply(cf => S3BinaryContent(cf.asByteArray()))
-    }
 
     override def onResponse(response: GetObjectResponse): Unit = impl.onResponse(response)
 
