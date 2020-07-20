@@ -183,7 +183,7 @@ lazy val scalaCollCompatVersion: String = "2.1.6"    //https://github.com/scala/
 lazy val monixVersion:           String = "3.2.2"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val awsJavaSdkVersion:      String = "1.11.882" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.13.9"   //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val awsJavaSdkV2Version:    String = "2.13.57"  //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion:   String = "1.2.3"  //https://github.com/qos-ch/logback/releases
