@@ -63,11 +63,11 @@ lazy val `aws-core` = project
   .settings(
     name := "pureharm-aws-core",
     libraryDependencies ++= Seq(
-      pureharmCorePhantom,
-      pureharmCoreAnomaly,
-      pureharmEffectsCats,
-      pureharmConfig,
-      amazonRegionsV2,
+      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
+      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
+      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
+      pureharmConfig.withDottyCompat(scalaVersion.value),
+      amazonRegionsV2.withDottyCompat(scalaVersion.value),
     ),
   )
 
@@ -81,15 +81,15 @@ lazy val `aws-s3` = project
   .settings(
     name := "pureharm-aws-s3",
     libraryDependencies ++= Seq(
-      monixCatnap,
-      pureharmCoreAnomaly,
-      pureharmCorePhantom,
-      pureharmEffectsCats,
-      pureharmConfig,
-      amazonS3V2,
-      scalaTest      % ITT,
-      log4cats       % ITT,
-      logbackClassic % ITT,
+      monixCatnap.withDottyCompat(scalaVersion.value),
+      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
+      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
+      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
+      pureharmConfig.withDottyCompat(scalaVersion.value),
+      amazonS3V2.withDottyCompat(scalaVersion.value),
+      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
     ),
   )
   .dependsOn(
@@ -106,15 +106,15 @@ lazy val `aws-cloudfront` = project
   .settings(
     name := "pureharm-aws-cloudfront",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly,
-      pureharmCorePhantom,
-      pureharmEffectsCats,
-      pureharmConfig,
-      amazonCloudFront,
-      scalaTest      % ITT,
-      log4cats       % ITT,
-      http4sClient   % ITT,
-      logbackClassic % ITT,
+      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
+      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
+      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
+      pureharmConfig.withDottyCompat(scalaVersion.value),
+      amazonCloudFront.withDottyCompat(scalaVersion.value),
+      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
+      http4sClient.withDottyCompat(scalaVersion.value)   % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
     ),
   )
   .dependsOn(
@@ -132,14 +132,14 @@ lazy val `aws-logger` = project
   .settings(
     name := "pureharm-aws-logger",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly,
-      pureharmCorePhantom,
-      pureharmEffectsCats,
-      pureharmConfig,
-      amazonLogs,
-      log4cats,
-      scalaTest      % ITT,
-      logbackClassic % ITT,
+      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
+      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
+      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
+      pureharmConfig.withDottyCompat(scalaVersion.value),
+      amazonLogs.withDottyCompat(scalaVersion.value),
+      log4cats.withDottyCompat(scalaVersion.value),
+      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
     ),
   )
   .dependsOn(
@@ -156,16 +156,16 @@ lazy val `aws-sns` = project
   .settings(
     name := "pureharm-aws-sns",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly,
-      pureharmCorePhantom,
-      pureharmEffectsCats,
-      pureharmConfig,
-      pureharmJsonCirce,
-      amazonSNSV2,
-      scalaTest      % ITT,
-      log4cats       % ITT,
-      http4sClient   % ITT,
-      logbackClassic % ITT,
+      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
+      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
+      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
+      pureharmConfig.withDottyCompat(scalaVersion.value),
+      pureharmJsonCirce.withDottyCompat(scalaVersion.value),
+      amazonSNSV2.withDottyCompat(scalaVersion.value),
+      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
+      http4sClient.withDottyCompat(scalaVersion.value)   % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
     ),
   )
   .dependsOn(
@@ -205,15 +205,15 @@ lazy val scalaCollectionCompat: ModuleID =
 //#############################################################################
 
 //https://github.com/busymachines/pureharm/releases/
-def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureharmVersion
+def pureharm(m: String): ModuleID = ("com.busymachines" %% s"pureharm-$m" % pureharmVersion) withSources ()
 
-lazy val pureharmCore:             ModuleID = pureharm("core")              withSources ()
-lazy val pureharmCoreAnomaly:      ModuleID = pureharm("core-anomaly")      withSources ()
-lazy val pureharmCorePhantom:      ModuleID = pureharm("core-phantom")      withSources ()
-lazy val pureharmCoreIdentifiable: ModuleID = pureharm("core-identifiable") withSources ()
-lazy val pureharmEffectsCats:      ModuleID = pureharm("effects-cats")      withSources ()
-lazy val pureharmJsonCirce:        ModuleID = pureharm("json-circe")        withSources ()
-lazy val pureharmConfig:           ModuleID = pureharm("config")            withSources ()
+lazy val pureharmCore:             ModuleID = pureharm("core")
+lazy val pureharmCoreAnomaly:      ModuleID = pureharm("core-anomaly")
+lazy val pureharmCorePhantom:      ModuleID = pureharm("core-phantom")
+lazy val pureharmCoreIdentifiable: ModuleID = pureharm("core-identifiable")
+lazy val pureharmEffectsCats:      ModuleID = pureharm("effects-cats")
+lazy val pureharmJsonCirce:        ModuleID = pureharm("json-circe")
+lazy val pureharmConfig:           ModuleID = pureharm("config")
 
 //#############################################################################
 //################################# TYPELEVEL #################################
