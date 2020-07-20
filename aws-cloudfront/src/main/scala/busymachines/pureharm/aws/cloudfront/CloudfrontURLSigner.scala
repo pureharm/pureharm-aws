@@ -10,7 +10,6 @@ import busymachines.pureharm.aws.s3._
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 Jul 2019
-  *
   */
 trait CloudfrontURLSigner[F[_]] {
   def signS3KeyCanned(s3key: S3FileKey): F[CloudfrontSignedURL]
@@ -76,14 +75,13 @@ object CloudfrontURLSigner {
       expiresAt:  java.util.Date,
     )(implicit F: Sync[F]): F[String] =
       F.delay {
-          CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-            baseURL,
-            keyPairID,
-            privateKey,
-            expiresAt,
-          )
-        }
-        .adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
+        CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
+          baseURL,
+          keyPairID,
+          privateKey,
+          expiresAt,
+        )
+      }.adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
 
     final class CloudfrontURLSignerImpl[F[_]](
       private val config:           CloudfrontConfig

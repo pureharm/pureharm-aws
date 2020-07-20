@@ -23,7 +23,6 @@ import busymachines.pureharm.effects.implicits._
 import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
 
 /**
-  *
   * Logger that only logs to remote (except failures while trying
   * to connect to AWS, which it logs locally).
   *
@@ -35,7 +34,6 @@ import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
   * -----
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
-  *
   */
 final private[logger] class AWSRemoteLoggerImpl[F[_]] private[logger] (
   private val config:      CloudWatchLoggerConfig,
@@ -169,7 +167,7 @@ private[logger] object AWSRemoteLoggerImpl {
     //TODO: maybe this should put messages in a queue and only call logs2Cloud on a larger List
     //TODO: queue emptied at fixed size, or at fixed intervals
     //TODO: implement this in second iteration
-    private def logWithLevel(l:   Level, message: String): F[Unit] =
+    private def logWithLevel(l: Level, message: String): F[Unit] =
       for {
         //TODO: create time module
         now <- F.delay(java.time.ZonedDateTime.now().toInstant.toEpochMilli)
@@ -216,13 +214,13 @@ private[logger] object AWSRemoteLoggerImpl {
       F.delay(awsLogs.describeLogStreams(req))
     }
 
-    private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]]     = F.delay {
+    private def getUploadSequenceToken(lsr: DescribeLogStreamsResult): F[Option[String]] = F.delay {
       lsr.getLogStreams.asScala.find(_.getLogStreamName == config.streamName).map(_.getUploadSequenceToken)
     }
 
     //TODO: maybe put the next sequence token in an MVar and take it from there...
     //TODO: but first you'd have to see if that's how the API is intended to be used...
-    private def putLogsOnCloud(plrq:        PutLogEventsRequest):      F[PutLogEventsResult] =
+    private def putLogsOnCloud(plrq: PutLogEventsRequest): F[PutLogEventsResult] =
       F.delay(awsLogs.putLogEvents(plrq))
   }
 

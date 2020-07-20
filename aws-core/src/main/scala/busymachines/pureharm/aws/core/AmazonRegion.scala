@@ -23,10 +23,8 @@ import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.config._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 object AmazonRegion extends SafePhantomType[Throwable, String] {
 

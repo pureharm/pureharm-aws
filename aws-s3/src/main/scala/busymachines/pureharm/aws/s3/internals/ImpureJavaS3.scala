@@ -22,10 +22,8 @@ import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 private[s3] object ImpureJavaS3 {
 

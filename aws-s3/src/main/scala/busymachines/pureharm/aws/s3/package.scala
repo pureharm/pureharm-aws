@@ -22,10 +22,8 @@ import busymachines.pureharm.phantom._
 import scala.concurrent.duration.FiniteDuration
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 package object s3 {
 

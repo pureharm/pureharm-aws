@@ -23,10 +23,8 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 14 May 2019
-  *
   */
 final class S3ConfigTest extends AnyFunSuite with Matchers {
 

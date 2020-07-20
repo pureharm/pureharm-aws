@@ -20,10 +20,8 @@ package busymachines.pureharm.aws.core
 import busymachines.pureharm.anomaly._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 final case class InvalidAmazonRegionIA(r: String) extends InvalidInputAnomaly(s"Invalid Amazon region: $r") {
   override val id: AnomalyID = InvalidAmazonRegionID

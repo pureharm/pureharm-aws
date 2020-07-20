@@ -20,10 +20,8 @@ package busymachines.pureharm.aws.s3
 import busymachines.pureharm.aws.core._
 import busymachines.pureharm.effects._
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 
 final case class S3Config(

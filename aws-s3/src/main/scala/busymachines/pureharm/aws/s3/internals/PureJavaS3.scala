@@ -22,10 +22,8 @@ import busymachines.pureharm.aws.s3._
 import scala.concurrent.duration.FiniteDuration
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 private[s3] object PureJavaS3 {
 
