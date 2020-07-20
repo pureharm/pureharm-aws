@@ -180,7 +180,6 @@ lazy val `aws-sns` = project
 
 lazy val pureharmVersion:        String = "0.0.5"    //https://github.com/busymachines/pureharm/releases
 lazy val scalaCollCompatVersion: String = "2.1.6"    //https://github.com/scala/scala-collection-compat/releases
-lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
 lazy val fs2Version:             String = "2.3.0"    //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.1.0"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.1"    //https://github.com/ChristopherDavenport/log4cats/releases
@@ -222,9 +221,6 @@ lazy val pureharmConfig:           ModuleID = pureharm("config")
 //https://github.com/monix/monix/releases
 //we use this to interop with Java Futures from AWS stuff
 lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion withSources ()
-
-//https://github.com/milessabin/shapeless/releases
-lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion withSources ()
 
 //used only for testing
 //https://github.com/http4s/http4s/releases
