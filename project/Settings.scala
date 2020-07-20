@@ -31,5 +31,5 @@ object Settings {
         Resolver.sonatypeRepo("public"),
         Resolver.sonatypeRepo("snapshots"),
       ),
-    ) ++ CompilerSettings.compilerSettings
+    ) ++ CompilerSettings.commonSettings
 }
