@@ -182,7 +182,7 @@ lazy val pureharmVersion:        String = "0.0.5"    //https://github.com/busyma
 lazy val scalaCollCompatVersion: String = "2.1.6"    //https://github.com/scala/scala-collection-compat/releases
 lazy val fs2Version:             String = "2.3.0"    //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.2.2"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.0.1"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val awsJavaSdkVersion:      String = "1.11.775" //java — https://github.com/aws/aws-sdk-java/releases
 lazy val awsJavaSdkV2Version:    String = "2.13.9"   //java — https://github.com/aws/aws-sdk-java-v2/releases
 
