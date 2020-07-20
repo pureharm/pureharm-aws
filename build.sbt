@@ -56,43 +56,22 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++ AWS ++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-lazy val `aws-core-deps` = Seq(
-  catsCore,
-  catsEffect,
-  pureharmCorePhantom,
-  pureharmCoreAnomaly,
-  pureharmEffectsCats,
-  pureharmConfig,
-  amazonRegionsV2,
-)
 
 lazy val `aws-core` = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-core",
-    libraryDependencies ++= `aws-core-deps`.distinct,
+    libraryDependencies ++= Seq(
+      pureharmCorePhantom,
+      pureharmCoreAnomaly,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonRegionsV2,
+    ),
   )
-  .dependsOn(
-    )
-  .aggregate(
-    )
 
 //#############################################################################
-lazy val `aws-s3-deps` =
-  `aws-core-deps` ++ Seq(
-    catsCore,
-    catsEffect,
-    monixCatnap,
-    pureharmCoreAnomaly,
-    pureharmCorePhantom,
-    pureharmEffectsCats,
-    pureharmConfig,
-    amazonS3V2,
-    scalaTest      % ITT,
-    log4cats       % ITT,
-    logbackClassic % ITT,
-  )
 
 lazy val `aws-s3` = project
   .configs(IntegrationTest)
@@ -101,31 +80,23 @@ lazy val `aws-s3` = project
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-s3",
-    libraryDependencies ++= `aws-s3-deps`.distinct,
+    libraryDependencies ++= Seq(
+      monixCatnap,
+      pureharmCoreAnomaly,
+      pureharmCorePhantom,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonS3V2,
+      scalaTest      % ITT,
+      log4cats       % ITT,
+      logbackClassic % ITT,
+    ),
   )
   .dependsOn(
-    `aws-core`,
-  )
-  .aggregate(
-    `aws-core`,
+    `aws-core`
   )
 
 //#############################################################################
-
-lazy val `aws-cloudfront-deps` =
-  `aws-core-deps` ++ `aws-s3-deps` ++ Seq(
-    catsCore,
-    catsEffect,
-    pureharmCoreAnomaly,
-    pureharmCorePhantom,
-    pureharmEffectsCats,
-    pureharmConfig,
-    amazonCloudFront,
-    scalaTest      % ITT,
-    log4cats       % ITT,
-    http4sClient   % ITT,
-    logbackClassic % ITT,
-  )
 
 lazy val `aws-cloudfront` = project
   .configs(IntegrationTest)
@@ -134,32 +105,24 @@ lazy val `aws-cloudfront` = project
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-cloudfront",
-    libraryDependencies ++= `aws-cloudfront-deps`.distinct,
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCorePhantom,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonCloudFront,
+      scalaTest      % ITT,
+      log4cats       % ITT,
+      http4sClient   % ITT,
+      logbackClassic % ITT,
+    ),
   )
   .dependsOn(
     `aws-core`,
     `aws-s3`,
   )
-  .aggregate(
-    `aws-core`,
-    `aws-s3`,
-  )
 
 //#############################################################################
-
-lazy val `aws-logger-deps` =
-  `aws-core-deps` ++ Seq(
-    catsCore,
-    catsEffect,
-    pureharmCoreAnomaly,
-    pureharmCorePhantom,
-    pureharmEffectsCats,
-    pureharmConfig,
-    amazonLogs,
-    log4cats,
-    scalaTest      % ITT,
-    logbackClassic % ITT,
-  )
 
 lazy val `aws-logger` = project
   .configs(IntegrationTest)
@@ -168,32 +131,22 @@ lazy val `aws-logger` = project
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-logger",
-    libraryDependencies ++= `aws-logger-deps`.distinct,
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCorePhantom,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonLogs,
+      log4cats,
+      scalaTest      % ITT,
+      logbackClassic % ITT,
+    ),
   )
   .dependsOn(
-    `aws-core`,
-  )
-  .aggregate(
-    `aws-core`,
+    `aws-core`
   )
 
 //#############################################################################
-
-lazy val `aws-sns-deps` =
-  `aws-core-deps` ++ Seq(
-    catsCore,
-    catsEffect,
-    pureharmCoreAnomaly,
-    pureharmCorePhantom,
-    pureharmEffectsCats,
-    pureharmConfig,
-    pureharmJsonCirce,
-    amazonSNSV2,
-    scalaTest      % ITT,
-    log4cats       % ITT,
-    http4sClient   % ITT,
-    logbackClassic % ITT,
-  )
 
 lazy val `aws-sns` = project
   .configs(IntegrationTest)
@@ -202,13 +155,21 @@ lazy val `aws-sns` = project
   .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-sns",
-    libraryDependencies ++= `aws-sns-deps`.distinct,
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCorePhantom,
+      pureharmEffectsCats,
+      pureharmConfig,
+      pureharmJsonCirce,
+      amazonSNSV2,
+      scalaTest      % ITT,
+      log4cats       % ITT,
+      http4sClient   % ITT,
+      logbackClassic % ITT,
+    ),
   )
   .dependsOn(
-    `aws-core`,
-  )
-  .aggregate(
-    `aws-core`,
+    `aws-core`
   )
 
 //#############################################################################
@@ -220,8 +181,6 @@ lazy val `aws-sns` = project
 lazy val pureharmVersion:        String = "0.0.5"    //https://github.com/busymachines/pureharm/releases
 lazy val scalaCollCompatVersion: String = "2.1.6"    //https://github.com/scala/scala-collection-compat/releases
 lazy val shapelessVersion:       String = "2.3.3"    //https://github.com/milessabin/shapeless/releases
-lazy val catsVersion:            String = "2.1.1"    //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion:      String = "2.1.3"    //https://github.com/typelevel/cats-effect/releases
 lazy val fs2Version:             String = "2.3.0"    //https://github.com/functional-streams-for-scala/fs2/releases
 lazy val monixVersion:           String = "3.1.0"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.0.1"    //https://github.com/ChristopherDavenport/log4cats/releases
@@ -260,12 +219,6 @@ lazy val pureharmConfig:           ModuleID = pureharm("config")            with
 //################################# TYPELEVEL #################################
 //#############################################################################
 
-//https://github.com/typelevel/cats/releases
-lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % catsVersion withSources ()
-
-//https://github.com/typelevel/cats-effect/releases
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
-
 //https://github.com/monix/monix/releases
 //we use this to interop with Java Futures from AWS stuff
 lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion withSources ()
@@ -296,8 +249,8 @@ lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Ve
   * - cloudfront: cannot sign
   * - logs: uses shitty interop w/ slf4j. Way too much magic...
   */
-lazy val amazonS3V2  = "software.amazon.awssdk" % "s3"  % awsJavaSdkV2Version withSources ()
-lazy val amazonSNSV2 = "software.amazon.awssdk" % "sns" % awsJavaSdkV2Version withSources ()
+lazy val amazonS3V2      = "software.amazon.awssdk" % "s3"      % awsJavaSdkV2Version withSources ()
+lazy val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2Version withSources ()
 
 //#############################################################################
 //################################## TESTING ##################################
