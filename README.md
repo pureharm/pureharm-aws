@@ -8,7 +8,7 @@ Currently the project is under heavy development, and is mostly driven by compan
 The available modules are:
 
 ```scala
-val pureharmAWSVersion: String = "0.0.4-M4" //https://github.com/busymachines/pureharm-aws/releases
+val pureharmAWSVersion: String = "0.0.4" //https://github.com/busymachines/pureharm-aws/releases
 
 def pureharmAWS(m: String): ModuleID = "com.busymachines" %% s"pureharm-aws-$m" % pureharmAWSVersion
 
