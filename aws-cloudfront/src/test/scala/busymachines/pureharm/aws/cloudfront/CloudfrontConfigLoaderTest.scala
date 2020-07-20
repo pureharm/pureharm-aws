@@ -6,10 +6,8 @@ import scala.concurrent.duration._
 import org.scalatest.funsuite.AnyFunSuite
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Jul 2019
-  *
   */
 class CloudfrontConfigLoaderTest extends AnyFunSuite {
 

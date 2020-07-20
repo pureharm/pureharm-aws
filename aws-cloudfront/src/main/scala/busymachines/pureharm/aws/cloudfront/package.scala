@@ -5,10 +5,8 @@ import busymachines.pureharm.phantom._
 import scala.concurrent.duration.FiniteDuration
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 Jul 2019
-  *
   */
 package object cloudfront {
 
@@ -50,7 +48,6 @@ package object cloudfront {
     * It's a rather annoying API on part of amazon, because it's the client's responsibility
     * to correctly construct this URL from these two parts, instead of them providing an
     * API where you pass along these two parts... anyway.
-    *
     */
   type CloudfrontSignedURL = CloudfrontSignedURL.Type
 }

@@ -4,10 +4,8 @@ import busymachines.pureharm.effects._
 import busymachines.pureharm.config._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 Jul 2019
-  *
   */
 final case class CloudfrontConfig(
   distributionDomain: CloudfrontDistributionDomain,

@@ -20,10 +20,8 @@ package busymachines.pureharm.aws
 import busymachines.pureharm.phantom._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Nov 2019
-  *
   */
 package object sns {
 

@@ -6,10 +6,8 @@ import scala.concurrent.duration._
 import org.scalatest.funsuite.AnyFunSuite
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 May 2020
-  *
   */
 class TimeUtilTest extends AnyFunSuite {
 

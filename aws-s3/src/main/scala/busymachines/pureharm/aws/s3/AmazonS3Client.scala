@@ -18,10 +18,8 @@
 package busymachines.pureharm.aws.s3
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
-  *
   */
 trait AmazonS3Client[F[_]] {
 

@@ -20,7 +20,6 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.effects._
 import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
 /**
-  *
   * Logger that also logs to AWS, not only to the local machine.
   *
   * Can only be built using the [[AWSLoggerFactory]] for
@@ -28,7 +27,6 @@ import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
-  *
   */
 sealed trait AWSLogger[F[_]] extends SelfAwareStructuredLogger[F]
 
@@ -36,15 +34,13 @@ object AWSLogger {
   import busymachines.pureharm.aws.logger.internals.AWSRemoteLoggerImpl
 
   /**
-    *
     * Logger that uses standard SFL4j stuff to log locally,
     * and then, logs to amazon as well.
     *
     * @author Lorand Szakacs, https://github.com/lorandszakacs
     * @since 09 Apr 2019
-    *
     */
-  final private[logger] class AWSLoggerImpl[F[_]:      Sync](
+  final private[logger] class AWSLoggerImpl[F[_]: Sync](
     private val remote: AWSRemoteLoggerImpl[F],
     private val local:  SelfAwareStructuredLogger[F],
   ) extends AWSLogger[F] {
@@ -123,14 +119,12 @@ object AWSLogger {
   }
 
   /**
-    *
     * Unfortunately we can't do PhantomTypes for Logger[F] :(
     * so we have to be really lame about just delegating to a
     * logger
     *
     * @author Lorand Szakacs, https://github.com/lorandszakacs
     * @since 23 Apr 2019
-    *
     */
   final private[logger] class DummyAWSLoggerImpl[F[_]: Sync](
     private val local: SelfAwareStructuredLogger[F]

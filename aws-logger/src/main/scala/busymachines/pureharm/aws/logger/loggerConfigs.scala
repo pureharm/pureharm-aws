@@ -22,12 +22,11 @@ import busymachines.pureharm.config._
 import busymachines.pureharm.effects._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
   *        ---
   */
-sealed trait AWSLoggerConfig        extends Product with Serializable {
+sealed trait AWSLoggerConfig extends Product with Serializable {
   def enabled:    AWSLoggingEnabled
   def cloudwatch: Option[CloudWatchLoggerConfig]
 }

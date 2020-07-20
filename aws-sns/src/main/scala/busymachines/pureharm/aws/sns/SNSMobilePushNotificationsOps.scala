@@ -8,10 +8,8 @@ import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model._
 
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 29 Nov 2019
-  *
   */
 final class SNSMobilePushNotificationsOps[F[_]](
   private val jSNSClient:      SnsClient
@@ -83,7 +81,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     }
   }
 
-  private def healthcheckErrorParser:       PartialFunction[Throwable, F[SNSPlatformEndpointHealthcheck]] = {
+  private def healthcheckErrorParser: PartialFunction[Throwable, F[SNSPlatformEndpointHealthcheck]] = {
     case _: NotFoundException => F.pure(SNSPlatformEndpointHealthcheck.NotFound)
   }
 
@@ -91,7 +89,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     * The parsing of the exception is part of the official Amazon API docs... yeah ... not cool.
     * {{{https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html}}}
     */
-  private def createEndpointARNErrorParser: PartialFunction[Throwable, F[SNSEndpointARN]]                 = {
+  private def createEndpointARNErrorParser: PartialFunction[Throwable, F[SNSEndpointARN]] = {
     case ipe: InvalidParameterException =>
       val message = ipe.getMessage
       val matcher = endpointMatcherPattern.matcher(message)

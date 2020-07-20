@@ -21,13 +21,11 @@ import busymachines.pureharm.effects._
 import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
 
 /**
-  *
   * Because building these amazon thingies is not thread safe,
   * we have to build a thread safe builder
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
-  *
   */
 sealed trait AWSLoggerFactory[F[_]] {
   def getLogger(logger: SelfAwareStructuredLogger[F]): AWSLogger[F]

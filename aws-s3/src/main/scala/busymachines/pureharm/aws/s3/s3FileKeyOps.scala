@@ -19,10 +19,8 @@ package busymachines.pureharm.aws.s3
 
 import busymachines.pureharm.effects._
 /**
-  *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 23 Jul 2019
-  *
   */
 
 trait S3FileKeyImplicits {
@@ -32,7 +30,6 @@ trait S3FileKeyImplicits {
 final class S3FileKeyOps(val s3FileKey: S3FileKey) extends AnyVal {
 
   /**
-    *
     * @param path
     *   Should not end or start in slash
     * @return
@@ -41,7 +38,6 @@ final class S3FileKeyOps(val s3FileKey: S3FileKey) extends AnyVal {
   def prependPath(path: String): Attempt[S3FileKey] = S3FileKey(path, s3FileKey)
 
   /**
-    *
     * @param path
     *   Should not end in slash, or start in slash
     * @return
