@@ -23,10 +23,9 @@
   *
   * https://github.com/xerial/sbt-sonatype/releases
   */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8.1") //https://github.com/xerial/sbt-sonatype/releases
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.4") //https://github.com/xerial/sbt-sonatype/releases
 
 /**
-  *
   * Signs all the jars, used in conjunction with sbt-sonatype.
   *
   * Do not forget to include this in your global plugins as described in:
@@ -41,12 +40,38 @@ addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1") //https://github.com/sbt/sbt-
   *
   * https://github.com/sbt/sbt-release/releases
   */
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.12") //https://github.com/sbt/sbt-release/releases
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13") //https://github.com/sbt/sbt-release/releases
 
 /**
   * The best thing since sliced bread.
   *
   * https://github.com/scalameta/sbt-scalafmt/releases
-  *
   */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4") //https://github.com/scalameta/sbt-scalafmt/releases
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.0") //https://github.com/scalameta/sbt-scalafmt/releases
+
+/**
+  * Refactoring/linting tool for scala.
+  *
+  * https://github.com/scalacenter/scalafix/releases
+  * https://scalacenter.github.io/scalafix/
+  *
+  * From docs:
+  * {{{
+  *   // ===> sbt shell
+  *
+  *   > scalafixEnable                         // Setup scalafix for active session.
+  *
+  *   > scalafix                               // Run all rules configured in .scalafix.conf
+  *
+  *   > scalafix RemoveUnusedImports           // Run only RemoveUnusedImports rule
+  *
+  *   > myProject/scalafix RemoveUnusedImports // Run rule in one project only
+  *
+  * }}}
+  */
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.17") //https://github.com/scalacenter/scalafix/releases
+
+/**
+  * https://github.com/lampepfl/dotty/releases
+  */
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.1")
