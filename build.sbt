@@ -15,37 +15,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
-//#############################################################################
-//################################## README ##################################
-//#############################################################################
-//
-// The reason all modules gather their dependencies up top, is so that
-// downstream modules declare ALL their transitive dependencies explicitly
-// because otherwise fetching source code for all is kinda bugged :(
-// plus, this way it should be always clear that a module only puts its
-// UNIQUE dependencies out in the clear. Everything else gets brought on
-// transitively anyway. So whatever change you make, please respect the
-// pattern that you see here. Maybe even borrow it for other projects.
-//
-//#############################################################################
-//#############################################################################
-//#############################################################################
-
 // format: off
+addCommandAlias("useScala212", s"++${CompilerSettings.scala2_12}")
+addCommandAlias("useScala213", s"++${CompilerSettings.scala2_13}")
+addCommandAlias("useDotty",    s"++${CompilerSettings.dottyVersion}")
+
 addCommandAlias("it",             "IntegrationTest / test")
-addCommandAlias("recompile",      ";clean;update;compile")
+addCommandAlias("recompile",      ";clean;compile;")
 addCommandAlias("build",          ";compile;Test/compile")
 addCommandAlias("rebuild",        ";clean;compile;Test/compile")
 addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
-addCommandAlias("ci",             ";scalafmtCheck;rebuild-update;test;it")
+addCommandAlias("ci",             ";scalafmtCheck;rebuild-update;test")
 addCommandAlias("ci-quick",       ";scalafmtCheck;build;test;it")
 addCommandAlias("doLocal",        ";clean;update;compile;publishLocal")
 
 addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
-addCommandAlias("do212Release",       s";++${CompilerSettings.scala2_12};cleanPublishSigned;sonatypeBundleRelease")
-addCommandAlias("do213Release",       s";++${CompilerSettings.scala2_13};cleanPublishSigned;sonatypeBundleRelease")
-addCommandAlias("doRelease",          ";do212Release;do213Release")
+addCommandAlias("do212Release",       ";useScala212;cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias("do213Release",       ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
 
 addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 // format: on
