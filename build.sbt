@@ -32,6 +32,7 @@ addCommandAlias(name = "doLocal",        value = ";clean;update;compile;publishL
 addCommandAlias(name = "cleanPublishSigned", value = ";recompile;publishSigned")
 addCommandAlias(name = "do212Release",       value = ";useScala212;cleanPublishSigned;sonatypeBundleRelease")
 addCommandAlias(name = "do213Release",       value = ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias(name = "doRelease",          value = ";do212Release;do213Release")
 
 addCommandAlias(name = "lint", value = ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 
