@@ -183,7 +183,7 @@ lazy val `aws-sns` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.6-M4" //https://github.com/busymachines/pureharm/releases
+lazy val pureharmVersion:        String = "0.0.6-M5" //https://github.com/busymachines/pureharm/releases
 lazy val scalaCollCompatVersion: String = "2.1.6"    //https://github.com/scala/scala-collection-compat/releases
 lazy val monixVersion:           String = "3.2.2"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
