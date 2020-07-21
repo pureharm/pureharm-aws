@@ -22,7 +22,7 @@ import busymachines.pureharm.effects.implicits._
 
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
-import org.scalatest.funsuite.AnyFunSuite
+import busymachines.pureharm.testkit._
 import scala.concurrent.duration._
 
 /**
@@ -36,44 +36,33 @@ import scala.concurrent.duration._
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 04 Sep 2019
-  *
   */
-@org.scalatest.Ignore
-final class AWSLoggerLiveTest extends AnyFunSuite {
-
-  private val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-cf-test")
-
-  implicit private val cs:    ContextShift[IO] = ioRuntime.value._1
-  implicit private val timer: Timer[IO]        = ioRuntime.value._2
-
+final class AWSLoggerLiveTest extends PureharmTestWithResource {
   private val localLogger = Slf4jLogger.getLogger[IO]
 
-  private val fixture: Resource[IO, AWSLoggerFactory[IO]] = for {
-    config     <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
-    blockingEC <- Pools.cached[IO]("aws-logger-block")
-    implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, *]]
+  override type ResourceType = AWSLoggerFactory[IO]
+
+  override def resource(meta: MetaData): Resource[IO, ResourceType] = for {
+    config  <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
     logFact <- AWSLoggerFactory.resource[IO](config)
-    _       <- cs.shift.to[Resource[IO, *]] //shifting so that first parts of test are not run on scalatest-threads
+    _       <-
+      runtime.contextShift.shift
+        .to[Resource[IO, *]] //shifting so that first parts of test are not run on scalatest-threads
   } yield logFact
 
-  test("... should send logs to AWS cloud") {
-    val testIO = fixture.use { loggerFactory: AWSLoggerFactory[IO] =>
-      for {
-        randomNumber <- IO(Math.abs(scala.util.Random.nextLong()))
-        _            <- localLogger.info(s"LOCAL — look manually for number '$randomNumber' in aws cloudwatch logs")
-        logger       <- loggerFactory.getLogger(localLogger).pure[IO]
-        _            <- logger.trace(s"pureharm — logger test $randomNumber — trace")
-        _            <- logger.debug(s"pureharm — logger test $randomNumber — debug")
-        _            <- logger.info(s"pureharm — logger test $randomNumber — info")
-        _            <- logger.warn(s"pureharm — logger test $randomNumber — warn")
-        _            <- logger.error(s"pureharm — logger test $randomNumber — error")
-        _ <- withClue("we fork and forget sending logs to amazon, so hence the wait") {
-          Timer[IO].sleep(2.seconds)
-        }
-      } yield ()
-
-    }
-
-    testIO.unsafeRunSync()
+  test("... should send logs to AWS cloud") { loggerFactory =>
+    for {
+      randomNumber <- IO(Math.abs(scala.util.Random.nextLong()))
+      _            <- localLogger.info(s"LOCAL — look manually for number '$randomNumber' in aws cloudwatch logs")
+      logger       <- loggerFactory.getLogger(localLogger).pure[IO]
+      _            <- logger.trace(s"pureharm — logger test $randomNumber — trace")
+      _            <- logger.debug(s"pureharm — logger test $randomNumber — debug")
+      _            <- logger.info(s"pureharm — logger test $randomNumber — info")
+      _            <- logger.warn(s"pureharm — logger test $randomNumber — warn")
+      _            <- logger.error(s"pureharm — logger test $randomNumber — error")
+      _            <- withClue("we fork and forget sending logs to amazon, so hence the wait") {
+        Timer[IO].sleep(2.seconds)
+      }
+    } yield succeed
   }
 }
