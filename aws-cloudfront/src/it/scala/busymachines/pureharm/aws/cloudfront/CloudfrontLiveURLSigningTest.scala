@@ -3,17 +3,15 @@ package busymachines.pureharm.aws.cloudfront
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.aws.s3._
+import busymachines.pureharm.testkit._
 import org.http4s.client.Client
 import org.http4s.client.blaze._
-import org.scalatest.funsuite.AnyFunSuite
-
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration._
 
 /**
-  *
   * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
   * Before running this ensure that you actually have the proper local environment
@@ -66,62 +64,55 @@ import scala.concurrent.duration._
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Jul 2019
-  *
   */
-final class CloudfrontLiveURLSigningTest extends AnyFunSuite {
-
-  private val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime("s3-cf-test")
-
-  implicit private val cs: ContextShift[IO] = ioRuntime.value._1
+final class CloudfrontLiveURLSigningTest extends PureharmTestWithResource {
 
   implicit private val l: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  private val s3clientR: Resource[IO, (Client[IO], S3Config, AmazonS3Client[IO], CloudfrontURLSigner[IO])] =
-    for {
-      config     <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
-      blockingEC <- Pools.cached[IO]("aws-block")
-      implicit0(b: BlockingShifter[IO]) <- BlockingShifter.fromExecutionContext[IO](blockingEC).pure[Resource[IO, *]]
-      blazeClient <- BlazeClientBuilder[IO](blockingEC).withResponseHeaderTimeout(10.seconds).resource
-      s3Client    <- AmazonS3Client.resource[IO](config)
-      cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
-      _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
-      cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, *]]
-      _           <- cs.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
-    } yield (blazeClient, config, s3Client, cfClient)
+  override type ResourceType = (Client[IO], S3Config, AmazonS3Client[IO], CloudfrontURLSigner[IO])
+
+  override def resource(meta: MetaData): Resource[IO, ResourceType] = for {
+    config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
+    blazeClient <-
+      BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
+    s3Client    <- AmazonS3Client.resource[IO](config)
+    cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
+    _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
+    cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, *]]
+    _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
+  } yield (blazeClient, config, s3Client, cfClient)
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey("aws_live_test", "subfolder", "google_murray_bookchin.txt").liftTo[IO]
+
   private val fileContent: S3BinaryContent = S3BinaryContent(
-    "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8),
+    "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
   test("s3 upload + signed url delivery via cloudfront") {
-    val test = s3clientR.use {
-      case (http4sClient, s3Config, s3Client, cfSigner) =>
-        for {
-          s3Key <- s3KeyIO
-          _     <- l.info(s"Uploaded file to s3: $s3Key")
-          _ <- s3Client
+    case (http4sClient, s3Config, s3Client, cfSigner) =>
+      for {
+        s3Key        <- s3KeyIO
+        _            <- l.info(s"Uploaded file to s3: $s3Key")
+        _            <-
+          s3Client
             .put(s3Config.bucket, s3Key, fileContent)
             .onError { case e => l.error(e)(s"PUT failed w/: $e") }
             .void
             .handleErrorWith(_ => IO(fail("1. failed to upload file to s3")))
 
-          checkingFile <- s3Client.get(s3Config.bucket, s3Key)
-          _            <- l.info(s"Fetched file from s3: $s3Key")
-          _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
-          _            <- l.info(s"File from s3 is all OK: $s3Key")
+        checkingFile <- s3Client.get(s3Config.bucket, s3Key)
+        _            <- l.info(s"Fetched file from s3: $s3Key")
+        _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
+        _            <- l.info(s"File from s3 is all OK: $s3Key")
 
-          signedURL <- cfSigner.signS3KeyCanned(s3Key)
-          _         <- l.info(s"Signed url: $signedURL")
-          bytesFromSigned <- http4sClient.get(signedURL) { response =>
-            response.body.compile.toList
-          }
-          _ <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
-          _ <- l.info(s"Expected #${fileContent.size} bytes")
-          _ <- IO(assert(fileContent.toList == bytesFromSigned))
-            .onErrorF(l.info("comparison failed for bytes from URL"))
-        } yield ()
-    }
-    test.unsafeRunSync()
+        signedURL       <- cfSigner.signS3KeyCanned(s3Key)
+        _               <- l.info(s"Signed url: $signedURL")
+        bytesFromSigned <- http4sClient.get(signedURL)(response => response.body.compile.toList)
+        _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
+        _               <- l.info(s"Expected #${fileContent.size} bytes")
+        _               <- IO(assert(fileContent.toList == bytesFromSigned))
+          .onErrorF(l.info("comparison failed for bytes from URL"))
+      } yield succeed
   }
+
 }
