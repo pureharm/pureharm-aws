@@ -16,24 +16,29 @@
   * limitations under the License.
   */
 // format: off
-addCommandAlias("useScala212", s"++${CompilerSettings.scala2_12}")
-addCommandAlias("useScala213", s"++${CompilerSettings.scala2_13}")
-addCommandAlias("useDotty",    s"++${CompilerSettings.dottyVersion}")
+addCommandAlias(name = "useScala212", value = s"++${CompilerSettings.scala2_12}")
+addCommandAlias(name = "useScala213", value = s"++${CompilerSettings.scala2_13}")
+addCommandAlias(name = "useDotty",    value = s"++${CompilerSettings.dottyVersion}")
 
-addCommandAlias("it",             "IntegrationTest / test")
-addCommandAlias("recompile",      ";clean;compile;")
-addCommandAlias("build",          ";compile;Test/compile")
-addCommandAlias("rebuild",        ";clean;compile;Test/compile")
-addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
-addCommandAlias("ci",             ";scalafmtCheck;rebuild-update;test")
-addCommandAlias("ci-quick",       ";scalafmtCheck;build;test;it")
-addCommandAlias("doLocal",        ";clean;update;compile;publishLocal")
+addCommandAlias(name = "it",             value = "IntegrationTest / test")
+addCommandAlias(name = "recompile",      value = ";clean;compile;")
+addCommandAlias(name = "build",          value = ";compile;Test/compile")
+addCommandAlias(name = "rebuild",        value = ";clean;compile;Test/compile")
+addCommandAlias(name = "rebuild-update", value = ";clean;update;compile;Test/compile")
+addCommandAlias(name = "ci",             value = ";scalafmtCheck;rebuild-update;test")
+addCommandAlias(name = "ci-quick",       value = ";scalafmtCheck;build;test;it")
+addCommandAlias(name = "doLocal",        value = ";clean;update;compile;publishLocal")
 
-addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
-addCommandAlias("do212Release",       ";useScala212;cleanPublishSigned;sonatypeBundleRelease")
-addCommandAlias("do213Release",       ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias(name = "cleanPublishSigned", value = ";recompile;publishSigned")
+addCommandAlias(name = "do212Release",       value = ";useScala212;cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias(name = "do213Release",       value = ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
 
-addCommandAlias("lint", ";scalafixEnable;rebuild;scalafix;scalafmtAll")
+addCommandAlias(name = "lint", value = ";scalafixEnable;rebuild;scalafix;scalafmtAll")
+
+addCommandAlias(name = "s3-it",     value = "aws-s3 / IntegrationTest / test")
+addCommandAlias(name = "cf-it",     value = "aws-cloudfront / IntegrationTest / test")
+addCommandAlias(name = "logger-it", value = "aws-logger / IntegrationTest / test")
+addCommandAlias(name = "sns-it",    value = "aws-sns / IntegrationTest / test")
 // format: on
 
 //*****************************************************************************
@@ -87,9 +92,9 @@ lazy val `aws-s3` = project
       pureharmEffectsCats.withDottyCompat(scalaVersion.value),
       pureharmConfig.withDottyCompat(scalaVersion.value),
       amazonS3V2.withDottyCompat(scalaVersion.value),
-      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
+      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
     ),
   )
   .dependsOn(
@@ -111,10 +116,10 @@ lazy val `aws-cloudfront` = project
       pureharmEffectsCats.withDottyCompat(scalaVersion.value),
       pureharmConfig.withDottyCompat(scalaVersion.value),
       amazonCloudFront.withDottyCompat(scalaVersion.value),
-      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
-      http4sClient.withDottyCompat(scalaVersion.value)   % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
+      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
+      http4sClient.withDottyCompat(scalaVersion.value)    % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
     ),
   )
   .dependsOn(
@@ -138,8 +143,8 @@ lazy val `aws-logger` = project
       pureharmConfig.withDottyCompat(scalaVersion.value),
       amazonLogs.withDottyCompat(scalaVersion.value),
       log4cats.withDottyCompat(scalaVersion.value),
-      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
+      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
     ),
   )
   .dependsOn(
@@ -162,10 +167,10 @@ lazy val `aws-sns` = project
       pureharmConfig.withDottyCompat(scalaVersion.value),
       pureharmJsonCirce.withDottyCompat(scalaVersion.value),
       amazonSNSV2.withDottyCompat(scalaVersion.value),
-      scalaTest.withDottyCompat(scalaVersion.value)      % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)       % ITT,
-      http4sClient.withDottyCompat(scalaVersion.value)   % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value) % ITT,
+      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
+      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
+      http4sClient.withDottyCompat(scalaVersion.value)    % ITT,
+      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
     ),
   )
   .dependsOn(
@@ -186,9 +191,8 @@ lazy val awsJavaSdkVersion:      String = "1.11.822" //java — https://github.c
 lazy val awsJavaSdkV2Version:    String = "2.13.57"  //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
-lazy val logbackVersion:   String = "1.2.3"  //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:    String = "0.21.6" //https://github.com/http4s/http4s/releases
-lazy val scalaTestVersion: String = "3.2.0"  //https://github.com/scalatest/scalatest/releases
+lazy val logbackVersion: String = "1.2.3"  //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:  String = "0.21.6" //https://github.com/http4s/http4s/releases
 
 //#############################################################################
 //################################### SCALA ###################################
@@ -212,6 +216,7 @@ lazy val pureharmCoreIdentifiable: ModuleID = pureharm("core-identifiable")
 lazy val pureharmEffectsCats:      ModuleID = pureharm("effects-cats")
 lazy val pureharmJsonCirce:        ModuleID = pureharm("json-circe")
 lazy val pureharmConfig:           ModuleID = pureharm("config")
+lazy val pureharmTestkit:          ModuleID = pureharm("testkit")
 
 //#############################################################################
 //################################# TYPELEVEL #################################
@@ -246,13 +251,6 @@ lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Ve
   */
 lazy val amazonS3V2      = "software.amazon.awssdk" % "s3"      % awsJavaSdkV2Version withSources ()
 lazy val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2Version withSources ()
-
-//#############################################################################
-//################################## TESTING ##################################
-//#############################################################################
-
-//https://github.com/scalatest/scalatest/releases
-lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % scalaTestVersion withSources ()
 
 //#############################################################################
 //#################################  LOGGING ##################################
