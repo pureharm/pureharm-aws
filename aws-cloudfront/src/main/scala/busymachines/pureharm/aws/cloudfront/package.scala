@@ -22,6 +22,8 @@ package object cloudfront {
   object CloudfrontPrivateKeyFilePath extends PhantomType[String]
   type CloudfrontPrivateKeyFilePath = CloudfrontPrivateKeyFilePath.Type
 
+  type CloudfrontPrivateKey = CloudfrontPrivateKey.Type
+
   object CloudfrontKeyPairID extends PhantomType[String]
   /**
     * See [[https://support.s3mediamaestro.com/article/204-how-to-obtain-your-cloudfront-key-pair-id-and-private-key]]
