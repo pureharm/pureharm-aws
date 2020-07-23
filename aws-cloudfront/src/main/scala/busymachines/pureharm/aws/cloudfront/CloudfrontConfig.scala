@@ -7,7 +7,11 @@ import busymachines.pureharm.config._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 Jul 2019
   */
-sealed trait CloudfrontConfig
+sealed trait CloudfrontConfig {
+  def distributionDomain: CloudfrontDistributionDomain
+  def keyPairID:          CloudfrontKeyPairID
+  def urlExpirationTime:  CloudfrontURLExpiration
+}
 
 object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
   import busymachines.pureharm.config.implicits._
@@ -15,18 +19,18 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
   import pureconfig.error.CannotConvert
 
   final case class WithKeyFile(
-    distributionDomain: CloudfrontDistributionDomain,
-    privateKeyFilePath: CloudfrontPrivateKeyFilePath,
-    keyPairID:          CloudfrontKeyPairID,
-    urlExpirationTime:  CloudfrontURLExpiration,
+    override val distributionDomain: CloudfrontDistributionDomain,
+    override val keyPairID:          CloudfrontKeyPairID,
+    override val urlExpirationTime:  CloudfrontURLExpiration,
+    val privateKeyFilePath:          CloudfrontPrivateKeyFilePath,
   ) extends CloudfrontConfig
 
   final case class WithPrivateKey(
-    distributionDomain: CloudfrontDistributionDomain,
-    keyPairID:          CloudfrontKeyPairID,
-    privateKey:         CloudfrontPrivateKey,
-    privateKeyFormat:   CloudfrontPrivateKey.Format,
-    urlExpirationTime:  CloudfrontURLExpiration,
+    override val distributionDomain: CloudfrontDistributionDomain,
+    override val keyPairID:          CloudfrontKeyPairID,
+    override val urlExpirationTime:  CloudfrontURLExpiration,
+    privateKey:                      CloudfrontPrivateKey,
+    privateKeyFormat:                CloudfrontPrivateKey.Format,
   ) extends CloudfrontConfig
 
   //TODO: add safe phantom type support in pureconfig
