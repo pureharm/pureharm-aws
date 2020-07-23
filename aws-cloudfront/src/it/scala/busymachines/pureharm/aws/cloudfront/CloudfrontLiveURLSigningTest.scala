@@ -78,7 +78,7 @@ final class CloudfrontLiveURLSigningTest extends PureharmTestWithResource {
     s3Client    <- AmazonS3Client.resource[IO](config)
     cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
     _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
-    cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, *]]
+    cfClient    <- CloudfrontURLSigner[IO](cfConfig)
     _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
   } yield (blazeClient, config, s3Client, cfClient)
 
