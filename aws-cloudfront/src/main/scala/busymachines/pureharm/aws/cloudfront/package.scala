@@ -19,7 +19,7 @@ package object cloudfront {
     */
   type CloudfrontDistributionDomain = CloudfrontDistributionDomain.Type
 
-  object CloudfrontPrivateKeyFilePath extends PhantomType[String]
+  object CloudfrontPrivateKeyFilePath extends PhantomType[java.nio.file.Path]
   type CloudfrontPrivateKeyFilePath = CloudfrontPrivateKeyFilePath.Type
 
   type CloudfrontPrivateKey = CloudfrontPrivateKey.Type

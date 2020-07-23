@@ -17,7 +17,7 @@ final class CloudfrontConfigLoaderTest extends PureharmTest {
     } yield assert(
       config === CloudfrontConfig.WithKeyFile(
         distributionDomain = CloudfrontDistributionDomain("test.cloudfront.net"),
-        privateKeyFilePath = CloudfrontPrivateKeyFilePath("test-key"),
+        privateKeyFilePath = CloudfrontPrivateKeyFilePath(java.nio.file.Path.of("test-key")),
         keyPairID          = CloudfrontKeyPairID("test-key-pair-id"),
         urlExpirationTime  = CloudfrontURLExpiration(7.days),
       )
