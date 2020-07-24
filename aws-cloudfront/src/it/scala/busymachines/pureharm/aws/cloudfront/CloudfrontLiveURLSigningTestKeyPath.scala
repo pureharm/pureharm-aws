@@ -65,7 +65,7 @@ import scala.concurrent.duration._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Jul 2019
   */
-final class CloudfrontLiveURLSigningTest extends PureharmTestWithResource {
+final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTestWithResource {
 
   implicit private val l: Logger[IO] = Slf4jLogger.getLogger[IO]
 
@@ -76,9 +76,9 @@ final class CloudfrontLiveURLSigningTest extends PureharmTestWithResource {
     blazeClient <-
       BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
     s3Client    <- AmazonS3Client.resource[IO](config)
-    cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront")
+    cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-path")
     _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
-    cfClient    <- CloudfrontURLSigner[IO](cfConfig).pure[Resource[IO, *]]
+    cfClient    <- CloudfrontURLSigner[IO](cfConfig)
     _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
   } yield (blazeClient, config, s3Client, cfClient)
 
