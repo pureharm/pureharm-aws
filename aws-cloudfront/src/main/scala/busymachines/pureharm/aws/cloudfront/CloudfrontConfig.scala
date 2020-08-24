@@ -46,7 +46,7 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
     )
 
   implicit protected val formatReader: ConfigReader[CloudfrontPrivateKey.Format]  =
-    semiauto.deriveEnumerationReader(transformName = n => n.toLowerCase.prepended('.'))
+    semiauto.deriveEnumerationReader(transformName = n => s".${n.toLowerCase}")
 
   implicit private val withKeyFileCFG: ConfigReader[CloudfrontConfig.WithKeyFile] =
     semiauto.deriveReader[CloudfrontConfig.WithKeyFile]
