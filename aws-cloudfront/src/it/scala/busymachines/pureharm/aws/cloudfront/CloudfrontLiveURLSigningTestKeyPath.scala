@@ -15,7 +15,7 @@ import scala.concurrent.duration._
   * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
   * Before running this ensure that you actually have the proper local environment
-  * variables. See the ``pureharm-aws/aws-cloudfront/src/test/resources/reference.conf``
+  * variables. See the ``pureharm-aws/aws-cloudfront/src/test/resources/application.conf``
   * for the environment variables that are used by this test.
   *
   * We can't commit to github the proper configuration to make this run.
