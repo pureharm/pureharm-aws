@@ -20,9 +20,9 @@ import Keys._
 import dotty.tools.sbtplugin.DottyPlugin.autoImport._
 
 object CompilerSettings {
-  lazy val scala2_12:        String = "2.12.12"    //https://github.com/scala/scala/releases
-  lazy val scala2_13:        String = "2.13.3"     //https://github.com/scala/scala/releases
-  lazy val dottyVersion:     String = "0.25.0-RC2" //https://github.com/lampepfl/dotty/releases
+  lazy val scala2_12:        String = "2.12.12" //https://github.com/scala/scala/releases
+  lazy val scala2_13:        String = "2.13.3"  //https://github.com/scala/scala/releases
+  lazy val dottyVersion:     String = "0.26.0"  //https://github.com/lampepfl/dotty/releases
   lazy val mainScalaVersion: String = scala2_13
 
   //https://github.com/typelevel/kind-projector/releases
@@ -43,15 +43,15 @@ object CompilerSettings {
       scalaVersion              := mainScalaVersion,
       crossScalaVersions        := List(scala2_12, scala2_13, dottyVersion),
       libraryDependencies ++= (if (isDotty.value) {
-        Nil
-      }
-      else {
-        Seq(
-          compilerPlugin(kindProjector.cross(CrossVersion.full)),
-          compilerPlugin(betterMonadicFor),
-          //compilerPlugin(splain).cross(CrossVersion.patch),
-        )
-      }),
+                                 Nil
+                               }
+                               else {
+                                 Seq(
+                                   compilerPlugin(kindProjector.cross(CrossVersion.full)),
+                                   compilerPlugin(betterMonadicFor),
+                                   //compilerPlugin(splain).cross(CrossVersion.patch),
+                                 )
+                               }),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 12)) => scala2_12Flags ++ betterForPluginCompilerFlags
         case Some((2, 13)) => scala2_13Flags ++ betterForPluginCompilerFlags
