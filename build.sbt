@@ -18,7 +18,7 @@
 // format: off
 addCommandAlias(name = "useScala212", value = s"++${CompilerSettings.scala2_12}")
 addCommandAlias(name = "useScala213", value = s"++${CompilerSettings.scala2_13}")
-addCommandAlias(name = "useDotty",    value = s"++${CompilerSettings.dottyVersion}")
+addCommandAlias(name = "useScala30",  value = s"++${CompilerSettings.scala3_0}")
 
 addCommandAlias(name = "it",             value = "IntegrationTest / test")
 addCommandAlias(name = "recompile",      value = ";clean;compile;")

@@ -20,9 +20,9 @@ import Keys._
 import dotty.tools.sbtplugin.DottyPlugin.autoImport._
 
 object CompilerSettings {
-  lazy val scala2_12:        String = "2.12.12" //https://github.com/scala/scala/releases
-  lazy val scala2_13:        String = "2.13.3"  //https://github.com/scala/scala/releases
-  lazy val dottyVersion:     String = "0.26.0"  //https://github.com/lampepfl/dotty/releases
+  lazy val scala2_12:        String = "2.12.12"  //https://github.com/scala/scala/releases
+  lazy val scala2_13:        String = "2.13.3"   //https://github.com/scala/scala/releases
+  lazy val scala3_0:         String = "3.0.0-M1" //https://github.com/lampepfl/dotty/releases
   lazy val mainScalaVersion: String = scala2_13
 
   //https://github.com/typelevel/kind-projector/releases
@@ -41,7 +41,7 @@ object CompilerSettings {
       organization in ThisBuild := organizationName,
       homepage                  := Some(url(pureharmHomepage)),
       scalaVersion              := mainScalaVersion,
-      crossScalaVersions        := List(scala2_12, scala2_13, dottyVersion),
+      crossScalaVersions        := List(scala2_12, scala2_13, scala3_0),
       libraryDependencies ++= (if (isDotty.value) {
                                  Nil
                                }
