@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -22,8 +21,7 @@ import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
 
-/**
-  * Logger that only logs to remote (except failures while trying
+/** Logger that only logs to remote (except failures while trying
   * to connect to AWS, which it logs locally).
   *
   * Composed with a fully local logger to implement an [[busymachines.pureharm.aws.logger.AWSLogger]]
@@ -175,8 +173,7 @@ private[logger] object AWSRemoteLoggerImpl {
         _ <- logToClouds(List(log))
       } yield ()
 
-    /**
-      * FIXME: Super rough implementation. REVISE
+    /** FIXME: Super rough implementation. REVISE
       * Requires actual study of AWS logging to see if there's
       * anything to be improved here.
       */
@@ -193,11 +190,11 @@ private[logger] object AWSRemoteLoggerImpl {
               new PutLogEventsRequest(config.groupName, config.streamName, logs.asJava)
                 .withSequenceToken(null) //java :'(!
           }
-          _        <- putLogsOnCloud(plrq).void
+          _ <- putLogsOnCloud(plrq).void
         } yield ()
 
-      val nonFailingF = logF.timeout(config.timeout).recoverWith {
-        case NonFatal(e) => logger.trace(e)("Failed to log to AWS Cloud Watch!")
+      val nonFailingF = logF.timeout(config.timeout).recoverWith { case NonFatal(e) =>
+        logger.trace(e)("Failed to log to AWS Cloud Watch!")
       }
 
       //This is where the magic happens!

@@ -7,8 +7,7 @@ import busymachines.pureharm.effects.implicits._
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 29 Nov 2019
   */
 final class SNSMobilePushNotificationsOps[F[_]](
@@ -85,8 +84,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     case _: NotFoundException => F.pure(SNSPlatformEndpointHealthcheck.NotFound)
   }
 
-  /**
-    * The parsing of the exception is part of the official Amazon API docs... yeah ... not cool.
+  /** The parsing of the exception is part of the official Amazon API docs... yeah ... not cool.
     * {{{https://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html}}}
     */
   private def createEndpointARNErrorParser: PartialFunction[Throwable, F[SNSEndpointARN]] = {

@@ -4,8 +4,7 @@ import busymachines.pureharm.phantom.PhantomType
 
 import scala.concurrent.duration.FiniteDuration
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 04 Sep 2019
   */
 package object logger {

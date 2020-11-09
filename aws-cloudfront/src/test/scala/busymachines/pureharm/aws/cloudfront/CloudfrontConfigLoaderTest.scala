@@ -5,8 +5,7 @@ import busymachines.pureharm.testkit.PureharmTest
 
 import scala.concurrent.duration._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Jul 2019
   */
 final class CloudfrontConfigLoaderTest extends PureharmTest {

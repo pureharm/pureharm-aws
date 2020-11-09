@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2019 BusyMachines
+/** Copyright (c) 2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -245,8 +244,7 @@ lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJav
 
 //https://github.com/aws/aws-sdk-java-v2/releases
 lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Version withSources ()
-/**
-  * currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
+/** currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
   * - cloudfront: cannot sign
   * - logs: uses shitty interop w/ slf4j. Way too much magic...
   */
@@ -266,21 +264,18 @@ lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion 
 //#############################################################################
 //################################  BUILD UTILS ###############################
 //#############################################################################
-/**
-  * See SBT docs:
+/** See SBT docs:
   * https://www.scala-sbt.org/release/docs/Multi-Project.html#Per-configuration+classpath+dependencies
   *
   * Ensures dependencies between the ``test`` parts of the modules
   */
 def fullDependency(p: Project): ClasspathDependency = p % "compile->compile;test->test"
 
-/**
-  * Used only when one module is useful to test another module, but
+/** Used only when one module is useful to test another module, but
   * in production build they don't require to be used together.
   */
 def asTestingDependency(p: Project): ClasspathDependency = p % "test -> compile"
 
-/**
-  * Used to mark a dependency as needed in both integration tests, and tests
+/** Used to mark a dependency as needed in both integration tests, and tests
   */
 def ITT: String = "it,test"

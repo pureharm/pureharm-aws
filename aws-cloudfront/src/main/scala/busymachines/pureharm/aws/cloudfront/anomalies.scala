@@ -2,8 +2,7 @@ package busymachines.pureharm.aws.cloudfront
 
 import busymachines.pureharm.anomaly._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Jul 2019
   */
 final case class CloudFrontKeyReadingCatastrophe(cause: Throwable)

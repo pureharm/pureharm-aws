@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -19,16 +18,14 @@ package busymachines.pureharm.aws
 
 import busymachines.pureharm.phantom._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Nov 2019
   */
 package object sns {
 
   object SNSDeviceToken extends PhantomType[String]
 
-  /**
-    * @see
+  /** @see
     *   Section "Token"
     *   https://docs.aws.amazon.com/sns/latest/api/API_CreatePlatformEndpoint.html
     */
@@ -42,8 +39,7 @@ package object sns {
 
   object SNSAccessKeyID extends PhantomType[String]
 
-  /**
-    * Standard AWS AccessKeyID, of different type, so it's harder
+  /** Standard AWS AccessKeyID, of different type, so it's harder
     * to accidentally mix up with the AccessKey used for S3,
     * in case they have different values. Since these are read
     * from a config, they can easily be set to have the same value,
@@ -53,8 +49,7 @@ package object sns {
 
   object SNSSecretAccessKey extends PhantomType[String]
 
-  /**
-    * Standard AWS SecretAccessKey, same reasoning as behind
+  /** Standard AWS SecretAccessKey, same reasoning as behind
     * [[SNSAccessKeyID]]
     */
   type SNSSecretAccessKey = SNSSecretAccessKey.Type

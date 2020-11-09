@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -17,8 +16,7 @@
   */
 package busymachines.pureharm.aws.s3
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
 trait AmazonS3Client[F[_]] {
@@ -58,15 +56,13 @@ object AmazonS3Client {
       s3Client <- Resource.make(buildSDKClient(config).pure[F])(c => F.delay(c.close()))
     } yield this.withFixedBucket[F](config.bucket, new AmazonS3ClientImpl[F](s3Client, config))
 
-  /**
-    * Please use [[resource]], there's no reasonable way to close the
+  /** Please use [[resource]], there's no reasonable way to close the
     * underlying S3Client
     */
   def unsafe[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3Client[F] =
     new AmazonS3ClientImpl(buildSDKClient(config), config)
 
-  /**
-    * Please use [[resource]], there's no reasonable way to close the
+  /** Please use [[resource]], there's no reasonable way to close the
     * underlying S3Client
     */
   def unsafeWithFixedBucket[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3ClientForBucket[F] =

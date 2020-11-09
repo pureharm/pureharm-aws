@@ -2,8 +2,7 @@ package busymachines.pureharm.aws.cloudfront
 
 import busymachines.pureharm.phantom._
 
-/**
-  * The key has to be base64 encoded and will be checked
+/** The key has to be base64 encoded and will be checked
   */
 object CloudfrontPrivateKey extends SafePhantomType[Throwable, String] {
 

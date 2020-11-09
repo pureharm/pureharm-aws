@@ -2,8 +2,7 @@ package busymachines.pureharm.aws.cloudfront
 
 import busymachines.pureharm.effects._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 May 2020
   */
 object TimeUtil {

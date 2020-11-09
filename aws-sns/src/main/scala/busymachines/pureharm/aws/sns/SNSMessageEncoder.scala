@@ -1,7 +1,6 @@
 package busymachines.pureharm.aws.sns
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Nov 2019
   */
 trait SNSMessageEncoder[T] {

@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2019 BusyMachines
+/** Copyright (c) 2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -60,8 +59,7 @@ object CompilerSettings {
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
     )
 
-  /**
-    * tpolecat's glorious compile flag list:
+  /** tpolecat's glorious compile flag list:
     * https://tpolecat.github.io/2017/04/25/scalac-flags.html
     */
   def scala2_12Flags: Seq[String] = Seq(
@@ -111,8 +109,7 @@ object CompilerSettings {
     "-Ypartial-unification",            // Enable partial unification in type constructor inference
   )
 
-  /**
-    * tpolecat's glorious compile flag list adapted for scala 2.13 (fewer flags):
+  /** tpolecat's glorious compile flag list adapted for scala 2.13 (fewer flags):
     * https://tpolecat.github.io/2017/04/25/scalac-flags.html
     */
   def scala2_13Flags: Seq[String] = Seq(
@@ -164,8 +161,7 @@ object CompilerSettings {
     "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
   )
 
-  /**
-    * These are flags specific to the "better-monadic-for" plugin:
+  /** These are flags specific to the "better-monadic-for" plugin:
     * https://github.com/oleg-py/better-monadic-for
     */
   def betterForPluginCompilerFlags: Seq[String] = Seq(
