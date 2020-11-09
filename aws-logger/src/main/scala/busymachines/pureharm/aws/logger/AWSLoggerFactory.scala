@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -20,8 +19,7 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.effects._
 import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
 
-/**
-  * Because building these amazon thingies is not thread safe,
+/** Because building these amazon thingies is not thread safe,
   * we have to build a thread safe builder
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs

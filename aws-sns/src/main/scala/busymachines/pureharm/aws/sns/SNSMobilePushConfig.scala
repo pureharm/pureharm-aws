@@ -5,8 +5,7 @@ import pureconfig.ConfigReader
 
 import scala.concurrent.duration.FiniteDuration
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 27 Nov 2019
   */
 case class SNSMobilePushConfig(

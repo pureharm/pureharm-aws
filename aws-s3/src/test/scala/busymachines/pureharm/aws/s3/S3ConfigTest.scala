@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -22,8 +21,7 @@ import busymachines.pureharm.effects._
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 14 May 2019
   */
 final class S3ConfigTest extends AnyFunSuite with Matchers {

@@ -47,8 +47,7 @@ object CloudfrontURLSigner {
         )
       } yield CloudfrontSignedURL(signed)
 
-    /**
-      * We have to load private key from fuck-all the way where AWS stores it :/
+    /** We have to load private key from fuck-all the way where AWS stores it :/
       * it necessarily needs to be in .DER format.
       * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
@@ -72,8 +71,7 @@ object CloudfrontURLSigner {
         }
         .adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
 
-    /**
-      * We have to load private key from fuck-all the way where AWS stores it :/
+    /** We have to load private key from fuck-all the way where AWS stores it :/
       * it necessarily needs to be in .DER format.
       * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
@@ -89,8 +87,7 @@ object CloudfrontURLSigner {
         F.delay(SignerUtils.loadPrivateKey(kp.toFile)).adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
       }
 
-    /**
-      * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
+    /** See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       * Creates that url from the distributionDomain + S3FileKey
       *
       * Which then has to be signed.

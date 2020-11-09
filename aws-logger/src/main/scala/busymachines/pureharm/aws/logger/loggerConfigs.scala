@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -21,8 +20,7 @@ import busymachines.pureharm.aws.core._
 import busymachines.pureharm.config._
 import busymachines.pureharm.effects._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
   *        ---
   */
@@ -43,8 +41,7 @@ case object DisabledAWSLoggerConfig extends AWSLoggerConfig {
   override val enabled:    AWSLoggingEnabled              = AWSLoggingEnabled.False
 }
 
-/**
-  * @param timeout
+/** @param timeout
   *   if a log cannot be sent within this time to AWS, then timeout.
   *
   * @param region
@@ -67,8 +64,7 @@ object CloudWatchLoggerConfig {
     semiauto.deriveReader[CloudWatchLoggerConfig]
 }
 
-/**
-  * Config reading will behave the following way:
+/** Config reading will behave the following way:
   * 1) enabled = true, then we attempt to read a well-formed cloudwatch subobject
   *
   * {{{

@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -21,8 +20,7 @@ import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
 private[s3] object ImpureJavaS3 {
@@ -57,7 +55,7 @@ private[s3] object ImpureJavaS3 {
       ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].delay(
         client.putObject(putRequest, reqBody)
       )
-      _       <- Interop.toF(ff)
+      _ <- Interop.toF(ff)
     } yield key
 
   def get[F[_]: Async](client: S3AsyncClient)(
@@ -99,8 +97,8 @@ private[s3] object ImpureJavaS3 {
   ): F[Boolean] =
     for {
       headReq <- HeadObjectRequest.builder().bucket(bucket).key(key).build().pure[F]
-      exists  <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover {
-        case _: S3Exception => false
+      exists  <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover { case _: S3Exception =>
+        false
       }
     } yield exists
 

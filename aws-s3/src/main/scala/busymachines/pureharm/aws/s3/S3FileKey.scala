@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -21,8 +20,7 @@ import busymachines.pureharm.phantom._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
 
@@ -35,8 +33,7 @@ object S3FileKey extends SafePhantomType[Throwable, String] {
   def generate[F[_]: Sync]: F[this.Type] =
     randomString[F].map(r => this.unsafe(r))
 
-  /**
-    * @param extension
+  /** @param extension
     *   Should not contain "."
     * @return
     *   Randomly generated name w/ the given extension
@@ -51,16 +48,14 @@ object S3FileKey extends SafePhantomType[Throwable, String] {
     validatePath(value).map(_.normalize().toString)
 
   final def asJPath(s3FilePath: this.Type): Attempt[Path] =
-    Attempt.catchNonFatal(Paths.get(this.despook(s3FilePath))).adaptError {
-      case NonFatal(e) => InvalidPathIA(s3FilePath, e)
+    Attempt.catchNonFatal(Paths.get(this.despook(s3FilePath))).adaptError { case NonFatal(e) =>
+      InvalidPathIA(s3FilePath, e)
     }
 
   final def asJPathUnsafe(s3FilePath: this.Type): Path =
     asJPath(s3FilePath).unsafeGet()
 
   private def validatePath(path: String): Attempt[Path] =
-    Attempt.catchNonFatal(Paths.get(path)).adaptError {
-      case NonFatal(e) => InvalidPathIA(path, e)
-    }
+    Attempt.catchNonFatal(Paths.get(path)).adaptError { case NonFatal(e) => InvalidPathIA(path, e) }
 
 }

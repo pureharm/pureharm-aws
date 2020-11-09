@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -17,8 +16,7 @@
   */
 package busymachines.pureharm.aws.s3
 
-/**
-  * Convenience trait.
+/** Convenience trait.
   * Same as [[AmazonS3Client]] but uses the same bucket
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs

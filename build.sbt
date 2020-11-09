@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2019 BusyMachines
+/** Copyright (c) 2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -18,7 +17,7 @@
 // format: off
 addCommandAlias(name = "useScala212", value = s"++${CompilerSettings.scala2_12}")
 addCommandAlias(name = "useScala213", value = s"++${CompilerSettings.scala2_13}")
-addCommandAlias(name = "useDotty",    value = s"++${CompilerSettings.dottyVersion}")
+addCommandAlias(name = "useScala30",  value = s"++${CompilerSettings.scala3_0}")
 
 addCommandAlias(name = "it",             value = "IntegrationTest / test")
 addCommandAlias(name = "recompile",      value = ";clean;compile;")
@@ -184,16 +183,16 @@ lazy val `aws-sns` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.6-RC1" //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.1.6"     //https://github.com/scala/scala-collection-compat/releases
-lazy val monixVersion:           String = "3.2.2"     //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.1.1"     //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:      String = "1.11.859"  //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.14.5"    //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val pureharmVersion:        String = "0.0.6"    //https://github.com/busymachines/pureharm/releases
+lazy val scalaCollCompatVersion: String = "2.2.0"    //https://github.com/scala/scala-collection-compat/releases
+lazy val monixVersion:           String = "3.2.2"    //https://github.com/monix/monix/releases
+lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:      String = "1.11.896" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version:    String = "2.15.23"  //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 lazy val logbackVersion: String = "1.2.3"  //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:  String = "0.21.7" //https://github.com/http4s/http4s/releases
+lazy val http4sVersion:  String = "0.21.8" //https://github.com/http4s/http4s/releases
 
 //#############################################################################
 //################################### SCALA ###################################
@@ -245,8 +244,7 @@ lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJav
 
 //https://github.com/aws/aws-sdk-java-v2/releases
 lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Version withSources ()
-/**
-  * currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
+/** currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
   * - cloudfront: cannot sign
   * - logs: uses shitty interop w/ slf4j. Way too much magic...
   */
@@ -266,21 +264,18 @@ lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion 
 //#############################################################################
 //################################  BUILD UTILS ###############################
 //#############################################################################
-/**
-  * See SBT docs:
+/** See SBT docs:
   * https://www.scala-sbt.org/release/docs/Multi-Project.html#Per-configuration+classpath+dependencies
   *
   * Ensures dependencies between the ``test`` parts of the modules
   */
 def fullDependency(p: Project): ClasspathDependency = p % "compile->compile;test->test"
 
-/**
-  * Used only when one module is useful to test another module, but
+/** Used only when one module is useful to test another module, but
   * in production build they don't require to be used together.
   */
 def asTestingDependency(p: Project): ClasspathDependency = p % "test -> compile"
 
-/**
-  * Used to mark a dependency as needed in both integration tests, and tests
+/** Used to mark a dependency as needed in both integration tests, and tests
   */
 def ITT: String = "it,test"

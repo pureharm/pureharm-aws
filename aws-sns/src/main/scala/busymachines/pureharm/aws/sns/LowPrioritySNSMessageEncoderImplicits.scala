@@ -1,7 +1,6 @@
 package busymachines.pureharm.aws.sns
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 07 Jan 2020
   */
 trait LowPrioritySNSMessageEncoderImplicits {

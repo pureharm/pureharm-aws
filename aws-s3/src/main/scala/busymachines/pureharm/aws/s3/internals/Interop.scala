@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -19,8 +18,7 @@ package busymachines.pureharm.aws.s3.internals
 
 import busymachines.pureharm.effects.Async
 
-/**
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
 private[s3] object Interop {
