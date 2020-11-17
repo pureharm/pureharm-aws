@@ -16,6 +16,7 @@
   */
 package busymachines.pureharm.aws.s3.internals
 
+import busymachines.pureharm.aws.core.AmazonRegion
 import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
@@ -122,6 +123,36 @@ private[s3] object ImpureJavaS3 {
           .pure[F]
       _                <- Interop.toF(Sync[F].delay(client.copyObject(copyReq)))
     } yield ()
+  }
+
+  def createBucket[F[_]: Async](client: S3AsyncClient)(
+    bucket: S3Bucket,
+    region: AmazonRegion,
+  ): F[Unit] = {
+    val req = CreateBucketRequest
+      .builder()
+      .bucket(bucket)
+      .createBucketConfiguration(
+        CreateBucketConfiguration
+          .builder()
+          .locationConstraint(region)
+          .build()
+      )
+      .build()
+
+    Interop.toF(Sync[F].delay(client.createBucket(req))).void
+  }
+
+  def deleteBucket[F[_]: Async](client: S3AsyncClient)(
+    bucket: S3Bucket,
+    region: AmazonRegion,
+  ): F[Unit] = {
+    val req = DeleteBucketRequest
+      .builder()
+      .bucket(bucket)
+      .build()
+
+    Interop.toF(Sync[F].delay(client.deleteBucket(req))).void
   }
 
   private def asyncBytesTransformer[F[_]: Sync]: F[AsyncResponseTransformer[GetObjectResponse, S3BinaryContent]] =
