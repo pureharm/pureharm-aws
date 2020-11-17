@@ -65,7 +65,10 @@ private[s3] object PureJavaS3 {
       .asyncConfiguration(asyncConfig)
       .overrideConfiguration(overrideConfiguration)
 
-    val client: S3AsyncClient = builder.build()
+    val client: S3AsyncClient = config.endpointOverride match {
+      case None           => builder.build()
+      case Some(endpoint) => builder.endpointOverride(endpoint).build()
+    }
     client
   }
 
