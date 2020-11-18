@@ -21,6 +21,10 @@ package busymachines.pureharm.aws.s3
   */
 trait AmazonS3Client[F[_]] {
 
+  def createBucket(bucket: S3Bucket): F[Unit]
+
+  def deleteBucket(bucket: S3Bucket): F[Unit]
+
   def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit]
 
   def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent]
@@ -86,6 +90,12 @@ object AmazonS3Client {
     implicit private val F:       Async[F],
     implicit private val shifter: BlockingShifter[F],
   ) extends AmazonS3Client[F] {
+
+    override def createBucket(bucket: S3Bucket): F[Unit] =
+      shifter.blockOn(internals.ImpureJavaS3.createBucket(s3Client)(bucket, config.region))
+
+    override def deleteBucket(bucket: S3Bucket): F[Unit] =
+      shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket, config.region))
 
     override def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void)

@@ -50,4 +50,7 @@ package object s3 {
   object S3DownloadURL extends PhantomType[String]
   type S3DownloadURL = S3DownloadURL.Type
 
+  object S3EndpointOverride extends PhantomType[java.net.URI]
+  type S3EndpointOverride = S3EndpointOverride.Type
+
 }

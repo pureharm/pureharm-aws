@@ -18,10 +18,10 @@ package busymachines.pureharm.aws.s3
 
 import busymachines.pureharm.aws.core._
 import busymachines.pureharm.effects._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
-
 final case class S3Config(
   region:                AmazonRegion,
   accessKeyID:           S3AccessKeyID,
@@ -30,6 +30,7 @@ final case class S3Config(
   apiCallAttemptTimeout: S3ApiCallAttemptTimeout,
   apiCallTimeout:        S3ApiCallTimeout,
   headers:               List[AmazonRequestHeader] = List.empty,
+  endpointOverride:      Option[S3EndpointOverride],
 )
 
 import busymachines.pureharm.config._
