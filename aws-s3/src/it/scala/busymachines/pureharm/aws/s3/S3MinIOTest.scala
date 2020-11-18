@@ -18,6 +18,7 @@ package busymachines.pureharm.aws.s3
 
 import io.chrisdavenport.log4cats.StructuredLogger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import fs2._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.testkit._
@@ -57,7 +58,7 @@ final class S3MinIOTest extends PureharmTestWithResource {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
-  test("minio upload + get + delete") { case (config, client) =>
+  test("minio put + get + delete") { case (config, client) =>
     for {
       _   <- l.info(s"acquired client resource: ${client.toString}")
       _   <-
@@ -68,6 +69,32 @@ final class S3MinIOTest extends PureharmTestWithResource {
       _   <- l.info(s"1 — after PUT — trying GET")
       got <- client.get(config.bucket, f1S3Key)
       _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
+      _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
+      _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+
+      _ <- l.info("---- deleting file ----")
+      _ <- client.delete(config.bucket, f1S3Key)
+      _ <- l.info("---- DELETED — now trying to get back file to see----")
+      _ <-
+        client
+          .get(config.bucket, f1S3Key)
+          .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
+          .void
+          .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
+    } yield succeed
+  }
+
+  test("minio putStream + getStream + delete") { case (config, client) =>
+    for {
+      _   <- l.info(s"acquired client resource: ${client.toString}")
+      _   <-
+        client
+          .putStream(config.bucket, f1S3Key, Stream.emits[IO, Byte](f1_contents.toSeq))
+          .void
+          .handleErrorWith(e => l.error(e)(s"PUT stream failed w/: $e"))
+      _   <- l.info(s"1 — after PUT — trying GET")
+      got <- client.getStream(config.bucket, f1S3Key).compile.toList
+      _   <- l.info(s"2 — after GET — we got back: ${new String(got.toArray, UTF_8)}")
       _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
       _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
 

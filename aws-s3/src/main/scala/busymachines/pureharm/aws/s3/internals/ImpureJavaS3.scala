@@ -59,12 +59,60 @@ private[s3] object ImpureJavaS3 {
       _ <- Interop.toF(ff)
     } yield key
 
+  def putStream[F[_]](
+    client:  S3AsyncClient
+  )(
+    bucket:  S3Bucket,
+    key:     S3FileKey,
+    content: S3BinaryStream[F],
+  )(implicit
+    F:       ConcurrentEffect[F]
+  ): F[S3FileKey] =
+    for {
+      jpath <- S3FileKey.asJPath(key).liftTo[F]
+      mimeType   = Mimetype.getInstance().getMimetype(jpath)
+      putRequest =
+        PutObjectRequest
+          .builder()
+          .bucket(bucket)
+          .key(key)
+          .contentType(mimeType)
+          .build()
+
+      //unfortunately we cannot use reactive streams publisher because
+      //then we have to supply the length... so it still means compiling the stream...
+      bytes: Array[Byte] <- {
+        content.chunks
+          .map(_.toArray)
+          .compile
+          .toList
+          .map(lob => lob.foldRight(Array.empty[Byte])((e, acc) => e ++ acc))
+      }
+
+      reqBody <- Sync[F].delay(AsyncRequestBody.fromBytes(bytes))
+
+      ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].delay(
+        client.putObject(putRequest, reqBody)
+      )
+      _ <- Interop.toF(ff)
+    } yield key
+
   def get[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
     key:    S3FileKey,
   ): F[S3BinaryContent] =
     for {
       transformer <- asyncBytesTransformer[F]
+      getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
+      content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
+    } yield content
+
+  def getStream[F[_]: Async: BlockingShifter](client: S3AsyncClient)(
+    bucket: S3Bucket,
+    key:    S3FileKey,
+  ): F[S3BinaryStream[F]] =
+    for {
+      transformer <- streamTransformer[F]
       getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
       content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
     } yield content
@@ -155,6 +203,8 @@ private[s3] object ImpureJavaS3 {
     Interop.toF(Sync[F].delay(client.deleteBucket(req))).void
   }
 
+  //bytes transformer
+
   private def asyncBytesTransformer[F[_]: Sync]: F[AsyncResponseTransformer[GetObjectResponse, S3BinaryContent]] =
     for {
       bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])
@@ -175,4 +225,34 @@ private[s3] object ImpureJavaS3 {
 
     override def exceptionOccurred(error: Throwable): Unit = impl.exceptionOccurred(error)
   }
+
+  //stream transfomer
+  private def streamTransformer[F[_]: Sync: BlockingShifter]
+    : F[AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]]] =
+    for {
+      bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])
+    } yield new StreamTransformer[F](bf)
+
+  private class StreamTransformer[F[_]: Sync: BlockingShifter](
+    private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]]
+  ) extends AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]] {
+    import java.nio.ByteBuffer
+    import java.util.concurrent.CompletableFuture
+
+    override def prepare(): CompletableFuture[S3BinaryStream[F]] =
+      impl.prepare().thenApply { cf =>
+        //
+        import fs2.io
+        val inputStream = Sync[F].delay(cf.asInputStream())
+        implicit val cs: ContextShift[F] = BlockingShifter[F].contextShift
+        io.readInputStream(fis = inputStream, chunkSize = 1024, BlockingShifter[F].blocker, closeAfterUse = false)
+      }
+
+    override def onResponse(response: GetObjectResponse): Unit = impl.onResponse(response)
+
+    override def onStream(publisher: SdkPublisher[ByteBuffer]): Unit = impl.onStream(publisher)
+
+    override def exceptionOccurred(error: Throwable): Unit = impl.exceptionOccurred(error)
+  }
+
 }

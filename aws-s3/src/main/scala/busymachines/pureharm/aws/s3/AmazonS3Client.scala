@@ -16,6 +16,8 @@
   */
 package busymachines.pureharm.aws.s3
 
+import busymachines.pureharm.effects._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
@@ -28,6 +30,10 @@ trait AmazonS3Client[F[_]] {
   def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit]
 
   def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent]
+
+  def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
+
+  def getStream(bucket: S3Bucket, key: S3FileKey): S3BinaryStream[F]
 
   def delete(bucket: S3Bucket, key: S3FileKey): F[Unit]
 
@@ -43,7 +49,7 @@ trait AmazonS3Client[F[_]] {
 
 object AmazonS3Client {
   import busymachines.pureharm.aws.core._
-  import busymachines.pureharm.effects._
+
   import busymachines.pureharm.effects.implicits._
 
   def resource[F[_]: BlockingShifter](
@@ -96,6 +102,15 @@ object AmazonS3Client {
 
     override def deleteBucket(bucket: S3Bucket): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket, config.region))
+
+    override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit
+      F:                           ConcurrentEffect[F]
+    ): F[Unit] = shifter.blockOn(internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void)
+
+    override def getStream(bucket: S3Bucket, key: S3FileKey): S3BinaryStream[F] = {
+      import fs2._
+      Stream.eval(shifter.blockOn(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key))).flatten
+    }
 
     override def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void)
