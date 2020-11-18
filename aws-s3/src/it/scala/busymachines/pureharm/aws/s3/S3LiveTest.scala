@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -22,9 +21,9 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.testkit._
+import fs2._
 
-/**
-  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+/** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-s3/src/test/resources/reference.conf``
@@ -56,75 +55,99 @@ final class S3LiveTest extends PureharmTestWithResource {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
-  test("s3 upload + get + delete") {
-    case (config, client) =>
-      for {
-        _   <- l.info(s"acquired client resource: ${client.toString}")
-        _   <-
-          client
-            .put(config.bucket, f1S3Key, f1_contents)
-            .void
-            .handleErrorWith(e => l.error(e)(s"PUT failed w/: $e"))
-        _   <- l.info(s"1 — after PUT — trying GET")
-        got <- client.get(config.bucket, f1S3Key)
-        _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
-        _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
-        _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+  test("s3 put + get + delete") { case (config, client) =>
+    for {
+      _   <- l.info(s"acquired client resource: ${client.toString}")
+      _   <-
+        client
+          .put(config.bucket, f1S3Key, f1_contents)
+          .void
+          .handleErrorWith(e => l.error(e)(s"PUT failed w/: $e"))
+      _   <- l.info(s"1 — after PUT — trying GET")
+      got <- client.get(config.bucket, f1S3Key)
+      _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
+      _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
+      _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
 
-        _ <- l.info("---- deleting file ----")
-        _ <- client.delete(config.bucket, f1S3Key)
-        _ <- l.info("---- DELETED — now trying to get back file to see----")
-        _ <-
-          client
-            .get(config.bucket, f1S3Key)
-            .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
-            .void
-            .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
-      } yield succeed
+      _ <- l.info("---- deleting file ----")
+      _ <- client.delete(config.bucket, f1S3Key)
+      _ <- l.info("---- DELETED — now trying to get back file to see----")
+      _ <-
+        client
+          .get(config.bucket, f1S3Key)
+          .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
+          .void
+          .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
+    } yield succeed
   }
 
-  test("s3 copy + exists + list") {
-    case (config, client) =>
-      for {
-        _      <- l.info(s"acquired client resource: ${client.toString}")
-        _      <-
-          client
-            .put(config.bucket, f1S3Key, f1_contents)
-            .void
-            .handleErrorWith(e => l.error(e)(s"PUT failed w/: $e"))
-        _      <- l.info(s"1 — trying COPY")
-        _      <-
-          client
-            .copy(config.bucket, f1S3Key, config.bucket, f2S3Key)
-            .void
-            .handleErrorWith(e => l.error(e)(s"COPY failed w/: $e"))
-        _      <- l.info(s"2 - after COPY - trying EXISTS")
-        exists <-
-          client
-            .exists(config.bucket, f2S3Key)
-            .handleErrorWith(e => l.error(e)(s"EXISTS failed w/: $e").map(_ => false))
-        _      <- l.info(s"2 — after EXISTS — we got back: $exists")
-        _      <- l.info(s"2 — after EXISTS — we expect: true")
-        _      <- IO(assert(exists)).onErrorF(l.info("comparison failed :(("))
-        _      <- l.info(s"3 - after EXISTS - trying LIST")
-        listReqPrefix = S3Path.unsafe("folder")
-        listResult <-
-          client
-            .list(config.bucket, listReqPrefix)
-            .handleErrorWith(e => l.error(e)(s"LIST failed w/: $e").map(_ => List()))
-        _          <- l.info(s"3 — after LIST — we got back: ${listResult.mkString("[", ",", "]")}")
-        _          <- l.info(s"3 — after LIST — we expect: ${List(f1S3Key, f2S3Key).mkString("[", ",", "]")}")
-        _          <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key))).onErrorF(l.info("comparison failed :(("))
-        _          <- l.info("---- cleanup ----")
-        _          <-
-          client
-            .delete(config.bucket, f1S3Key)
-            .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
-        _          <-
-          client
-            .delete(config.bucket, f2S3Key)
-            .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
-      } yield succeed
+  test("s3 putStream + getStream + delete") { case (config, client) =>
+    for {
+      _   <- l.info(s"acquired client resource: ${client.toString}")
+      _   <-
+        client
+          .putStream(config.bucket, f1S3Key, Stream.emits[IO, Byte](f1_contents.toSeq))
+          .void
+          .handleErrorWith(e => l.error(e)(s"PUT stream failed w/: $e"))
+      _   <- l.info(s"1 — after PUT — trying GET")
+      got <- client.getStream(config.bucket, f1S3Key).compile.toList
+      _   <- l.info(s"2 — after GET — we got back: ${new String(got.toArray, UTF_8)}")
+      _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
+      _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+
+      _ <- l.info("---- deleting file ----")
+      _ <- client.delete(config.bucket, f1S3Key)
+      _ <- l.info("---- DELETED — now trying to get back file to see----")
+      _ <-
+        client
+          .get(config.bucket, f1S3Key)
+          .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
+          .void
+          .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
+    } yield succeed
+  }
+
+  test("s3 copy + exists + list") { case (config, client) =>
+    for {
+      _      <- l.info(s"acquired client resource: ${client.toString}")
+      _      <-
+        client
+          .put(config.bucket, f1S3Key, f1_contents)
+          .void
+          .handleErrorWith(e => l.error(e)(s"PUT failed w/: $e"))
+      _      <- l.info(s"1 — trying COPY")
+      _      <-
+        client
+          .copy(config.bucket, f1S3Key, config.bucket, f2S3Key)
+          .void
+          .handleErrorWith(e => l.error(e)(s"COPY failed w/: $e"))
+      _      <- l.info(s"2 - after COPY - trying EXISTS")
+      exists <-
+        client
+          .exists(config.bucket, f2S3Key)
+          .handleErrorWith(e => l.error(e)(s"EXISTS failed w/: $e").map(_ => false))
+      _      <- l.info(s"2 — after EXISTS — we got back: $exists")
+      _      <- l.info(s"2 — after EXISTS — we expect: true")
+      _      <- IO(assert(exists)).onErrorF(l.info("comparison failed :(("))
+      _      <- l.info(s"3 - after EXISTS - trying LIST")
+      listReqPrefix = S3Path.unsafe("folder")
+      listResult <-
+        client
+          .list(config.bucket, listReqPrefix)
+          .handleErrorWith(e => l.error(e)(s"LIST failed w/: $e").map(_ => List()))
+      _          <- l.info(s"3 — after LIST — we got back: ${listResult.mkString("[", ",", "]")}")
+      _          <- l.info(s"3 — after LIST — we expect: ${List(f1S3Key, f2S3Key).mkString("[", ",", "]")}")
+      _          <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key))).onErrorF(l.info("comparison failed :(("))
+      _          <- l.info("---- cleanup ----")
+      _          <-
+        client
+          .delete(config.bucket, f1S3Key)
+          .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
+      _          <-
+        client
+          .delete(config.bucket, f2S3Key)
+          .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
+    } yield succeed
   }
 
 }

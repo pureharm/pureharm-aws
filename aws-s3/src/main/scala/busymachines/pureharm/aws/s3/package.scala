@@ -32,6 +32,8 @@ package object s3 {
   object S3BinaryContent extends PhantomType[Array[Byte]]
   type S3BinaryContent = S3BinaryContent.Type
 
+  type S3BinaryStream[F[_]] = fs2.Stream[F, Byte]
+
   object S3Bucket extends PhantomType[String]
   type S3Bucket = S3Bucket.Type
 

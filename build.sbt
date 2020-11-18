@@ -87,6 +87,8 @@ lazy val `aws-s3` = project
     name := "pureharm-aws-s3",
     libraryDependencies ++= Seq(
       monixCatnap.withDottyCompat(scalaVersion.value),
+      fs2Core.withDottyCompat(scalaVersion.value),
+      fs2IO.withDottyCompat(scalaVersion.value),
       pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
       pureharmCorePhantom.withDottyCompat(scalaVersion.value),
       pureharmEffectsCats.withDottyCompat(scalaVersion.value),
@@ -189,10 +191,10 @@ lazy val monixVersion:           String = "3.2.2"    //https://github.com/monix/
 lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val awsJavaSdkVersion:      String = "1.11.896" //java — https://github.com/aws/aws-sdk-java/releases
 lazy val awsJavaSdkV2Version:    String = "2.15.23"  //java — https://github.com/aws/aws-sdk-java-v2/releases
-
+lazy val fs2Version:             String = "2.4.5"    //https://github.com/typelevel/fs2/releases/tag/v2.4.5
 //these are used only for testing
-lazy val logbackVersion: String = "1.2.3"  //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:  String = "0.21.8" //https://github.com/http4s/http4s/releases
+lazy val logbackVersion:         String = "1.2.3"    //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:          String = "0.21.8"   //https://github.com/http4s/http4s/releases
 
 //#############################################################################
 //################################### SCALA ###################################
@@ -225,6 +227,9 @@ lazy val pureharmTestkit:          ModuleID = pureharm("testkit")
 //https://github.com/monix/monix/releases
 //we use this to interop with Java Futures from AWS stuff
 lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion withSources ()
+
+lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2Version withSources ()
+lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2Version withSources ()
 
 //used only for testing
 //https://github.com/http4s/http4s/releases
