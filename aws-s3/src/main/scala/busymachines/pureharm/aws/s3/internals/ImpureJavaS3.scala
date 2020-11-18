@@ -192,8 +192,7 @@ private[s3] object ImpureJavaS3 {
   }
 
   def deleteBucket[F[_]: Async](client: S3AsyncClient)(
-    bucket: S3Bucket,
-    region: AmazonRegion,
+    bucket: S3Bucket
   ): F[Unit] = {
     val req = DeleteBucketRequest
       .builder()

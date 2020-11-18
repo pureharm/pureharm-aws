@@ -101,7 +101,7 @@ object AmazonS3Client {
       shifter.blockOn(internals.ImpureJavaS3.createBucket(s3Client)(bucket, config.region))
 
     override def deleteBucket(bucket: S3Bucket): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket, config.region))
+      shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket))
 
     override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit
       F:                           ConcurrentEffect[F]
