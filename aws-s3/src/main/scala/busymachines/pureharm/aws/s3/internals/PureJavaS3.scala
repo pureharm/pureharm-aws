@@ -44,7 +44,6 @@ private[s3] object PureJavaS3 {
       S3Configuration.builder().build()
 
     import scala.jdk.CollectionConverters._
-    import scala.collection.compat._ //FIXME: once we're only on scala 2.13 this is no longer necessary
 
     val headers: java.util.Map[String, java.util.List[String]] =
       config.headers.groupBy(_.name).view.mapValues(_.map(_.value).asJava).toMap.asJava

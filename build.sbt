@@ -15,7 +15,6 @@
   * limitations under the License.
   */
 // format: off
-addCommandAlias(name = "useScala212", value = s"++${CompilerSettings.scala2_12}")
 addCommandAlias(name = "useScala213", value = s"++${CompilerSettings.scala2_13}")
 addCommandAlias(name = "useScala30",  value = s"++${CompilerSettings.scala3_0}")
 
@@ -29,9 +28,8 @@ addCommandAlias(name = "ci-quick",       value = ";scalafmtCheck;build;test;it")
 addCommandAlias(name = "doLocal",        value = ";clean;update;compile;publishLocal")
 
 addCommandAlias(name = "cleanPublishSigned", value = ";recompile;publishSigned")
-addCommandAlias(name = "do212Release",       value = ";useScala212;cleanPublishSigned;sonatypeBundleRelease")
 addCommandAlias(name = "do213Release",       value = ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
-addCommandAlias(name = "doRelease",          value = ";do212Release;do213Release")
+addCommandAlias(name = "doRelease",          value = ";do213Release")
 
 addCommandAlias(name = "lint", value = ";scalafixEnable;rebuild;scalafix;scalafmtAll")
 
@@ -185,24 +183,15 @@ lazy val `aws-sns` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:        String = "0.0.6"    //https://github.com/busymachines/pureharm/releases
-lazy val scalaCollCompatVersion: String = "2.3.1"    //https://github.com/scala/scala-collection-compat/releases
-lazy val monixVersion:           String = "3.3.0"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:        String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:      String = "1.11.921" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version:    String = "2.15.48"  //java — https://github.com/aws/aws-sdk-java-v2/releases
-lazy val fs2Version:             String = "2.4.6"    //https://github.com/typelevel/fs2/releases
+lazy val pureharmVersion:     String = "0.0.7-M1" //https://github.com/busymachines/pureharm/releases
+lazy val monixVersion:        String = "3.3.0"    //https://github.com/monix/monix/releases
+lazy val log4catsVersion:     String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:   String = "1.11.921" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version: String = "2.15.48"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val fs2Version:          String = "2.4.6"    //https://github.com/typelevel/fs2/releases
 //these are used only for testing
-lazy val logbackVersion:         String = "1.2.3"    //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:          String = "0.21.14"  //https://github.com/http4s/http4s/releases
-
-//#############################################################################
-//################################### SCALA ###################################
-//#############################################################################
-
-//https://github.com/scala/scala-collection-compat/releases
-lazy val scalaCollectionCompat: ModuleID =
-  "org.scala-lang.modules" %% "scala-collection-compat" % scalaCollCompatVersion withSources ()
+lazy val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:       String = "0.21.14"  //https://github.com/http4s/http4s/releases
 
 //#############################################################################
 //################################# PUREHARM ##################################
