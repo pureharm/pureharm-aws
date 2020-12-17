@@ -183,7 +183,7 @@ lazy val `aws-sns` = project
 //#############################################################################
 //#############################################################################
 
-lazy val pureharmVersion:     String = "0.0.7-M1" //https://github.com/busymachines/pureharm/releases
+lazy val pureharmVersion:     String = "0.0.7-M2" //https://github.com/busymachines/pureharm/releases
 lazy val monixVersion:        String = "3.3.0"    //https://github.com/monix/monix/releases
 lazy val log4catsVersion:     String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val awsJavaSdkVersion:   String = "1.11.921" //java — https://github.com/aws/aws-sdk-java/releases
