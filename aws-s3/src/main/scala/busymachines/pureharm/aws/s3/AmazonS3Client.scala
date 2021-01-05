@@ -103,6 +103,12 @@ object AmazonS3Client {
     override def deleteBucket(bucket: S3Bucket): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket))
 
+    override def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit] =
+      shifter.blockOn(internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void)
+
+    override def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent] =
+      shifter.blockOn(internals.ImpureJavaS3.get(s3Client)(bucket, key))
+
     override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit
       F:                           ConcurrentEffect[F]
     ): F[Unit] = shifter.blockOn(internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void)
@@ -111,15 +117,6 @@ object AmazonS3Client {
       import fs2._
       Stream.eval(shifter.blockOn(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key))).flatten
     }
-
-    override def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void)
-
-    override def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent] =
-      shifter.blockOn(internals.ImpureJavaS3.get(s3Client)(bucket, key))
-
-    override def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL] =
-      AmazonS3Client.downloadURL(config.region, bucket, key).pure[F]
 
     override def delete(bucket: S3Bucket, key: S3FileKey): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.delete(s3Client)(bucket, key))
@@ -132,6 +129,10 @@ object AmazonS3Client {
 
     override def copy(fromBucket: S3Bucket, fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.copy(s3Client)(fromBucket, fromKey, toBucket, toKey))
+
+    override def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL] =
+      AmazonS3Client.downloadURL(config.region, bucket, key).pure[F]
+
   }
 
   private class AmazonS3ClientForBucketImpl[F[_]](
@@ -145,11 +146,14 @@ object AmazonS3Client {
     override def get(key: S3FileKey): F[S3BinaryContent] =
       client.get(bucket, key)
 
+    override def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit] =
+      client.putStream(bucket, key, content)
+
+    override def getStream(key: S3FileKey): S3BinaryStream[F] =
+      client.getStream(bucket, key)
+
     override def delete(key: S3FileKey): F[Unit] =
       client.delete(bucket, key)
-
-    override def downloadURL(key: S3FileKey): F[S3DownloadURL] =
-      client.downloadURL(bucket, key)
 
     override def list(prefix: S3Path): F[List[S3FileKey]] =
       client.list(bucket, prefix)
@@ -162,6 +166,9 @@ object AmazonS3Client {
 
     override def copy(fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit] =
       client.copy(bucket, fromKey, toBucket, toKey)
+
+    override def downloadURL(key: S3FileKey): F[S3DownloadURL] =
+      client.downloadURL(bucket, key)
 
   }
 }
