@@ -8,15 +8,15 @@ development a breeze.
 
 ## modules
 
-Depend on [pureharm kernel, config, json](https://github.com/busymachines/pureharm/releases) `0.0.7-M1`
+Depend on [pureharm kernel, config, json](https://github.com/busymachines/pureharm/releases) `0.0.7-M3`
 
 The available modules are (for Scala 2.13):
 
-- `"com.busymachines" %% s"pureharm-aws-core" % "0.0.7-M1"`
-- `"com.busymachines" %% s"pureharm-aws-s3" % "0.0.7-M1"`
-- `"com.busymachines" %% s"pureharm-aws-sns" % "0.0.7-M1"`
-- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.0.7-M1"`
-- `"com.busymachines" %% s"pureharm-aws-logger" % "0.0.7-M1"`
+- `"com.busymachines" %% s"pureharm-aws-core" % "0.0.7-M3"`
+- `"com.busymachines" %% s"pureharm-aws-s3" % "0.0.7-M3"`
+- `"com.busymachines" %% s"pureharm-aws-sns" % "0.0.7-M3"`
+- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.0.7-M3"`
+- `"com.busymachines" %% s"pureharm-aws-logger" % "0.0.7-M3"`
 
 ### For the impatient
 
