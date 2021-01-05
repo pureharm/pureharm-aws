@@ -16,6 +16,8 @@
   */
 package busymachines.pureharm.aws.s3
 
+import busymachines.pureharm.effects.ConcurrentEffect
+
 /** Convenience trait.
   * Same as [[AmazonS3Client]] but uses the same bucket
   *
@@ -30,9 +32,11 @@ trait AmazonS3ClientForBucket[F[_]] {
 
   def get(key: S3FileKey): F[S3BinaryContent]
 
-  def delete(key: S3FileKey): F[Unit]
+  def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
 
-  def downloadURL(key: S3FileKey): F[S3DownloadURL]
+  def getStream(key: S3FileKey): S3BinaryStream[F]
+
+  def delete(key: S3FileKey): F[Unit]
 
   def list(prefix: S3Path): F[List[S3FileKey]]
 
@@ -42,4 +46,5 @@ trait AmazonS3ClientForBucket[F[_]] {
 
   def copy(fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit]
 
+  def downloadURL(key: S3FileKey): F[S3DownloadURL]
 }
