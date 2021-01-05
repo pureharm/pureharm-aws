@@ -188,7 +188,7 @@ lazy val monixVersion:        String = "3.3.0"    //https://github.com/monix/mon
 lazy val log4catsVersion:     String = "1.1.1"    //https://github.com/ChristopherDavenport/log4cats/releases
 lazy val awsJavaSdkVersion:   String = "1.11.931" //java — https://github.com/aws/aws-sdk-java/releases
 lazy val awsJavaSdkV2Version: String = "2.15.58"  //java — https://github.com/aws/aws-sdk-java-v2/releases
-lazy val fs2Version:          String = "2.4.6"    //https://github.com/typelevel/fs2/releases
+lazy val fs2Version:          String = "2.5.0"    //https://github.com/typelevel/fs2/releases
 //these are used only for testing
 lazy val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
 lazy val http4sVersion:       String = "0.21.14"  //https://github.com/http4s/http4s/releases
