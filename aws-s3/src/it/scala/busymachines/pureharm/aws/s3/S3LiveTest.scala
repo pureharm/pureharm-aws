@@ -55,6 +55,19 @@ final class S3LiveTest extends PureharmTestWithResource {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
+  test("s3 init bucket + list bucket") { case (config, client) =>
+    val newBucket = S3Bucket("testinitbucket")
+    for {
+      buckets <- client.listBuckets
+      _ = assert(buckets.contains(config.bucket))
+      att1: Attempt[Unit] <- client.initBucket(config.bucket).attempt
+      _ = assertSuccess(att1)(())
+      _ <- Resource.make(client.initBucket(newBucket))(_ => client.deleteBucket(newBucket).attempt.void).use { _ =>
+        client.listBuckets.map(bs => IO(assert(bs.contains(newBucket))))
+      }
+    } yield succeed
+  }
+
   test("s3 put + get + delete") { case (config, client) =>
     for {
       _   <- l.info(s"acquired client resource: ${client.toString}")

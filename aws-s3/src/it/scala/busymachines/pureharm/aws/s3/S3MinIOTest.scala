@@ -44,7 +44,7 @@ final class S3MinIOTest extends PureharmTestWithResource {
     s3Client <- AmazonS3Client.resource[IO](config)
     _        <- Resource.liftF(l.info(s"creating minio bucket"))
     _        <- Resource.liftF(s3Client.deleteBucket(config.bucket).attempt.void) // just in case
-    _        <- Resource.make(s3Client.createBucket(config.bucket))(_ => s3Client.deleteBucket(config.bucket))
+    _        <- Resource.make(s3Client.initBucket(config.bucket))(_ => s3Client.deleteBucket(config.bucket))
     _        <- Resource.liftF(l.info(s"created minio bucket"))
   } yield (config, s3Client)
 
@@ -57,6 +57,19 @@ final class S3MinIOTest extends PureharmTestWithResource {
   private val f1_contents: S3BinaryContent = S3BinaryContent(
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
+
+  test("minio init bucket + list bucket") { case (config, client) =>
+    val newBucket = S3Bucket("testinitbucket")
+    for {
+      buckets <- client.listBuckets
+      _ = assert(buckets.contains(config.bucket))
+      att1: Attempt[Unit] <- client.initBucket(config.bucket).attempt
+      _ = assertSuccess(att1)(())
+      _ <- Resource.make(client.initBucket(newBucket))(_ => client.deleteBucket(newBucket).attempt.void).use { _ =>
+        client.listBuckets.map(bs => IO(assert(bs.contains(newBucket))))
+      }
+    } yield succeed
+  }
 
   test("minio put + get + delete") { case (config, client) =>
     for {
