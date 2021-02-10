@@ -28,13 +28,13 @@ object CompilerSettings {
   //https://github.com/oleg-py/better-monadic-for/releases
   lazy val betterMonadicFor = "com.olegpy"    %% "better-monadic-for" % "0.3.1"
 
-  lazy val organizationName: String = "com.busymachines"
-  lazy val pureharmHomepage: String = "https://github.com/busymachines/pureharm"
+  lazy val organizationName:    String = "com.busymachines"
+  lazy val pureharmAWSHomepage: String = "https://github.com/busymachines/pureharm-aws"
 
   def commonSettings: Seq[Setting[_]] =
     Seq(
       organization in ThisBuild := organizationName,
-      homepage                  := Some(url(pureharmHomepage)),
+      homepage                  := Some(url(pureharmAWSHomepage)),
       scalaVersion              := mainScalaVersion,
       crossScalaVersions        := List(scala2_13, scala3_0),
       libraryDependencies ++= (if (isDotty.value) {
