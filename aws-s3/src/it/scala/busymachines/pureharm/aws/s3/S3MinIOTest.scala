@@ -16,8 +16,8 @@
   */
 package busymachines.pureharm.aws.s3
 
-import io.chrisdavenport.log4cats.StructuredLogger
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.StructuredLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._

@@ -19,7 +19,7 @@ package busymachines.pureharm.aws.logger.internals
 import busymachines.pureharm.aws.logger._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
-import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 
 /** Logger that only logs to remote (except failures while trying
   * to connect to AWS, which it logs locally).

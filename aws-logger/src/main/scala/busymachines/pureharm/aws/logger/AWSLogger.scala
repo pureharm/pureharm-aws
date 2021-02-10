@@ -17,7 +17,7 @@
 package busymachines.pureharm.aws.logger
 
 import busymachines.pureharm.effects._
-import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 /** Logger that also logs to AWS, not only to the local machine.
   *
   * Can only be built using the [[AWSLoggerFactory]] for

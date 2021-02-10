@@ -17,7 +17,7 @@
 package busymachines.pureharm.aws.logger
 
 import busymachines.pureharm.effects._
-import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 
 /** Because building these amazon thingies is not thread safe,
   * we have to build a thread safe builder
