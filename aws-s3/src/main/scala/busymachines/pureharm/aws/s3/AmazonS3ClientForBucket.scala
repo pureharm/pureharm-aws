@@ -28,6 +28,10 @@ trait AmazonS3ClientForBucket[F[_]] {
 
   def bucket: S3Bucket
 
+  /** @see [[AmazonS3Client.initBucket]]
+    */
+  def initBucket: F[Unit]
+
   def put(key: S3FileKey, content: S3BinaryContent): F[Unit]
 
   def get(key: S3FileKey): F[S3BinaryContent]

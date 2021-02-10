@@ -17,11 +17,21 @@
 package busymachines.pureharm.aws.s3
 
 import busymachines.pureharm.effects._
+import software.amazon.awssdk.services.s3.S3AsyncClient
+import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 10 Jul 2019
   */
 trait AmazonS3Client[F[_]] {
+
+  /** Creates a bucket if it doesn't already exist.
+    * Does not change existing buckets, does not
+    * fail if bucket already exist.
+    */
+  def initBucket(bucket: S3Bucket): F[Unit]
+
+  def listBuckets: F[List[S3Bucket]]
 
   def createBucket(bucket: S3Bucket): F[Unit]
 
@@ -91,11 +101,30 @@ object AmazonS3Client {
 
   private class AmazonS3ClientImpl[F[_]](
     private val s3Client:         S3AsyncClient,
-    private val config:           S3Config,
+    override val config:          S3Config,
   )(
     implicit private val F:       Async[F],
     implicit private val shifter: BlockingShifter[F],
   ) extends AmazonS3Client[F] {
+
+    override def initBucket(bucket: S3Bucket): F[Unit] =
+      for {
+        buckets <- this.listBuckets
+        _       <-
+          if (buckets.contains(bucket)) {
+            F.unit
+          }
+          else {
+            this.createBucket(bucket).recoverWith { case _: BucketAlreadyExistsException =>
+              F.unit
+            //in case we are dealing with a race condition, we just silently ignore if
+            //someone else created the bucket before
+            }
+          }
+      } yield ()
+
+    override def listBuckets: F[List[S3Bucket]] =
+      shifter.blockOn(internals.ImpureJavaS3.listBuckets(s3Client))
 
     override def createBucket(bucket: S3Bucket): F[Unit] =
       shifter.blockOn(internals.ImpureJavaS3.createBucket(s3Client)(bucket, config.region))
@@ -139,6 +168,9 @@ object AmazonS3Client {
     override val bucket: S3Bucket,
     private val client:  AmazonS3Client[F],
   ) extends AmazonS3ClientForBucket[F] {
+
+    override def initBucket: F[Unit] =
+      client.initBucket(bucket)
 
     override def put(key: S3FileKey, content: S3BinaryContent): F[Unit] =
       client.put(bucket, key, content)
