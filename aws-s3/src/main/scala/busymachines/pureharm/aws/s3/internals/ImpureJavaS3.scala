@@ -173,6 +173,17 @@ private[s3] object ImpureJavaS3 {
     } yield ()
   }
 
+  def listBuckets[F[_]: Async](client: S3AsyncClient): F[List[S3Bucket]] = {
+    val req = ListBucketsRequest
+      .builder()
+      .build()
+
+    Interop.toF(Sync[F].delay(client.listBuckets(req))).map { resp =>
+      import scala.jdk.CollectionConverters._
+      (resp.buckets().asScala.toList).map(b => S3Bucket.spook(b.name()))
+    }
+  }
+
   def createBucket[F[_]: Async](client: S3AsyncClient)(
     bucket: S3Bucket,
     region: AmazonRegion,
