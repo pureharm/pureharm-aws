@@ -17,6 +17,7 @@
 package busymachines.pureharm.aws.s3
 
 import busymachines.pureharm.effects.ConcurrentEffect
+import software.amazon.awssdk.services.s3.S3AsyncClient
 
 /** Convenience trait.
   * Same as [[AmazonS3Client]] but uses the same bucket
@@ -51,4 +52,10 @@ trait AmazonS3ClientForBucket[F[_]] {
   def copy(fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit]
 
   def downloadURL(key: S3FileKey): F[S3DownloadURL]
+
+  def s3Client: AmazonS3Client[F]
+
+  def unsafeJavaClient: S3AsyncClient
+
+  def config: S3Config
 }

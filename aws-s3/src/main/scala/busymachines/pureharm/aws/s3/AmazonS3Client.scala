@@ -55,6 +55,23 @@ trait AmazonS3Client[F[_]] {
 
   def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL]
 
+  /** Here until the API is more complete,
+    * please use with care especially
+    * because of all the thread management
+    *
+    * N.B.
+    * DO NOT close this manually, unless you know
+    * what you're doing. This should be handled
+    * by the Resource[F, AmazonS3Client] constructor
+    * in the companion object.
+    *
+    * @see [[busymachines.pureharm.aws.s3.internals.ImpureJavaS3]]
+    *      for hints on how to use everything.
+    */
+  def unsafeJavaClient: S3AsyncClient
+
+  def config: S3Config
+
 }
 
 object AmazonS3Client {
@@ -162,6 +179,8 @@ object AmazonS3Client {
     override def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL] =
       AmazonS3Client.downloadURL(config.region, bucket, key).pure[F]
 
+    def unsafeJavaClient: S3AsyncClient = s3Client
+
   }
 
   private class AmazonS3ClientForBucketImpl[F[_]](
@@ -201,6 +220,12 @@ object AmazonS3Client {
 
     override def downloadURL(key: S3FileKey): F[S3DownloadURL] =
       client.downloadURL(bucket, key)
+
+    override def s3Client: AmazonS3Client[F] = client
+
+    override def unsafeJavaClient: S3AsyncClient = client.unsafeJavaClient
+
+    override def config: S3Config = client.config
 
   }
 }
