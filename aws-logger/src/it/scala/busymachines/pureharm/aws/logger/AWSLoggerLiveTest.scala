@@ -20,7 +20,7 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import busymachines.pureharm.testkit._
 import scala.concurrent.duration._

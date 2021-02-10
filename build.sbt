@@ -250,7 +250,7 @@ lazy val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2Ve
 //#############################################################################
 
 //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % log4catsVersion withSources ()
+lazy val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion withSources ()
 
 //https://github.com/qos-ch/logback/releases — it is the backend implementation used by log4cats-slf4j
 lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion withSources ()
