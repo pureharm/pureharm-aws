@@ -21,7 +21,7 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
     override val distributionDomain: CloudfrontDistributionDomain,
     override val keyPairID:          CloudfrontKeyPairID,
     override val urlExpirationTime:  CloudfrontURLExpiration,
-    val privateKeyFilePath:          CloudfrontPrivateKeyFilePath,
+    privateKeyFilePath:              CloudfrontPrivateKeyFilePath,
   ) extends CloudfrontConfig
 
   final case class WithPrivateKey(
@@ -37,7 +37,7 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
     ConfigReader[String].emap(s =>
       CloudfrontPrivateKey(s).leftMap(an =>
         CannotConvert(
-          value   = s"CloudfrontPrivateKeyValue — truncated(10): ${s.take(20)}",
+          value   = s"CloudfrontPrivateKeyValue — truncated(20): ${s.take(20)}",
           toType  = "CloudfrontPrivateKey",
           because = an.toString,
         )
