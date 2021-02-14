@@ -43,7 +43,7 @@ trait AmazonS3Client[F[_]] {
 
   def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
 
-  def getStream(bucket: S3Bucket, key: S3FileKey): S3BinaryStream[F]
+  def getStream(bucket: S3Bucket, key: S3FileKey, chunkSize: Int = 1024 * 512): S3BinaryStream[F]
 
   def delete(bucket: S3Bucket, key: S3FileKey): F[Unit]
 
@@ -159,9 +159,9 @@ object AmazonS3Client {
       F:                           ConcurrentEffect[F]
     ): F[Unit] = shifter.blockOn(internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void)
 
-    override def getStream(bucket: S3Bucket, key: S3FileKey): S3BinaryStream[F] = {
+    override def getStream(bucket: S3Bucket, key: S3FileKey, chunkSize: Int): S3BinaryStream[F] = {
       import fs2._
-      Stream.eval(shifter.blockOn(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key))).flatten
+      Stream.eval(shifter.blockOn(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key, chunkSize))).flatten
     }
 
     override def delete(bucket: S3Bucket, key: S3FileKey): F[Unit] =
@@ -200,8 +200,8 @@ object AmazonS3Client {
     override def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit] =
       client.putStream(bucket, key, content)
 
-    override def getStream(key: S3FileKey): S3BinaryStream[F] =
-      client.getStream(bucket, key)
+    override def getStream(key: S3FileKey, chunkSize: Int): S3BinaryStream[F] =
+      client.getStream(bucket, key, chunkSize)
 
     override def delete(key: S3FileKey): F[Unit] =
       client.delete(bucket, key)

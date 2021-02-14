@@ -108,11 +108,12 @@ private[s3] object ImpureJavaS3 {
     } yield content
 
   def getStream[F[_]: Async: BlockingShifter](client: S3AsyncClient)(
-    bucket: S3Bucket,
-    key:    S3FileKey,
+    bucket:    S3Bucket,
+    key:       S3FileKey,
+    chunkSize: Int,
   ): F[S3BinaryStream[F]] =
     for {
-      transformer <- streamTransformer[F]
+      transformer <- streamTransformer[F](chunkSize)
       getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
       content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
     } yield content
@@ -236,15 +237,16 @@ private[s3] object ImpureJavaS3 {
     override def exceptionOccurred(error: Throwable): Unit = impl.exceptionOccurred(error)
   }
 
-  //stream transfomer
-  private def streamTransformer[F[_]: Sync: BlockingShifter]
-    : F[AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]]] =
+  private def streamTransformer[F[_]: Sync: BlockingShifter](
+    chunkSize: Int
+  ): F[AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]]] =
     for {
       bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])
-    } yield new StreamTransformer[F](bf)
+    } yield new StreamTransformer[F](chunkSize, bf)
 
   private class StreamTransformer[F[_]: Sync: BlockingShifter](
-    private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]]
+    val chunkSize:    Int,
+    private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]],
   ) extends AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]] {
     import java.nio.ByteBuffer
     import java.util.concurrent.CompletableFuture
@@ -255,7 +257,7 @@ private[s3] object ImpureJavaS3 {
         import fs2.io
         val inputStream = Sync[F].delay(cf.asInputStream())
         implicit val cs: ContextShift[F] = BlockingShifter[F].contextShift
-        io.readInputStream(fis = inputStream, chunkSize = 1024, BlockingShifter[F].blocker, closeAfterUse = false)
+        io.readInputStream(fis = inputStream, chunkSize = chunkSize, BlockingShifter[F].blocker, closeAfterUse = false)
       }
 
     override def onResponse(response: GetObjectResponse): Unit = impl.onResponse(response)
