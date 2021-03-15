@@ -184,14 +184,14 @@ lazy val `aws-sns` = project
 //#############################################################################
 
 lazy val pureharmVersion:     String = "0.0.7"    //https://github.com/busymachines/pureharm/releases
-lazy val monixVersion:        String = "3.3.0"     //https://github.com/monix/monix/releases
-lazy val log4catsVersion:     String = "1.2.0" //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:   String = "1.11.974"  //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version: String = "2.16.18"   //java — https://github.com/aws/aws-sdk-java-v2/releases
-lazy val fs2Version:          String = "2.5.3"     //https://github.com/typelevel/fs2/releases
+lazy val monixVersion:        String = "3.3.0"    //https://github.com/monix/monix/releases
+lazy val log4catsVersion:     String = "1.2.0"    //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val awsJavaSdkVersion:   String = "1.11.974" //java — https://github.com/aws/aws-sdk-java/releases
+lazy val awsJavaSdkV2Version: String = "2.16.18"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+lazy val fs2Version:          String = "2.5.3"    //https://github.com/typelevel/fs2/releases
 //these are used only for testing
-lazy val logbackVersion:      String = "1.2.3"     //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:       String = "0.21.19"   //https://github.com/http4s/http4s/releases
+lazy val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
+lazy val http4sVersion:       String = "0.21.20"  //https://github.com/http4s/http4s/releases
 
 //#############################################################################
 //################################# PUREHARM ##################################
