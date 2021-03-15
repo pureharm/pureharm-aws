@@ -131,4 +131,6 @@ package object s3 {
   object S3EndpointOverride extends SproutSub[java.net.URI]
   type S3EndpointOverride = S3EndpointOverride.Type
 
+  object S3ContentLengthBytes extends Sprout[Long] with SproutShow[Long] with SproutEq[Long] with SproutOrder[Long]
+  type S3ContentLengthBytes = S3ContentLengthBytes.Type
 }

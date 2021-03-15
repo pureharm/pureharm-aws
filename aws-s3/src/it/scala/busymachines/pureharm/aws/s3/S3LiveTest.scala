@@ -55,6 +55,8 @@ final class S3LiveTest extends PureharmTestWithResource {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
+  private val f1_content_length: S3ContentLengthBytes = S3ContentLengthBytes(22L)
+
   test("s3 init bucket + list bucket") { case (config, client) =>
     val newBucket = S3Bucket("testinitbucket")
     for {
@@ -81,6 +83,10 @@ final class S3LiveTest extends PureharmTestWithResource {
       _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
       _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
       _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+
+      metadata <- client.getMetadata(config.bucket, f1S3Key)
+      _        <- l.info(s"3 — after GET metadata — we got back: $metadata")
+      _        <- IO(assert(metadata.contentLength == f1_content_length, "content length"))
 
       _ <- l.info("---- deleting file ----")
       _ <- client.delete(config.bucket, f1S3Key)

@@ -41,6 +41,8 @@ trait AmazonS3Client[F[_]] {
 
   def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent]
 
+  def getMetadata(bucket: S3Bucket, key: S3FileKey): F[S3Metadata]
+
   def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
 
   def getStream(bucket: S3Bucket, key: S3FileKey, chunkSize: Int = 1024 * 512): S3BinaryStream[F]
@@ -155,6 +157,9 @@ object AmazonS3Client {
     override def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent] =
       shifter.blockOn(internals.ImpureJavaS3.get(s3Client)(bucket, key))
 
+    override def getMetadata(bucket: S3Bucket, key: S3FileKey): F[S3Metadata] =
+      shifter.blockOn(internals.ImpureJavaS3.getMetadata[F](s3Client)(bucket, key))
+
     override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit
       F:                           ConcurrentEffect[F]
     ): F[Unit] = shifter.blockOn(internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void)
@@ -196,6 +201,9 @@ object AmazonS3Client {
 
     override def get(key: S3FileKey): F[S3BinaryContent] =
       client.get(bucket, key)
+
+    override def getMetadata(key: S3FileKey): F[S3Metadata] =
+      client.getMetadata(bucket, key)
 
     override def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit] =
       client.putStream(bucket, key, content)
