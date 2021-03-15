@@ -122,7 +122,7 @@ object AWSLogger {
     * @author Lorand Szakacs, https://github.com/lorandszakacs
     * @since 23 Apr 2019
     */
-  final private[logger] class DummyAWSLoggerImpl[F[_]: Sync](
+  final private[logger] class DummyAWSLoggerImpl[F[_]](
     private val local: SelfAwareStructuredLogger[F]
   ) extends AWSLogger[F] {
 

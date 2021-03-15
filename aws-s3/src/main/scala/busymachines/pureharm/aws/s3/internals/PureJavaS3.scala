@@ -16,7 +16,6 @@
   */
 package busymachines.pureharm.aws.s3.internals
 
-import busymachines.pureharm.aws.core._
 import busymachines.pureharm.aws.s3._
 import scala.concurrent.duration.FiniteDuration
 
