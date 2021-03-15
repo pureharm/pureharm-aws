@@ -32,10 +32,9 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
     privateKeyFormat:                CloudfrontPrivateKey.Format,
   ) extends CloudfrontConfig
 
-  //TODO: add safe phantom type support in pureconfig
   implicit protected val privateKeyReader: ConfigReader[CloudfrontPrivateKey] =
     ConfigReader[String].emap(s =>
-      CloudfrontPrivateKey(s).leftMap(an =>
+      CloudfrontPrivateKey[Attempt](s).leftMap(an =>
         CannotConvert(
           value   = s"CloudfrontPrivateKeyValue — truncated(20): ${s.take(20)}",
           toType  = "CloudfrontPrivateKey",

@@ -42,7 +42,7 @@ private[s3] object ImpureJavaS3 {
     F:       Async[F]
   ): F[S3FileKey] =
     for {
-      jpath <- S3FileKey.asJPath(key).liftTo[F]
+      jpath <- S3FileKey.asJPath[F](key)
       mimeType   = Mimetype.getInstance().getMimetype(jpath)
       putRequest =
         PutObjectRequest
@@ -69,7 +69,7 @@ private[s3] object ImpureJavaS3 {
     F:       ConcurrentEffect[F]
   ): F[S3FileKey] =
     for {
-      jpath <- S3FileKey.asJPath(key).liftTo[F]
+      jpath <- S3FileKey.asJPath[F](key)
       mimeType   = Mimetype.getInstance().getMimetype(jpath)
       putRequest =
         PutObjectRequest
@@ -137,7 +137,7 @@ private[s3] object ImpureJavaS3 {
       keys    <-
         Interop
           .toF(Sync[F].delay(client.listObjects(listReq)))
-          .map(_.contents().asScala.toList.map(obj => S3FileKey.unsafe(obj.key())))
+          .flatMap(_.contents().asScala.toList.traverse(obj => S3FileKey[F](obj.key())))
     } yield keys
   }
 
@@ -181,7 +181,7 @@ private[s3] object ImpureJavaS3 {
 
     Interop.toF(Sync[F].delay(client.listBuckets(req))).map { resp =>
       import scala.jdk.CollectionConverters._
-      (resp.buckets().asScala.toList).map(b => S3Bucket.spook(b.name()))
+      resp.buckets().asScala.toList.map(b => S3Bucket(b.name()))
     }
   }
 

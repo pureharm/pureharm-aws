@@ -30,7 +30,7 @@ final class CloudfrontConfigLoaderTest extends PureharmTest {
       config === CloudfrontConfig.WithPrivateKey(
         distributionDomain = CloudfrontDistributionDomain("test.cloudfront.net"),
         keyPairID          = CloudfrontKeyPairID("test-key-pair-id"),
-        privateKey         = CloudfrontPrivateKey.unsafe("BLABLABLA"),
+        privateKey         = CloudfrontPrivateKey[Try]("BLABLABLA").get,
         privateKeyFormat   = CloudfrontPrivateKey.PEM,
         urlExpirationTime  = CloudfrontURLExpiration(7.days),
       )
@@ -44,7 +44,7 @@ final class CloudfrontConfigLoaderTest extends PureharmTest {
       config === CloudfrontConfig.WithPrivateKey(
         distributionDomain = CloudfrontDistributionDomain("test.cloudfront.net"),
         keyPairID          = CloudfrontKeyPairID("test-key-pair-id"),
-        privateKey         = CloudfrontPrivateKey.unsafe("BLABLABLA"),
+        privateKey         = CloudfrontPrivateKey[Try]("BLABLABLA").get,
         privateKeyFormat   = CloudfrontPrivateKey.DER,
         urlExpirationTime  = CloudfrontURLExpiration(7.days),
       )

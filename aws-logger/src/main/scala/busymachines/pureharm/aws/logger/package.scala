@@ -1,6 +1,6 @@
 package busymachines.pureharm.aws
 
-import busymachines.pureharm.phantom.PhantomType
+import busymachines.pureharm.phantom._
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -9,24 +9,24 @@ import scala.concurrent.duration.FiniteDuration
   */
 package object logger {
 
-  object AWSLoggingEnabled extends PhantomType[Boolean] {
+  object AWSLoggingEnabled extends SproutSub[Boolean] {
     val True:  this.Type = this(true)
     val False: this.Type = this(false)
   }
   type AWSLoggingEnabled = AWSLoggingEnabled.Type
 
-  object CloudWatchTimeoutDuration extends PhantomType[FiniteDuration]
+  object CloudWatchTimeoutDuration extends SproutSub[FiniteDuration]
   type CloudWatchTimeoutDuration = CloudWatchTimeoutDuration.Type
 
-  object CloudWatchAccessKeyID extends PhantomType[String]
+  object CloudWatchAccessKeyID extends SproutSub[String]
   type CloudWatchAccessKeyID = CloudWatchAccessKeyID.Type
 
-  object CloudWatchSecretAccessKey extends PhantomType[String]
+  object CloudWatchSecretAccessKey extends SproutSub[String]
   type CloudWatchSecretAccessKey = CloudWatchSecretAccessKey.Type
 
-  object CloudWatchGroupName extends PhantomType[String]
+  object CloudWatchGroupName extends SproutSub[String]
   type CloudWatchGroupName = CloudWatchGroupName.Type
 
-  object CloudWatchStreamName extends PhantomType[String]
+  object CloudWatchStreamName extends SproutSub[String]
   type CloudWatchStreamName = CloudWatchStreamName.Type
 }

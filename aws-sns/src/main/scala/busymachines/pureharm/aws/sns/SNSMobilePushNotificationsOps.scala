@@ -67,7 +67,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
     deviceToken: SNSDeviceToken
   )(resp:        GetEndpointAttributesResponse): F[SNSPlatformEndpointHealthcheck] = {
     val exists  = Option(resp.attributes().get(SNSPlatformEndpointHealthcheck.TokenAttributeID))
-      .contains(SNSDeviceToken.despook(deviceToken))
+      .contains(SNSDeviceToken.oldType(deviceToken))
     val enabled = Option(resp.attributes().get(SNSPlatformEndpointHealthcheck.TokenAttributeID))
       .exists(_.equalsIgnoreCase(SNSPlatformEndpointHealthcheck.TrueString))
 
