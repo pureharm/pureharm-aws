@@ -37,6 +37,8 @@ trait AmazonS3ClientForBucket[F[_]] {
 
   def get(key: S3FileKey): F[S3BinaryContent]
 
+  def getMetadata(key: S3FileKey): F[S3Metadata]
+
   def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
 
   def getStream(key: S3FileKey, chunkSize: Int = 1024 * 512): S3BinaryStream[F]
