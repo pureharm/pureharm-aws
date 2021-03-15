@@ -23,7 +23,7 @@ import busymachines.pureharm.phantom._
   */
 package object sns {
 
-  object SNSDeviceToken extends PhantomType[String]
+  object SNSDeviceToken extends SproutSub[String]
 
   /** @see
     *   Section "Token"
@@ -31,13 +31,13 @@ package object sns {
     */
   type SNSDeviceToken = SNSDeviceToken.Type
 
-  object SNSEndpointARN extends PhantomType[String]
+  object SNSEndpointARN extends SproutSub[String]
   type SNSEndpointARN = SNSEndpointARN.Type
 
-  object SNSPlatformApplicationARN extends PhantomType[String]
+  object SNSPlatformApplicationARN extends SproutSub[String]
   type SNSPlatformApplicationARN = SNSPlatformApplicationARN.Type
 
-  object SNSAccessKeyID extends PhantomType[String]
+  object SNSAccessKeyID extends SproutSub[String]
 
   /** Standard AWS AccessKeyID, of different type, so it's harder
     * to accidentally mix up with the AccessKey used for S3,
@@ -47,7 +47,7 @@ package object sns {
     */
   type SNSAccessKeyID = SNSAccessKeyID.Type
 
-  object SNSSecretAccessKey extends PhantomType[String]
+  object SNSSecretAccessKey extends SproutSub[String]
 
   /** Standard AWS SecretAccessKey, same reasoning as behind
     * [[SNSAccessKeyID]]

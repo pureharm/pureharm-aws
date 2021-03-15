@@ -11,8 +11,7 @@ import org.http4s.client.blaze._
 
 import scala.concurrent.duration._
 
-/**
-  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+/** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-cloudfront/src/test/resources/application.conf``
@@ -80,37 +79,36 @@ final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTestWithResourc
     _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
   } yield (blazeClient, config, s3Client, cfClient)
 
-  private val s3KeyIO: IO[S3FileKey] = S3FileKey("aws_live_test", "subfolder", "google_murray_bookchin.txt").liftTo[IO]
+  private val s3KeyIO: IO[S3FileKey] = S3FileKey[IO]("aws_live_test", "subfolder", "google_murray_bookchin.txt")
 
   private val fileContent: S3BinaryContent = S3BinaryContent(
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
-  test("s3 upload + signed url delivery via cloudfront") {
-    case (http4sClient, s3Config, s3Client, cfSigner) =>
-      for {
-        s3Key        <- s3KeyIO
-        _            <- l.info(s"Uploaded file to s3: $s3Key")
-        _            <-
-          s3Client
-            .put(s3Config.bucket, s3Key, fileContent)
-            .onError { case e => l.error(e)(s"PUT failed w/: $e") }
-            .void
-            .handleErrorWith(_ => IO(fail("1. failed to upload file to s3")))
+  test("s3 upload + signed url delivery via cloudfront") { case (http4sClient, s3Config, s3Client, cfSigner) =>
+    for {
+      s3Key <- s3KeyIO
+      _     <- l.info(s"Uploaded file to s3: $s3Key")
+      _     <-
+        s3Client
+          .put(s3Config.bucket, s3Key, fileContent)
+          .onError { case e => l.error(e)(s"PUT failed w/: $e") }
+          .void
+          .handleErrorWith(_ => IO(fail("1. failed to upload file to s3")))
 
-        checkingFile <- s3Client.get(s3Config.bucket, s3Key)
-        _            <- l.info(s"Fetched file from s3: $s3Key")
-        _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
-        _            <- l.info(s"File from s3 is all OK: $s3Key")
+      checkingFile <- s3Client.get(s3Config.bucket, s3Key)
+      _            <- l.info(s"Fetched file from s3: $s3Key")
+      _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
+      _            <- l.info(s"File from s3 is all OK: $s3Key")
 
-        signedURL       <- cfSigner.signS3KeyCanned(s3Key)
-        _               <- l.info(s"Signed url: $signedURL")
-        bytesFromSigned <- http4sClient.get(signedURL)(response => response.body.compile.toList)
-        _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
-        _               <- l.info(s"Expected #${fileContent.size} bytes")
-        _               <- IO(assert(fileContent.toList == bytesFromSigned))
-          .onErrorF(l.info("comparison failed for bytes from URL"))
-      } yield succeed
+      signedURL       <- cfSigner.signS3KeyCanned(s3Key)
+      _               <- l.info(s"Signed url: $signedURL")
+      bytesFromSigned <- http4sClient.get(signedURL)(response => response.body.compile.toList)
+      _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
+      _               <- l.info(s"Expected #${fileContent.size} bytes")
+      _               <- IO(assert(fileContent.toList == bytesFromSigned))
+        .onErrorF(l.info("comparison failed for bytes from URL"))
+    } yield succeed
   }
 
 }
