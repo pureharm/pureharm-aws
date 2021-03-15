@@ -115,7 +115,8 @@ private[s3] object ImpureJavaS3 {
       getReq  <- HeadObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
       content <- Interop.toF(Sync[F].delay(client.headObject(getReq)))
     } yield S3Metadata(
-      contentLength = S3ContentLengthBytes(content.contentLength())
+      contentLength = S3ContentLengthBytes(content.contentLength()),
+      javaMetadata  = content,
     )
 
   def getStream[F[_]: Async: BlockingShifter](client: S3AsyncClient)(
