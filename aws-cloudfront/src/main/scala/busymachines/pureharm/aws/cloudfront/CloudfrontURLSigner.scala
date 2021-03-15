@@ -32,7 +32,7 @@ object CloudfrontURLSigner {
     import com.amazonaws.services.cloudfront.CloudFrontUrlSigner
     import com.amazonaws.services.cloudfront.util.SignerUtils
 
-    def signS3KeyCanned[F[_]: Sync: BlockingShifter](
+    def signS3KeyCanned[F[_]: Sync](
       privateKey: PrivateKey,
       config:     CloudfrontConfig,
     )(s3key:      S3FileKey): F[CloudfrontSignedURL] =

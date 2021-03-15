@@ -118,7 +118,7 @@ object SNSMobilePushNotificationsOps {
   import software.amazon.awssdk.auth.credentials._
   import software.amazon.awssdk.services.sns._
 
-  def resource[F[_]: Concurrent: Timer: BlockingShifter, K](
+  def resource[F[_]: Sync: BlockingShifter](
     config: SNSMobilePushConfig
   ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.liftF(this.create[F](config))
 
