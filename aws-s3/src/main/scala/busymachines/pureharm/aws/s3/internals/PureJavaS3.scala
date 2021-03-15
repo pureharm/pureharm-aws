@@ -59,7 +59,7 @@ private[s3] object PureJavaS3 {
     val builder = S3AsyncClient
       .builder()
       .credentialsProvider(aWSCredentialsProvider)
-      .region(AmazonRegion.toSDKRegion(config.region))
+      .region(config.region.toSDKRegion)
       .serviceConfiguration(s3Config)
       .asyncConfiguration(asyncConfig)
       .overrideConfiguration(overrideConfiguration)

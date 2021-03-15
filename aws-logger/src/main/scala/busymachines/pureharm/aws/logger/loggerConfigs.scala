@@ -58,7 +58,6 @@ final case class CloudWatchLoggerConfig(
 
 object CloudWatchLoggerConfig {
   import busymachines.pureharm.config.implicits._
-  import busymachines.pureharm.aws.core.implicits._
 
   implicit val cloudWatchConfigReader: ConfigReader[CloudWatchLoggerConfig] =
     semiauto.deriveReader[CloudWatchLoggerConfig]
