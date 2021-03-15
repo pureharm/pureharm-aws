@@ -64,7 +64,7 @@ object AWSLoggerFactory {
     lazy val aWSCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials)
     val lc                          = AWSLogsAsyncClientBuilder
       .standard()
-      .withRegion(c.region)
+      .withRegion(c.region.asString)
       .withCredentials(aWSCredentialsProvider)
       .build()
     lc

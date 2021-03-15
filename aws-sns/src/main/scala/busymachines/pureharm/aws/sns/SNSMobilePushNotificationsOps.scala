@@ -1,6 +1,5 @@
 package busymachines.pureharm.aws.sns
 
-import busymachines.pureharm.aws.core.AmazonRegion
 import busymachines.pureharm.aws.sns._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
@@ -134,7 +133,7 @@ object SNSMobilePushNotificationsOps {
             StaticCredentialsProvider
               .create(AwsBasicCredentials.create(config.accessKeyID, config.secretAccessKey))
           )
-          .region(AmazonRegion.toSDKRegion(config.region))
+          .region(config.region.toSDKRegion)
           .build()
       }
       .map(jSNSClient => new SNSMobilePushNotificationsOps[F](jSNSClient))

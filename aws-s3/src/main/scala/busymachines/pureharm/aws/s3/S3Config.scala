@@ -37,7 +37,6 @@ import busymachines.pureharm.config._
 
 object S3Config extends ConfigLoader[S3Config] {
   import busymachines.pureharm.config.implicits._
-  import busymachines.pureharm.aws.core.implicits._
 
   implicit val AmazonRequestHeaderReader: ConfigReader[AmazonRequestHeader] = semiauto.deriveReader[AmazonRequestHeader]
   implicit override val configReader:     ConfigReader[S3Config]            = semiauto.deriveReader[S3Config]
