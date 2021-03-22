@@ -92,8 +92,8 @@ val pureharmTestkitV:    String = "0.1.0"    //https://github.com/busymachines/p
 val fs2V:                String = "2.5.3"    //https://github.com/typelevel/fs2/releases
 val monixV:              String = "3.3.0"    //https://github.com/monix/monix/releases
 val log4catsV:           String = "1.2.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-val awsJavaSdkV:         String = "1.11.974" //java — https://github.com/aws/aws-sdk-java/releases
-val awsJavaSdkV2V:       String = "2.16.18"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+val awsJavaSdkV:         String = "1.11.979" //java — https://github.com/aws/aws-sdk-java/releases
+val awsJavaSdkV2V:       String = "2.16.23"  //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 //these are used only for testing
 val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases

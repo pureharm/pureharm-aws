@@ -1,35 +1,29 @@
 # pureharm-aws
 
-Wrappers over the Java APIs for interacting with AWS. Depends on [pureharm](https://github.com/busymachines/pureharm)
+Pure functional wrappers in the typelevel ecosystem over the AWS Java SDK.
 
-Currently, the project is under heavy development, and is mostly driven by company needs until a stable version can be
-put out. At the end of the day this is a principled utility library that provides all glue to make web server
-development a breeze.
+See [changelog](./CHANGELOG.md).
 
 ## modules
 
-Depend on [pureharm kernel, config, json](https://github.com/busymachines/pureharm/releases) `0.0.7`
-
 The available modules are (for Scala 2.13):
 
-- `"com.busymachines" %% s"pureharm-aws-core" % "0.0.7"`
-- `"com.busymachines" %% s"pureharm-aws-s3" % "0.0.7"`
-- `"com.busymachines" %% s"pureharm-aws-sns" % "0.0.7"`
-- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.0.7"`
-- `"com.busymachines" %% s"pureharm-aws-logger" % "0.0.7"`
+- `"com.busymachines" %% s"pureharm-aws-core" % "0.1.0"`
+- `"com.busymachines" %% s"pureharm-aws-s3" % "0.1.0"`
+- `"com.busymachines" %% s"pureharm-aws-sns" % "0.1.0"`
+  - [pureharm-json-circe](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
+- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.1.0"`
+- `"com.busymachines" %% s"pureharm-aws-logger" % "0.1.0"`
+  - [log4cats](https://github.com/typelevel/log4cats/releases) `1.2.0`
 
-### For the impatient
+Common downstream dependencies:
 
-Add these resolvers to your settings to quickly get freshly published versions:
+- [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.979`
+- [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.23`
+- [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
+- [pureharm-config](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
 
-```
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("public"),
-  Resolver.sonatypeRepo("snapshots"),
-)
-```
-
-## Usage
+## usage
 
 Under construction. See [release notes](https://github.com/busymachines/pureharm-aws/releases) and tests for examples.
 
