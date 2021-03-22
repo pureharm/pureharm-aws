@@ -11,7 +11,7 @@ The available modules are (for Scala 2.13):
 - `"com.busymachines" %% s"pureharm-aws-core" % "0.1.0"`
 - `"com.busymachines" %% s"pureharm-aws-s3" % "0.1.0"`
 - `"com.busymachines" %% s"pureharm-aws-sns" % "0.1.0"`
-  - [pureharm-json-circe](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
+  - [pureharm-json-circe](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.1`
 - `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.1.0"`
 - `"com.busymachines" %% s"pureharm-aws-logger" % "0.1.0"`
   - [log4cats](https://github.com/typelevel/log4cats/releases) `1.2.0`
