@@ -70,7 +70,4 @@ object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
 
   implicit override val configReader: ConfigReader[CloudfrontConfig] =
     withPrivateKeyCFG.orElse(withKeyFileCFG)
-
-  override def default[F[_]](implicit F: Sync[F]): F[CloudfrontConfig] =
-    this.load("pureharm.aws.cloudfront")
 }

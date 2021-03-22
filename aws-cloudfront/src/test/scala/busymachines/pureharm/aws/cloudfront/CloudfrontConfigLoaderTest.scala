@@ -1,7 +1,8 @@
 package busymachines.pureharm.aws.cloudfront
 
 import busymachines.pureharm.effects._
-import busymachines.pureharm.testkit.PureharmTest
+import busymachines.pureharm.testkit._
+import org.typelevel.log4cats.slf4j._
 
 import scala.concurrent.duration._
 
@@ -9,6 +10,8 @@ import scala.concurrent.duration._
   * @since 19 Jul 2019
   */
 final class CloudfrontConfigLoaderTest extends PureharmTest {
+
+  implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
 
   test("load config values — CloudfrontConfig.WithKeyFile") {
     for {

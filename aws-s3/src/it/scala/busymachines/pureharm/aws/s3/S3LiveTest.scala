@@ -16,12 +16,10 @@
   */
 package busymachines.pureharm.aws.s3
 
-import org.typelevel.log4cats.StructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.testkit._
-import fs2._
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
@@ -35,8 +33,10 @@ import fs2._
   * @since 22 May 2019
   */
 final class S3LiveTest extends PureharmTestWithResource {
+  implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
+  val l = testLogger
+
   private val UTF_8 = java.nio.charset.StandardCharsets.UTF_8
-  implicit val l: StructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
   override type ResourceType = (S3Config, AmazonS3Client[IO])
 
@@ -82,7 +82,7 @@ final class S3LiveTest extends PureharmTestWithResource {
       got <- client.get(config.bucket, f1S3Key)
       _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
       _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
-      _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+      _   <- IO(assert(f1_contents.toList == got.toList)).onError(_ => l.info("comparison failed :(("))
 
       metadata <- client.getMetadata(config.bucket, f1S3Key)
       _        <- l.info(s"3 — after GET metadata — we got back: $metadata")
@@ -112,7 +112,7 @@ final class S3LiveTest extends PureharmTestWithResource {
       got <- client.getStream(config.bucket, f1S3Key).compile.toList
       _   <- l.info(s"2 — after GET — we got back: ${new String(got.toArray, UTF_8)}")
       _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
-      _   <- IO(assert(f1_contents.toList == got.toList)).onErrorF(l.info("comparison failed :(("))
+      _   <- IO(assert(f1_contents.toList == got.toList))
 
       _ <- l.info("---- deleting file ----")
       _ <- client.delete(config.bucket, f1S3Key)
@@ -147,7 +147,7 @@ final class S3LiveTest extends PureharmTestWithResource {
           .handleErrorWith(e => l.error(e)(s"EXISTS failed w/: $e").map(_ => false))
       _             <- l.info(s"2 — after EXISTS — we got back: $exists")
       _             <- l.info(s"2 — after EXISTS — we expect: true")
-      _             <- IO(assert(exists)).onErrorF(l.info("comparison failed :(("))
+      _             <- IO(assert(exists))
       _             <- l.info(s"3 - after EXISTS - trying LIST")
       listReqPrefix <- S3Path[IO]("folder")
       listResult    <-
@@ -156,7 +156,7 @@ final class S3LiveTest extends PureharmTestWithResource {
           .handleErrorWith(e => l.error(e)(s"LIST failed w/: $e").map(_ => List()))
       _             <- l.info(s"3 — after LIST — we got back: ${listResult.mkString("[", ",", "]")}")
       _             <- l.info(s"3 — after LIST — we expect: ${List(f1S3Key, f2S3Key).mkString("[", ",", "]")}")
-      _             <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key))).onErrorF(l.info("comparison failed :(("))
+      _             <- IO(assert(listResult.toSet == Set(f1S3Key, f2S3Key)))
       _             <- l.info("---- cleanup ----")
       _             <-
         client

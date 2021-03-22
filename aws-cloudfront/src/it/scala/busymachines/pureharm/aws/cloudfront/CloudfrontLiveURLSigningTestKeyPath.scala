@@ -6,7 +6,6 @@ import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.testkit._
 import org.http4s.client.Client
 import org.http4s.client.blaze._
-import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration._
@@ -65,8 +64,8 @@ import scala.concurrent.duration._
   * @since 19 Jul 2019
   */
 final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTestWithResource {
-
-  implicit private val l: Logger[IO] = Slf4jLogger.getLogger[IO]
+  implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
+  val l = testLogger
 
   override type ResourceType = (Client[IO], S3Config, AmazonS3Client[IO], CloudfrontURLSigner[IO])
 
@@ -100,7 +99,7 @@ final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTestWithResource
 
       checkingFile <- s3Client.get(s3Config.bucket, s3Key)
       _            <- l.info(s"Fetched file from s3: $s3Key")
-      _            <- IO(assert(fileContent.toList == checkingFile.toList)).onErrorF(l.info("checking file via S3 get failed"))
+      _            <- IO(assert(fileContent.toList == checkingFile.toList))
       _            <- l.info(s"File from s3 is all OK: $s3Key")
 
       signedURL       <- cfSigner.signS3KeyCanned(s3Key)
@@ -109,7 +108,6 @@ final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTestWithResource
       _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
       _               <- l.info(s"Expected #${fileContent.size} bytes")
       _               <- IO(assert(fileContent.toList == bytesFromSigned))
-        .onErrorF(l.info("comparison failed for bytes from URL"))
     } yield succeed
   }
 

@@ -1,5 +1,4 @@
-/**
-  * Copyright (c) 2017-2019 BusyMachines
+/** Copyright (c) 2017-2019 BusyMachines
   *
   * See company homepage at: https://www.busymachines.com/
   *
@@ -25,8 +24,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.testkit._
 import scala.concurrent.duration._
 
-/**
-  * --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+/** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-logger/src/test/resources/reference.conf``
@@ -38,6 +36,9 @@ import scala.concurrent.duration._
   * @since 04 Sep 2019
   */
 final class AWSLoggerLiveTest extends PureharmTestWithResource {
+
+  implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
+
   private val localLogger = Slf4jLogger.getLogger[IO]
 
   override type ResourceType = AWSLoggerFactory[IO]
