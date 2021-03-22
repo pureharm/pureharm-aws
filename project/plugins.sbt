@@ -14,36 +14,18 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-/** Helps us publish the artifacts to sonatype, which in turn
-  * pushes to maven central. Please follow instructions of setting
-  * up as described in:
-  * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
-  *
-  * https://github.com/xerial/sbt-sonatype/releases
-  */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.5") //https://github.com/xerial/sbt-sonatype/releases
+// https://github.com/djspiewak/sbt-spiewak/releases/
+addSbtPlugin("com.codecommit"     % "sbt-spiewak-sonatype"     % "0.20.4")
+// https://github.com/scalameta/sbt-scalafmt/releases
+addSbtPlugin("org.scalameta"      % "sbt-scalafmt"             % "2.4.2")
+// https://github.com/portable-scala/sbt-crossproject/releases
+addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.0.0")
+// https://github.com/scala-js/scala-js/releases/
+addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % "1.5.0")
+// https://github.com/sbt/sbt-header/releases
+addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.0")
 
-/** Signs all the jars, used in conjunction with sbt-sonatype.
-  *
-  * Do not forget to include this in your global plugins as described in:
-  * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
-  *
-  * https://github.com/sbt/sbt-pgp/releases
-  */
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1") //https://github.com/sbt/sbt-pgp/releases
-
-/** build configured in ``project/ReleaseProcess``
-  *
-  * https://github.com/sbt/sbt-release/releases
-  */
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13") //https://github.com/sbt/sbt-release/releases
-
-/** The best thing since sliced bread.
-  *
-  * https://github.com/scalameta/sbt-scalafmt/releases
-  */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2") //https://github.com/scalameta/sbt-scalafmt/releases
-
-/** https://github.com/lampepfl/dotty/releases
-  */
-addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.5.0")
+// addSbtPlugin("com.timushev.sbt"          % "sbt-updates"              % "0.5.1")
+// addSbtPlugin("org.scalameta"             % "sbt-mdoc"                 % "2.2.16")
+// addSbtPlugin("com.47deg"                 % "sbt-microsites"           % "1.3.1")
+// addSbtPlugin("com.typesafe.sbt"          % "sbt-ghpages"              % "0.6.3")

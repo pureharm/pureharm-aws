@@ -1,53 +1,153 @@
-/** Copyright (c) 2019 BusyMachines
-  *
-  * See company homepage at: https://www.busymachines.com/
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  * http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+/*
+ * Copyright 2019 BusyMachines
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//=============================================================================
+//============================== build details ================================
+//=============================================================================
+
+addCommandAlias("github-gen", "githubWorkflowGenerate")
+addCommandAlias("github-check", "githubWorkflowCheck")
+addCommandAlias("run-it", "IntegrationTest/test")
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
+val Scala213  = "2.13.5"
+val Scala3RC1 = "3.0.0-RC1"
+
+//=============================================================================
+//============================ publishing details =============================
+//=============================================================================
+
+//see: https://github.com/xerial/sbt-sonatype#buildsbt
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+
+ThisBuild / baseVersion  := "0.1.0"
+ThisBuild / organization := "com.busymachines"
+ThisBuild / organizationName := "BusyMachines"
+ThisBuild / homepage     := Option(url("https://github.com/busymachines/pureharm-aws"))
+
+ThisBuild / scmInfo := Option(
+  ScmInfo(
+    browseUrl  = url("https://github.com/busymachines/pureharm-aws"),
+    connection = "git@github.com:busymachines/pureharm-aws.git",
+  )
+)
+
+/** I want my email. So I put this here. To reduce a few lines of code,
+  * the sbt-spiewak plugin generates this (except email) from these two settings:
+  * {{{
+  * ThisBuild / publishFullName   := "Loránd Szakács"
+  * ThisBuild / publishGithubUser := "lorandszakacs"
+  * }}}
   */
-// format: off
-addCommandAlias(name = "useScala213", value = s"++${CompilerSettings.scala2_13}")
-addCommandAlias(name = "useScala30",  value = s"++${CompilerSettings.scala3_0}")
+ThisBuild / developers := List(
+  Developer(
+    id    = "lorandszakacs",
+    name  = "Loránd Szakács",
+    email = "lorand.szakacs@protonmail.com",
+    url   = new java.net.URL("https://github.com/lorandszakacs"),
+  )
+)
 
-addCommandAlias(name = "it",             value = "IntegrationTest / test")
-addCommandAlias(name = "recompile",      value = ";clean;compile;")
-addCommandAlias(name = "build",          value = ";compile;Test/compile")
-addCommandAlias(name = "rebuild",        value = ";clean;compile;Test/compile")
-addCommandAlias(name = "rebuild-update", value = ";clean;update;compile;Test/compile")
-addCommandAlias(name = "ci",             value = ";scalafmtCheck;rebuild-update;test")
-addCommandAlias(name = "ci-quick",       value = ";scalafmtCheck;build;test;it")
-addCommandAlias(name = "doLocal",        value = ";clean;update;compile;publishLocal")
+ThisBuild / startYear := Some(2019)
+ThisBuild / licenses   := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-addCommandAlias(name = "cleanPublishSigned", value = ";recompile;publishSigned")
-addCommandAlias(name = "do213Release",       value = ";useScala213;cleanPublishSigned;sonatypeBundleRelease")
-addCommandAlias(name = "doRelease",          value = ";do213Release")
+//until we get to 1.0.0, we keep strictSemVer false
+ThisBuild / strictSemVer              := false
+ThisBuild / spiewakCiReleaseSnapshots := false
+ThisBuild / spiewakMainBranches       := List("main")
+ThisBuild / Test / publishArtifact    := false
 
-addCommandAlias(name = "lint", value = ";scalafixEnable;rebuild;scalafix;scalafmtAll")
+ThisBuild / scalaVersion       := Scala213
+ThisBuild / crossScalaVersions := List(Scala213) //List(Scala213, Scala3RC1)
 
-addCommandAlias(name = "s3-it",     value = "aws-s3 / IntegrationTest / test")
-addCommandAlias(name = "cf-it",     value = "aws-cloudfront / IntegrationTest / test")
-addCommandAlias(name = "logger-it", value = "aws-logger / IntegrationTest / test")
-addCommandAlias(name = "sns-it",    value = "aws-sns / IntegrationTest / test")
-// format: on
+//required for binary compat checks
+ThisBuild / versionIntroduced := Map(
+  Scala213  -> "0.1.0",
+  Scala3RC1 -> "0.1.0",
+)
+//=============================================================================
+//================================ Dependencies ===============================
+//=============================================================================
+ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
+ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
-//*****************************************************************************
-//*****************************************************************************
-//********************************* PROJECTS **********************************
-//*****************************************************************************
-//*****************************************************************************
+val pureharmCoreV:       String = "0.1.0"    //https://github.com/busymachines/pureharm-core/releases
+val pureharmEffectsV:    String = "0.1.0"    //https://github.com/busymachines/pureharm-effects/releases
+val pureharmJsonV:       String = "0.1.1"    //https://github.com/busymachines/pureharm-json/releases
+val pureharmConfigV:     String = "0.1.0"    //https://github.com/busymachines/pureharm-config/releases
+val pureharmTestkitV:    String = "0.1.0"    //https://github.com/busymachines/pureharm-testkit/releases
+val fs2V:                String = "2.5.3"    //https://github.com/typelevel/fs2/releases
+val monixV:              String = "3.3.0"    //https://github.com/monix/monix/releases
+val log4catsV:           String = "1.2.0"    //https://github.com/ChristopherDavenport/log4cats/releases
+val awsJavaSdkV:         String = "1.11.974" //java — https://github.com/aws/aws-sdk-java/releases
+val awsJavaSdkV2V:       String = "2.16.18"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+
+//these are used only for testing
+val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
+val http4sVersion:       String = "0.21.20"  //https://github.com/http4s/http4s/releases
+
+val pureharmCoreAnomaly      = "com.busymachines" %% "pureharm-core-anomaly" % pureharmCoreV
+val pureharmCoreSprout       = "com.busymachines" %% "pureharm-core-sprout" % pureharmCoreV
+val pureharmCoreIdentifiable = "com.busymachines" %% "pureharm-core-identifiable" % pureharmCoreV
+val pureharmEffectsCats      = "com.busymachines" %% "pureharm-effects-cats" % pureharmEffectsV
+val pureharmJsonCirce        = "com.busymachines" %% "pureharm-json-circe" % pureharmJsonV
+val pureharmConfig           = "com.busymachines" %% "pureharm-config" % pureharmConfigV
+val pureharmTestkit          = "com.busymachines" %% "pureharm-testkit" % pureharmTestkitV
+
+
+//https://github.com/monix/monix/releases
+//we use this to interop with Java Futures from AWS stuff
+val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixV withSources ()
+
+val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2V withSources ()
+
+//used only for testing
+//https://github.com/http4s/http4s/releases
+val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4sVersion withSources ()
+
+
+//https://github.com/aws/aws-sdk-java/releases
+val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkV withSources ()
+val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkV withSources ()
+
+//https://github.com/aws/aws-sdk-java-v2/releases
+val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2V withSources ()
+/** currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
+  * - cloudfront: cannot sign
+  * - logs: uses shitty interop w/ slf4j. Way too much magic...
+  */
+val amazonS3V2      = "software.amazon.awssdk" % "s3"      % awsJavaSdkV2V withSources ()
+val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2V withSources ()
+
+
+//https://github.com/ChristopherDavenport/log4cats/releases
+val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsV withSources ()
+
+//https://github.com/qos-ch/logback/releases — it is the backend implementation used by log4cats-slf4j
+val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion withSources ()
+
+
+//=============================================================================
+//============================== Project details ==============================
+//=============================================================================
 
 lazy val root = Project(id = "pureharm-aws", base = file("."))
-  .settings(PublishingSettings.noPublishSettings)
-  .settings(Settings.commonSettings)
+  .enablePlugins(NoPublishPlugin)
+  .enablePlugins(SonatypeCiReleasePlugin)
+  .settings(commonSettings)
   .aggregate(
     `aws-core`,
     `aws-s3`,
@@ -61,40 +161,37 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 lazy val `aws-core` = project
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(Settings.commonSettings)
+  .settings(commonSettings)
   .settings(
     name := "pureharm-aws-core",
     libraryDependencies ++= Seq(
-      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
-      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
-      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
-      pureharmConfig.withDottyCompat(scalaVersion.value),
-      amazonRegionsV2.withDottyCompat(scalaVersion.value),
+      pureharmCoreSprout,
+      pureharmCoreAnomaly,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonRegionsV2,
     ),
   )
 
 //#############################################################################
 
 lazy val `aws-s3` = project
+  .settings(commonSettings)
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-s3",
     libraryDependencies ++= Seq(
-      monixCatnap.withDottyCompat(scalaVersion.value),
-      fs2Core.withDottyCompat(scalaVersion.value),
-      fs2IO.withDottyCompat(scalaVersion.value),
-      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
-      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
-      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
-      pureharmConfig.withDottyCompat(scalaVersion.value),
-      amazonS3V2.withDottyCompat(scalaVersion.value),
-      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
+      monixCatnap,
+      fs2IO,
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonS3V2,
+      pureharmTestkit % ITT,
+      log4cats        % ITT,
+      logbackClassic  % ITT,
     ),
   )
   .dependsOn(
@@ -104,22 +201,21 @@ lazy val `aws-s3` = project
 //#############################################################################
 
 lazy val `aws-cloudfront` = project
+  .settings(commonSettings)
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-cloudfront",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
-      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
-      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
-      pureharmConfig.withDottyCompat(scalaVersion.value),
-      amazonCloudFront.withDottyCompat(scalaVersion.value),
-      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
-      http4sClient.withDottyCompat(scalaVersion.value)    % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonCloudFront,
+      pureharmTestkit % ITT,
+      log4cats        % ITT,
+      http4sClient    % ITT,
+      logbackClassic  % ITT,
     ),
   )
   .dependsOn(
@@ -130,21 +226,20 @@ lazy val `aws-cloudfront` = project
 //#############################################################################
 
 lazy val `aws-logger` = project
+  .settings(commonSettings)
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-logger",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
-      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
-      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
-      pureharmConfig.withDottyCompat(scalaVersion.value),
-      amazonLogs.withDottyCompat(scalaVersion.value),
-      log4cats.withDottyCompat(scalaVersion.value),
-      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCats,
+      pureharmConfig,
+      amazonLogs,
+      log4cats,
+      pureharmTestkit % ITT,
+      logbackClassic  % ITT,
     ),
   )
   .dependsOn(
@@ -154,122 +249,45 @@ lazy val `aws-logger` = project
 //#############################################################################
 
 lazy val `aws-sns` = project
+  .settings(commonSettings)
   .configs(IntegrationTest)
   .settings(Defaults.itSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(Settings.commonSettings)
   .settings(
     name := "pureharm-aws-sns",
     libraryDependencies ++= Seq(
-      pureharmCoreAnomaly.withDottyCompat(scalaVersion.value),
-      pureharmCorePhantom.withDottyCompat(scalaVersion.value),
-      pureharmEffectsCats.withDottyCompat(scalaVersion.value),
-      pureharmConfig.withDottyCompat(scalaVersion.value),
-      pureharmJsonCirce.withDottyCompat(scalaVersion.value),
-      amazonSNSV2.withDottyCompat(scalaVersion.value),
-      pureharmTestkit.withDottyCompat(scalaVersion.value) % ITT,
-      log4cats.withDottyCompat(scalaVersion.value)        % ITT,
-      http4sClient.withDottyCompat(scalaVersion.value)    % ITT,
-      logbackClassic.withDottyCompat(scalaVersion.value)  % ITT,
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCats,
+      pureharmConfig,
+      pureharmJsonCirce,
+      amazonSNSV2,
+      pureharmTestkit % ITT,
+      log4cats        % ITT,
+      http4sClient    % ITT,
+      logbackClassic  % ITT,
     ),
   )
   .dependsOn(
     `aws-core`
   )
 
-//#############################################################################
-//#############################################################################
-//################################ DEPENDENCIES ###############################
-//#############################################################################
-//#############################################################################
+//=============================================================================
+//================================= Settings ==================================
+//=============================================================================
 
-lazy val pureharmVersion:     String = "0.0.7"    //https://github.com/busymachines/pureharm/releases
-lazy val monixVersion:        String = "3.3.0"    //https://github.com/monix/monix/releases
-lazy val log4catsVersion:     String = "1.2.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val awsJavaSdkVersion:   String = "1.11.974" //java — https://github.com/aws/aws-sdk-java/releases
-lazy val awsJavaSdkV2Version: String = "2.16.18"  //java — https://github.com/aws/aws-sdk-java-v2/releases
-lazy val fs2Version:          String = "2.5.3"    //https://github.com/typelevel/fs2/releases
-//these are used only for testing
-lazy val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
-lazy val http4sVersion:       String = "0.21.20"  //https://github.com/http4s/http4s/releases
+lazy val commonSettings = Seq(
+  Compile / unmanagedSourceDirectories ++= {
+    val major = if (isDotty.value) "-3" else "-2"
+    List(CrossType.Pure, CrossType.Full).flatMap(
+      _.sharedSrcDir(baseDirectory.value, "main").toList.map(f => file(f.getPath + major))
+    )
+  },
+  Test / unmanagedSourceDirectories ++= {
+    val major = if (isDotty.value) "-3" else "-2"
+    List(CrossType.Pure, CrossType.Full).flatMap(
+      _.sharedSrcDir(baseDirectory.value, "test").toList.map(f => file(f.getPath + major))
+    )
+  },
+)
 
-//#############################################################################
-//################################# PUREHARM ##################################
-//#############################################################################
-
-//https://github.com/busymachines/pureharm/releases/
-def pureharm(m: String): ModuleID = ("com.busymachines" %% s"pureharm-$m" % pureharmVersion) withSources ()
-
-lazy val pureharmCore:             ModuleID = pureharm("core")
-lazy val pureharmCoreAnomaly:      ModuleID = pureharm("core-anomaly")
-lazy val pureharmCorePhantom:      ModuleID = pureharm("core-phantom")
-lazy val pureharmCoreIdentifiable: ModuleID = pureharm("core-identifiable")
-lazy val pureharmEffectsCats:      ModuleID = pureharm("effects-cats")
-lazy val pureharmJsonCirce:        ModuleID = pureharm("json-circe")
-lazy val pureharmConfig:           ModuleID = pureharm("config")
-lazy val pureharmTestkit:          ModuleID = pureharm("testkit")
-
-//#############################################################################
-//################################# TYPELEVEL #################################
-//#############################################################################
-
-//https://github.com/monix/monix/releases
-//we use this to interop with Java Futures from AWS stuff
-lazy val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixVersion withSources ()
-
-lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2Version withSources ()
-lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2Version withSources ()
-
-//used only for testing
-//https://github.com/http4s/http4s/releases
-lazy val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4sVersion withSources ()
-
-//#############################################################################
-//################################ AMAZON V1 — ################################
-//#############################################################################
-
-//https://github.com/aws/aws-sdk-java/releases
-lazy val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkVersion withSources ()
-lazy val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkVersion withSources ()
-
-//#############################################################################
-//################################  AMAZON V2 ################################
-//#############################################################################
-
-//https://github.com/aws/aws-sdk-java-v2/releases
-lazy val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2Version withSources ()
-/** currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
-  * - cloudfront: cannot sign
-  * - logs: uses shitty interop w/ slf4j. Way too much magic...
-  */
-lazy val amazonS3V2      = "software.amazon.awssdk" % "s3"      % awsJavaSdkV2Version withSources ()
-lazy val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2Version withSources ()
-
-//#############################################################################
-//#################################  LOGGING ##################################
-//#############################################################################
-
-//https://github.com/ChristopherDavenport/log4cats/releases
-lazy val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion withSources ()
-
-//https://github.com/qos-ch/logback/releases — it is the backend implementation used by log4cats-slf4j
-lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion withSources ()
-
-//#############################################################################
-//################################  BUILD UTILS ###############################
-//#############################################################################
-/** See SBT docs:
-  * https://www.scala-sbt.org/release/docs/Multi-Project.html#Per-configuration+classpath+dependencies
-  *
-  * Ensures dependencies between the ``test`` parts of the modules
-  */
-def fullDependency(p: Project): ClasspathDependency = p % "compile->compile;test->test"
-
-/** Used only when one module is useful to test another module, but
-  * in production build they don't require to be used together.
-  */
-def asTestingDependency(p: Project): ClasspathDependency = p % "test -> compile"
-
-/** Used to mark a dependency as needed in both integration tests, and tests
-  */
 def ITT: String = "it,test"
