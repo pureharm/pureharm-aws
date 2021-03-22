@@ -70,7 +70,7 @@ package object s3 {
       /** @param path
         *   Should not end or start in slash
         * @return
-        *   given a key "x.foo" creates "$path/x.foo"
+        *   given a key "x.foo" creates "{path}/x.foo"
         */
       def prependPath[F[_]: MonadThrow](path: String): F[S3FileKey] = S3FileKey[F](path, s3FileKey)
 

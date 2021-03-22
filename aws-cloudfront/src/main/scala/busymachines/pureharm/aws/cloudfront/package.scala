@@ -87,7 +87,7 @@ package object cloudfront {
     * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html AmazonCloudFront]]
     *
     * The idea is that this domain serves as the base prefix to which we add
-    * the [[busymachines.pureharm.aws.s3.S3FileKey]] to uniquely identify this
+    * the busymachines.pureharm.aws.s3.S3FileKey to uniquely identify this
     * resource, which we then sign, to yield us a final value.
     *
     * It's a rather annoying API on part of amazon, because it's the client's responsibility
