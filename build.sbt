@@ -84,62 +84,42 @@ ThisBuild / versionIntroduced := Map(
 ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
-val pureharmCoreV:       String = "0.1.0"    //https://github.com/busymachines/pureharm-core/releases
-val pureharmEffectsV:    String = "0.1.0"    //https://github.com/busymachines/pureharm-effects/releases
-val pureharmJsonV:       String = "0.1.1"    //https://github.com/busymachines/pureharm-json/releases
-val pureharmConfigV:     String = "0.1.0"    //https://github.com/busymachines/pureharm-config/releases
-val pureharmTestkitV:    String = "0.1.0"    //https://github.com/busymachines/pureharm-testkit/releases
-val fs2V:                String = "2.5.3"    //https://github.com/typelevel/fs2/releases
-val monixV:              String = "3.3.0"    //https://github.com/monix/monix/releases
-val log4catsV:           String = "1.2.0"    //https://github.com/ChristopherDavenport/log4cats/releases
-val awsJavaSdkV:         String = "1.11.979" //java — https://github.com/aws/aws-sdk-java/releases
-val awsJavaSdkV2V:       String = "2.16.23"  //java — https://github.com/aws/aws-sdk-java-v2/releases
+// format: off
+/* currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
+ * - cloudfront: cannot sign
+ * - logs: uses shitty interop w/ slf4j. Way too much magic...
+ */
+val awsJavaSdkV         = "1.11.979"    //java — https://github.com/aws/aws-sdk-java/releases
+val awsJavaSdkV2V       = "2.16.23"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
-//these are used only for testing
-val logbackVersion:      String = "1.2.3"    //https://github.com/qos-ch/logback/releases
-val http4sVersion:       String = "0.21.20"  //https://github.com/http4s/http4s/releases
+val pureharmCoreV       = "0.1.0"       //https://github.com/busymachines/pureharm-core/releases
+val pureharmEffectsV    = "0.1.0"       //https://github.com/busymachines/pureharm-effects/releases
+val pureharmJsonV       = "0.1.1"       //https://github.com/busymachines/pureharm-json/releases
+val pureharmConfigV     = "0.1.0"       //https://github.com/busymachines/pureharm-config/releases
+val pureharmTestkitV    = "0.1.0"       //https://github.com/busymachines/pureharm-testkit/releases
+val fs2V                = "2.5.3"       //https://github.com/typelevel/fs2/releases
+val monixV              = "3.3.0"       //https://github.com/monix/monix/releases - used only for Java future conversion. Drop once we migrate to CE3, and use it from there
+val log4catsV           = "1.2.0"       //https://github.com/ChristopherDavenport/log4cats/releases
+val logbackV            = "1.2.3"       //https://github.com/qos-ch/logback/releases
+val http4sV             = "0.21.20"     //https://github.com/http4s/http4s/releases
 
-val pureharmCoreAnomaly      = "com.busymachines" %% "pureharm-core-anomaly" % pureharmCoreV
-val pureharmCoreSprout       = "com.busymachines" %% "pureharm-core-sprout" % pureharmCoreV
-val pureharmCoreIdentifiable = "com.busymachines" %% "pureharm-core-identifiable" % pureharmCoreV
-val pureharmEffectsCats      = "com.busymachines" %% "pureharm-effects-cats" % pureharmEffectsV
-val pureharmJsonCirce        = "com.busymachines" %% "pureharm-json-circe" % pureharmJsonV
-val pureharmConfig           = "com.busymachines" %% "pureharm-config" % pureharmConfigV
-val pureharmTestkit          = "com.busymachines" %% "pureharm-testkit" % pureharmTestkitV
-
-
-//https://github.com/monix/monix/releases
-//we use this to interop with Java Futures from AWS stuff
-val monixCatnap: ModuleID = "io.monix" %% "monix-catnap" % monixV withSources ()
-
-val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2V withSources ()
-
-//used only for testing
-//https://github.com/http4s/http4s/releases
-val http4sClient: ModuleID = "org.http4s" %% "http4s-blaze-client" % http4sVersion withSources ()
-
-
-//https://github.com/aws/aws-sdk-java/releases
-val amazonCloudFront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsJavaSdkV withSources ()
-val amazonLogs       = "com.amazonaws" % "aws-java-sdk-logs"       % awsJavaSdkV withSources ()
-
-//https://github.com/aws/aws-sdk-java-v2/releases
-val amazonRegionsV2 = "software.amazon.awssdk" % "regions" % awsJavaSdkV2V withSources ()
-/** currently, pretty much only S3 is usable, cloudfront and logs lack some serious features:
-  * - cloudfront: cannot sign
-  * - logs: uses shitty interop w/ slf4j. Way too much magic...
-  */
-val amazonS3V2      = "software.amazon.awssdk" % "s3"      % awsJavaSdkV2V withSources ()
-val amazonSNSV2     = "software.amazon.awssdk" % "sns"     % awsJavaSdkV2V withSources ()
-
-
-//https://github.com/ChristopherDavenport/log4cats/releases
-val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsV withSources ()
-
-//https://github.com/qos-ch/logback/releases — it is the backend implementation used by log4cats-slf4j
-val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion withSources ()
-
-
+val amazonCloudFront         = "com.amazonaws"             % "aws-java-sdk-cloudfront"    % awsJavaSdkV         withSources()
+val amazonLogs               = "com.amazonaws"             % "aws-java-sdk-logs"          % awsJavaSdkV         withSources()
+val amazonRegionsV2          = "software.amazon.awssdk"    % "regions"                    % awsJavaSdkV2V       withSources()
+val amazonS3V2               = "software.amazon.awssdk"    % "s3"                         % awsJavaSdkV2V       withSources()
+val amazonSNSV2              = "software.amazon.awssdk"    % "sns"                        % awsJavaSdkV2V       withSources()
+val pureharmCoreAnomaly      = "com.busymachines"         %% "pureharm-core-anomaly"      % pureharmCoreV       withSources()
+val pureharmCoreSprout       = "com.busymachines"         %% "pureharm-core-sprout"       % pureharmCoreV       withSources()
+val pureharmEffectsCats      = "com.busymachines"         %% "pureharm-effects-cats"      % pureharmEffectsV    withSources()
+val pureharmJsonCirce        = "com.busymachines"         %% "pureharm-json-circe"        % pureharmJsonV       withSources()
+val pureharmConfig           = "com.busymachines"         %% "pureharm-config"            % pureharmConfigV     withSources()
+val pureharmTestkit          = "com.busymachines"         %% "pureharm-testkit"           % pureharmTestkitV    withSources()
+val monixCatnap              = "io.monix"                 %% "monix-catnap"               % monixV              withSources()
+val fs2IO                    = "co.fs2"                   %% "fs2-io"                     % fs2V                withSources()
+val http4sClient             = "org.http4s"               %% "http4s-blaze-client"        % http4sV             withSources()
+val log4cats                 = "org.typelevel"            %% "log4cats-slf4j"             % log4catsV           withSources()
+val logbackClassic           = "ch.qos.logback"            % "logback-classic"            % logbackV            withSources()
+// format: on
 //=============================================================================
 //============================== Project details ==============================
 //=============================================================================
