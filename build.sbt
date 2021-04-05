@@ -99,7 +99,7 @@ val pureharmConfigV     = "0.1.0"       //https://github.com/busymachines/pureha
 val pureharmTestkitV    = "0.1.0"       //https://github.com/busymachines/pureharm-testkit/releases
 val fs2V                = "2.5.3"       //https://github.com/typelevel/fs2/releases
 val monixV              = "3.3.0"       //https://github.com/monix/monix/releases - used only for Java future conversion. Drop once we migrate to CE3, and use it from there
-val log4catsV           = "1.2.0"       //https://github.com/ChristopherDavenport/log4cats/releases
+val log4catsV           = "1.2.2"       //https://github.com/ChristopherDavenport/log4cats/releases
 val logbackV            = "1.2.3"       //https://github.com/qos-ch/logback/releases
 val http4sV             = "0.21.20"     //https://github.com/http4s/http4s/releases
 
