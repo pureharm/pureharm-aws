@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - now depends only on `cats-core` instead of `cats-slf4j`. There was no need to depend directly on an implementation.
 
+### deprecations
+
+- deprecate `AWSLoggerFactory` in favor of `AWSLoggin`. It is a straightforward rename, the semantics are the same.
+
 # 0.1.0
 
 - create build with github actions

@@ -24,7 +24,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import busymachines.pureharm.testkit._
 import scala.concurrent.duration._
 
-/** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
+/** test expects proper live amazon config
   *
   * Before running this ensure that you actually have the proper local environment
   * variables. See the ``pureharm-aws/aws-logger/src/test/resources/reference.conf``
@@ -41,11 +41,11 @@ final class AWSLoggerLiveTest extends PureharmTestWithResource {
 
   private val localLogger = Slf4jLogger.getLogger[IO]
 
-  override type ResourceType = AWSLoggerFactory[IO]
+  override type ResourceType = AWSLogging[IO]
 
   override def resource(meta: MetaData): Resource[IO, ResourceType] = for {
     config  <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
-    logFact <- AWSLoggerFactory.resource[IO](config)
+    logFact <- AWSLogging.resource[IO](config)
     _       <-
       runtime.contextShift.shift
         .to[Resource[IO, *]] //shifting so that first parts of test are not run on scalatest-threads

@@ -25,6 +25,9 @@ import scala.concurrent.duration.FiniteDuration
   */
 package object logger {
 
+  @scala.deprecated("Use AWSLogging[F] instead. Semantics are the same, it was only renamed", "0.2.0")
+  type AWSLoggerFactory[F[_]] = AWSLogging[F]
+
   object AWSLoggingEnabled extends SproutSub[Boolean] {
     val True:  this.Type = this(true)
     val False: this.Type = this(false)

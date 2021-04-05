@@ -25,20 +25,20 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 Apr 2019
   */
-sealed trait AWSLoggerFactory[F[_]] {
+sealed trait AWSLogging[F[_]] {
   def getLogger(logger: SelfAwareStructuredLogger[F]): AWSLogger[F]
 }
 
-object AWSLoggerFactory {
+object AWSLogging {
 
-  def getLogger[F[_]](localLogger: SelfAwareStructuredLogger[F])(implicit inst: AWSLoggerFactory[F]): AWSLogger[F] =
+  def getLogger[F[_]](localLogger: SelfAwareStructuredLogger[F])(implicit inst: AWSLogging[F]): AWSLogger[F] =
     inst.getLogger(localLogger)
 
-  def apply[F[_]](implicit inst: AWSLoggerFactory[F]): AWSLoggerFactory[F] = inst
+  def apply[F[_]](implicit inst: AWSLogging[F]): AWSLogging[F] = inst
 
   def resource[F[_]: Concurrent: Timer: BlockingShifter](
     config: AWSLoggerConfig
-  ): Resource[F, AWSLoggerFactory[F]] =
+  ): Resource[F, AWSLogging[F]] =
     config match {
       case enabled: EnabledAWSLoggerConfig =>
         for {
@@ -46,11 +46,11 @@ object AWSLoggerFactory {
         } yield new AWSLoggerFactoryImpl[F](
           awsLogs = awsLogs,
           config  = enabled.someCloudwatch,
-        ): AWSLoggerFactory[F]
+        ): AWSLogging[F]
       case DisabledAWSLoggerConfig => dummyLFResource
     }
 
-  def local[F[_]: Sync]: AWSLoggerFactory[F] = new DummyLoggerFactory[F]
+  def local[F[_]: Sync]: AWSLogging[F] = new DummyLoggerFactory[F]
 
   import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
   import com.amazonaws.services.logs.AWSLogsAsyncClientBuilder
@@ -70,10 +70,10 @@ object AWSLoggerFactory {
     lc
   }
 
-  private def dummyLFResource[F[_]: Sync]: Resource[F, AWSLoggerFactory[F]] =
+  private def dummyLFResource[F[_]: Sync]: Resource[F, AWSLogging[F]] =
     Resource.pure(new DummyLoggerFactory[F])
 
-  private class DummyLoggerFactory[F[_]](implicit private val F: Sync[F]) extends AWSLoggerFactory[F] {
+  private class DummyLoggerFactory[F[_]](implicit private val F: Sync[F]) extends AWSLogging[F] {
 
     override def getLogger(localLogger: SelfAwareStructuredLogger[F]): AWSLogger[F] =
       new AWSLogger.DummyAWSLoggerImpl[F](localLogger)
@@ -82,7 +82,7 @@ object AWSLoggerFactory {
   private class AWSLoggerFactoryImpl[F[_]: Concurrent: Timer: BlockingShifter](
     private val awsLogs: AWSLogsAsync,
     private val config:  CloudWatchLoggerConfig,
-  ) extends AWSLoggerFactory[F] {
+  ) extends AWSLogging[F] {
     import busymachines.pureharm.aws.logger.internals.AWSRemoteLoggerImpl
 
     override def getLogger(localLogger: SelfAwareStructuredLogger[F]): AWSLogger[F] = {
