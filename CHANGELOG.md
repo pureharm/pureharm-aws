@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+# 0.2.0
+
+## aws-logs
+
+- now depends only on `cats-core` instead of `cats-slf4j`. There was no need to depend directly on an implementation.
+
 # 0.1.0
 
 - create build with github actions
 
 Dependency upgrades:
+
 - pureharm series `0.1.x`
 - AWS SDK `1.11.979` and `2.16.23`

@@ -117,7 +117,8 @@ val pureharmTestkit          = "com.busymachines"         %% "pureharm-testkit" 
 val monixCatnap              = "io.monix"                 %% "monix-catnap"               % monixV              withSources()
 val fs2IO                    = "co.fs2"                   %% "fs2-io"                     % fs2V                withSources()
 val http4sClient             = "org.http4s"               %% "http4s-blaze-client"        % http4sV             withSources()
-val log4cats                 = "org.typelevel"            %% "log4cats-slf4j"             % log4catsV           withSources()
+val log4catsCore             = "org.typelevel"            %% "log4cats-core"              % log4catsV           withSources()
+val log4catsSlf4j            = "org.typelevel"            %% "log4cats-slf4j"             % log4catsV           withSources()
 val logbackClassic           = "ch.qos.logback"            % "logback-classic"            % logbackV            withSources()
 // format: on
 //=============================================================================
@@ -170,7 +171,7 @@ lazy val `aws-s3` = project
       pureharmConfig,
       amazonS3V2,
       pureharmTestkit % ITT,
-      log4cats        % ITT,
+      log4catsSlf4j   % ITT,
       logbackClassic  % ITT,
     ),
   )
@@ -193,7 +194,7 @@ lazy val `aws-cloudfront` = project
       pureharmConfig,
       amazonCloudFront,
       pureharmTestkit % ITT,
-      log4cats        % ITT,
+      log4catsSlf4j   % ITT,
       http4sClient    % ITT,
       logbackClassic  % ITT,
     ),
@@ -217,7 +218,7 @@ lazy val `aws-logger` = project
       pureharmEffectsCats,
       pureharmConfig,
       amazonLogs,
-      log4cats,
+      log4catsCore,
       pureharmTestkit % ITT,
       logbackClassic  % ITT,
     ),
@@ -242,7 +243,7 @@ lazy val `aws-sns` = project
       pureharmJsonCirce,
       amazonSNSV2,
       pureharmTestkit % ITT,
-      log4cats        % ITT,
+      log4catsSlf4j   % ITT,
       http4sClient    % ITT,
       logbackClassic  % ITT,
     ),
