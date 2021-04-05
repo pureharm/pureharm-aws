@@ -89,8 +89,8 @@ ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
  * - cloudfront: cannot sign
  * - logs: uses shitty interop w/ slf4j. Way too much magic...
  */
-val awsJavaSdkV         = "1.11.979"    //java — https://github.com/aws/aws-sdk-java/releases
-val awsJavaSdkV2V       = "2.16.23"     //java — https://github.com/aws/aws-sdk-java-v2/releases
+val awsJavaSdkV         = "1.11.991"    //java — https://github.com/aws/aws-sdk-java/releases
+val awsJavaSdkV2V       = "2.16.34"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 val pureharmCoreV       = "0.1.0"       //https://github.com/busymachines/pureharm-core/releases
 val pureharmEffectsV    = "0.1.0"       //https://github.com/busymachines/pureharm-effects/releases

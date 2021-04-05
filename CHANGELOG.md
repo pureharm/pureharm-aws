@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # 0.2.0
 
+## dependency upgrades
+- [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.991`
+- [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.34`
+
 ## aws-logs
 
 - now depends only on `cats-core` instead of `cats-slf4j`. There was no need to depend directly on an implementation.

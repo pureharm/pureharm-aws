@@ -18,8 +18,8 @@ The available modules are (for Scala 2.13):
 
 Common downstream dependencies:
 
-- [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.979`
-- [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.23`
+- [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.991`
+- [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.34`
 - [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
 - [pureharm-config](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
 
