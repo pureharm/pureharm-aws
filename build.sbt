@@ -92,11 +92,11 @@ ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 val awsJavaSdkV         = "1.11.991"    //java — https://github.com/aws/aws-sdk-java/releases
 val awsJavaSdkV2V       = "2.16.34"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
-val pureharmCoreV       = "0.1.0"       //https://github.com/busymachines/pureharm-core/releases
-val pureharmEffectsV    = "0.1.0"       //https://github.com/busymachines/pureharm-effects/releases
-val pureharmJsonV       = "0.1.1"       //https://github.com/busymachines/pureharm-json/releases
-val pureharmConfigV     = "0.1.0"       //https://github.com/busymachines/pureharm-config/releases
-val pureharmTestkitV    = "0.1.0"       //https://github.com/busymachines/pureharm-testkit/releases
+val pureharmCoreV       = "0.2.0"       //https://github.com/busymachines/pureharm-core/releases
+val pureharmEffectsV    = "0.2.0"       //https://github.com/busymachines/pureharm-effects/releases
+val pureharmJsonV       = "0.2.0"       //https://github.com/busymachines/pureharm-json/releases
+val pureharmConfigV     = "0.2.0"       //https://github.com/busymachines/pureharm-config/releases
+val pureharmTestkitV    = "0.2.0"       //https://github.com/busymachines/pureharm-testkit/releases
 val fs2V                = "2.5.4"       //https://github.com/typelevel/fs2/releases
 val monixV              = "3.3.0"       //https://github.com/monix/monix/releases - used only for Java future conversion. Drop once we migrate to CE3, and use it from there
 val log4catsV           = "1.2.2"       //https://github.com/ChristopherDavenport/log4cats/releases
@@ -257,6 +257,7 @@ lazy val `aws-sns` = project
 //=============================================================================
 
 lazy val commonSettings = Seq(
+  testFrameworks += new TestFramework("munit.Framework"),
   Compile / unmanagedSourceDirectories ++= {
     val major = if (isDotty.value) "-3" else "-2"
     List(CrossType.Pure, CrossType.Full).flatMap(
