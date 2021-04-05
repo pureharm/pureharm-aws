@@ -31,21 +31,21 @@ import busymachines.pureharm.testkit._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 22 May 2019
   */
-final class S3MinIOTest extends PureharmTestWithResource {
+final class S3MinIOTest extends PureharmTest {
   private val UTF_8 = java.nio.charset.StandardCharsets.UTF_8
   implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
-  val l = testLogger
+  private val l = testLogger
 
-  override type ResourceType = (S3Config, AmazonS3Client[IO])
-
-  override def resource(meta: MetaData): Resource[IO, ResourceType] = for {
-    config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3.minio")
-    s3Client <- AmazonS3Client.resource[IO](config)
-    _        <- Resource.liftF(l.info(s"creating minio bucket"))
-    _        <- Resource.liftF(s3Client.deleteBucket(config.bucket).attempt.void) // just in case
-    _        <- Resource.make(s3Client.initBucket(config.bucket))(_ => s3Client.deleteBucket(config.bucket))
-    _        <- Resource.liftF(l.info(s"created minio bucket"))
-  } yield (config, s3Client)
+  private val resource = ResourceFixture[(S3Config, AmazonS3Client[IO])] { _ =>
+    for {
+      config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3.minio")
+      s3Client <- AmazonS3Client.resource[IO](config)
+      _        <- Resource.eval(l.info(s"creating minio bucket"))
+      _        <- Resource.eval(s3Client.deleteBucket(config.bucket).attempt.void) // just in case
+      _        <- Resource.make(s3Client.initBucket(config.bucket))(_ => s3Client.deleteBucket(config.bucket))
+      _        <- Resource.eval(l.info(s"created minio bucket"))
+    } yield (config, s3Client)
+  }
 
   private val f1S3Key: S3FileKey =
     S3FileKey[Try]("folder", "subfolder", "file.txt").get
@@ -59,7 +59,7 @@ final class S3MinIOTest extends PureharmTestWithResource {
 
   private val f1_content_length: S3ContentLengthBytes = S3ContentLengthBytes(22L)
 
-  test("minio init bucket + list bucket") { case (config, client) =>
+  resource.test("minio init bucket + list bucket") { case (config, client) =>
     val newBucket = S3Bucket("testinitbucket")
     for {
       buckets <- client.listBuckets
@@ -69,10 +69,10 @@ final class S3MinIOTest extends PureharmTestWithResource {
       _ <- Resource.make(client.initBucket(newBucket))(_ => client.deleteBucket(newBucket).attempt.void).use { _ =>
         client.listBuckets.map(bs => IO(assert(bs.contains(newBucket))))
       }
-    } yield succeed
+    } yield ()
   }
 
-  test("minio put + get + delete") { case (config, client) =>
+  resource.test("minio put + get + delete") { case (config, client) =>
     for {
       _   <- l.info(s"acquired client resource: ${client.toString}")
       _   <-
@@ -99,10 +99,10 @@ final class S3MinIOTest extends PureharmTestWithResource {
           .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
           .void
           .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
-    } yield succeed
+    } yield ()
   }
 
-  test("minio putStream + getStream + delete") { case (config, client) =>
+  resource.test("minio putStream + getStream + delete") { case (config, client) =>
     for {
       _   <- l.info(s"acquired client resource: ${client.toString}")
       _   <-
@@ -125,10 +125,10 @@ final class S3MinIOTest extends PureharmTestWithResource {
           .flatMap(g => l.error(s"SHOULD HAVE DELETED, but got: ${new String(g, UTF_8)}"))
           .void
           .handleErrorWith(t => l.info(s"AFTER DELETE — expected failure, and got it: ${t.toString}"))
-    } yield succeed
+    } yield ()
   }
 
-  test("minio copy + exists + list") { case (config, client) =>
+  resource.test("minio copy + exists + list") { case (config, client) =>
     for {
       _             <- l.info(s"acquired client resource: ${client.toString}")
       _             <-
@@ -168,7 +168,7 @@ final class S3MinIOTest extends PureharmTestWithResource {
         client
           .delete(config.bucket, f2S3Key)
           .handleErrorWith(e => l.error(e)(s"DELETE failed w/: $e"))
-    } yield succeed
+    } yield ()
   }
 
 }

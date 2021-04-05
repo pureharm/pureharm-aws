@@ -61,22 +61,24 @@ import scala.concurrent.duration._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 19 Jul 2019
   */
-final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTestWithResource {
+final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTest {
   implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
   val l = testLogger
 
-  override type ResourceType = (Client[IO], S3Config, AmazonS3Client[IO], CloudfrontURLSigner[IO])
+  private type ResourceType = (Client[IO], S3Config, AmazonS3Client[IO], CloudfrontURLSigner[IO])
 
-  override def resource(meta: MetaData): Resource[IO, ResourceType] = for {
-    config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
-    blazeClient <-
-      BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
-    s3Client    <- AmazonS3Client.resource[IO](config)
-    cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-value")
-    _           <- Resource.liftF(l.info(s"CFCONFIG: $cfConfig"))
-    cfClient    <- CloudfrontURLSigner[IO](cfConfig)
-    _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
-  } yield (blazeClient, config, s3Client, cfClient)
+  private val resource = ResourceFixture[ResourceType] { _ =>
+    for {
+      config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
+      blazeClient <-
+        BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
+      s3Client    <- AmazonS3Client.resource[IO](config)
+      cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-value")
+      _           <- Resource.eval(l.info(s"CFCONFIG: $cfConfig"))
+      cfClient    <- CloudfrontURLSigner[IO](cfConfig)
+      _           <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
+    } yield (blazeClient, config, s3Client, cfClient)
+  }
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey[IO]("aws_live_test", "subfolder", "google_murray_bookchin.txt")
 
@@ -84,7 +86,7 @@ final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTestWithResourc
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
-  test("s3 upload + signed url delivery via cloudfront") { case (http4sClient, s3Config, s3Client, cfSigner) =>
+  resource.test("s3 upload + signed url delivery via cloudfront") { case (http4sClient, s3Config, s3Client, cfSigner) =>
     for {
       s3Key <- s3KeyIO
       _     <- l.info(s"Uploaded file to s3: $s3Key")
@@ -106,7 +108,7 @@ final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTestWithResourc
       _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
       _               <- l.info(s"Expected #${fileContent.size} bytes")
       _               <- IO(assert(fileContent.toList == bytesFromSigned))
-    } yield succeed
+    } yield ()
   }
 
 }

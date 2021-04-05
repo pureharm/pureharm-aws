@@ -8,20 +8,22 @@ See [changelog](./CHANGELOG.md).
 
 The available modules are (for Scala 2.13):
 
-- `"com.busymachines" %% s"pureharm-aws-core" % "0.1.0"`
-- `"com.busymachines" %% s"pureharm-aws-s3" % "0.1.0"`
-- `"com.busymachines" %% s"pureharm-aws-sns" % "0.1.0"`
-  - [pureharm-json-circe](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.1`
-- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.1.0"`
-- `"com.busymachines" %% s"pureharm-aws-logger" % "0.1.0"`
-  - [log4cats](https://github.com/typelevel/log4cats/releases) `1.2.0`
+- `"com.busymachines" %% s"pureharm-aws-core" % "0.2.0"`
+- `"com.busymachines" %% s"pureharm-aws-s3" % "0.2.0"`
+- `"com.busymachines" %% s"pureharm-aws-sns" % "0.2.0"`
+  - [pureharm-json-circe](https://github.com/busymachines/pureharm-json-circe/releases) `0.2.0`
+- `"com.busymachines" %% s"pureharm-aws-cloudfront" % "0.2.0"`
+- `"com.busymachines" %% s"pureharm-aws-logger" % "0.2.0"`
+  - [log4cats](https://github.com/typelevel/log4cats/releases) `1.2.2`
 
 Common downstream dependencies:
 
 - [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.991`
 - [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.34`
-- [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
-- [pureharm-config](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
+- [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.2.0`
+- [pureharm-core-anomaly](https://github.com/busymachines/pureharm-core/releases) `0.2.0`
+- [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.2.0`
+- [pureharm-config](https://github.com/busymachines/pureharm-config/releases) `0.2.0`
 
 ## usage
 

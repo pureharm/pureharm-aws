@@ -136,7 +136,7 @@ object SNSMobilePushNotificationsOps {
 
   def resource[F[_]: Sync: BlockingShifter](
     config: SNSMobilePushConfig
-  ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.liftF(this.create[F](config))
+  ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.eval(this.create[F](config))
 
   def create[F[_]: Sync: BlockingShifter](
     config: SNSMobilePushConfig

@@ -220,6 +220,7 @@ lazy val `aws-logger` = project
       amazonLogs,
       log4catsCore,
       pureharmTestkit % ITT,
+      log4catsSlf4j   % ITT,
       logbackClassic  % ITT,
     ),
   )

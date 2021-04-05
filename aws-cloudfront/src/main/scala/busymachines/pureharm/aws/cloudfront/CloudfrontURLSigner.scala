@@ -40,7 +40,7 @@ object CloudfrontURLSigner {
     }
 
     for {
-      pk <- Resource.liftF(privateKeyF) // Resource.fromDestroyable(privateKey): TODO: upon closing this fails :(
+      pk <- Resource.eval(privateKeyF) // Resource.fromDestroyable(privateKey): TODO: upon closing this fails :(
     } yield new impl.CloudfrontURLSignerImpl(pk, config)
   }
 
