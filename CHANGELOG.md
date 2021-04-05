@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # 0.2.0
 
+## deprecations
+
+- deprecate all configuration companion objects. Use `pureharm-config-ciris` to read the configs in userland, instead of relying on the library w/ pureconfig to do it.
+
 ## dependency upgrades
+
 - [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.991`
 - [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.34`
 - [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.2.0`
