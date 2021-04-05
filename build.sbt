@@ -101,7 +101,7 @@ val fs2V                = "2.5.4"       //https://github.com/typelevel/fs2/relea
 val monixV              = "3.3.0"       //https://github.com/monix/monix/releases - used only for Java future conversion. Drop once we migrate to CE3, and use it from there
 val log4catsV           = "1.2.2"       //https://github.com/ChristopherDavenport/log4cats/releases
 val logbackV            = "1.2.3"       //https://github.com/qos-ch/logback/releases
-val http4sV             = "0.21.20"     //https://github.com/http4s/http4s/releases
+val http4sV             = "0.21.21"     //https://github.com/http4s/http4s/releases
 
 val amazonCloudFront         = "com.amazonaws"             % "aws-java-sdk-cloudfront"    % awsJavaSdkV         withSources()
 val amazonLogs               = "com.amazonaws"             % "aws-java-sdk-logs"          % awsJavaSdkV         withSources()
