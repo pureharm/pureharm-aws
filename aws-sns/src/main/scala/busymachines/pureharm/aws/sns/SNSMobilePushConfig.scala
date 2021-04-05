@@ -35,6 +35,10 @@ case class SNSMobilePushConfig(
 
 import busymachines.pureharm.config._
 
+@scala.deprecated(
+  "Companion object that depends on pureharm-config will be deprecated and removed. Use pureharm-config-ciris in userland to read the config instead.",
+  "0.2.0",
+)
 object SNSMobilePushConfig extends ConfigLoader[SNSMobilePushConfig] {
   import busymachines.pureharm.config.implicits._
 

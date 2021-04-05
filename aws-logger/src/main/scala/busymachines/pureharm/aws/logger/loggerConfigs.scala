@@ -86,6 +86,10 @@ object CloudWatchLoggerConfig {
   * }
   * }}}
   */
+@scala.deprecated(
+  "Companion object that depends on pureharm-config will be deprecated and removed. Use pureharm-config-ciris in userland to read the config instead.",
+  "0.2.0",
+)
 object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
   import busymachines.pureharm.config.implicits._
 
