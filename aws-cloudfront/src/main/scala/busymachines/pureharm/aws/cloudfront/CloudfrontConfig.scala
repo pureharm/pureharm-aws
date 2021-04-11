@@ -28,10 +28,6 @@ sealed trait CloudfrontConfig {
   def urlExpirationTime:  CloudfrontURLExpiration
 }
 
-@scala.deprecated(
-  "Companion object that depends on pureharm-config will be deprecated and removed. Use pureharm-config-ciris in userland to read the config instead.",
-  "0.2.0",
-)
 object CloudfrontConfig extends ConfigLoader[CloudfrontConfig] {
   import busymachines.pureharm.config.implicits._
   import busymachines.pureharm.effects.implicits._
