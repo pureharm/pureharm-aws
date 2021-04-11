@@ -93,7 +93,7 @@ val awsJavaSdkV         = "1.11.991"    //java — https://github.com/aws/aws-sd
 val awsJavaSdkV2V       = "2.16.34"     //java — https://github.com/aws/aws-sdk-java-v2/releases
 
 val pureharmCoreV       = "0.2.0"       //https://github.com/busymachines/pureharm-core/releases
-val pureharmEffectsV    = "0.2.0"       //https://github.com/busymachines/pureharm-effects/releases
+val pureharmEffectsV    = "0.4.0"       //https://github.com/busymachines/pureharm-effects/releases
 val pureharmJsonV       = "0.2.0"       //https://github.com/busymachines/pureharm-json/releases
 val pureharmConfigV     = "0.4.0"       //https://github.com/busymachines/pureharm-config/releases
 val pureharmTestkitV    = "0.2.0"       //https://github.com/busymachines/pureharm-testkit/releases

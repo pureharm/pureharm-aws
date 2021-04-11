@@ -13,7 +13,7 @@ Reverse deprecation on configuration companion objects. But this is the last rel
 
 - [AWS SDK v1](https://github.com/aws/aws-sdk-java/releases) `1.11.991`
 - [AWS SDK v2](https://github.com/aws/aws-sdk-java-v2/releases) `2.16.34`
-- [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.2.0`
+- [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.4.0`
 - [pureharm-config](https://github.com/busymachines/pureharm-config/releases) `0.4.0`
 
 # 0.2.0
