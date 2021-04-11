@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
-Reverse deprecation on configuration companion objects. But this is the last release that depends on pureharm-config.
+- Reverse deprecation on configuration companion objects. But this is the last release that depends on pureharm-config.
+- Remove support for reading cloudfront signing keys as `.DER` format
 
 ## dependency upgrades
 

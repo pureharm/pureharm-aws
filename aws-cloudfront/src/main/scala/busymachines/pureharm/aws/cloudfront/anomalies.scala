@@ -37,7 +37,24 @@ final case class CloudFrontURLSigningCatastrophe(cause: Throwable)
   override val id: AnomalyID = CloudfrontAnomalyIDs.CloudFrontURLSigningCatastropheID
 }
 
+final case class InvalidCloudfrontPEMKey()
+  extends InvalidInputAnomaly(
+    message = s"""|Invalid PEM key. It did not include with 'BEGIN RSA PRIVATE KEY'. 
+                  |Assuming it's not a correct private key.
+                  |
+                  |Keep in mind that you take the .pem cloudfront keyfile, and base64 encode it.
+                  |And pass that _string_ along as a parameter.
+                  |
+                  |e.g.
+                  |
+                  |$$ base64 ~/some_path/my_cloudfront_private_key.pem
+                  |""".stripMargin
+  ) {
+  override val id: AnomalyID = CloudfrontAnomalyIDs.CloudFrontInvalidPrivateKeyID
+}
+
 object CloudfrontAnomalyIDs {
   case object CloudFrontKeyReadingCatastropheID extends AnomalyID { override val name: String = "PH_AWS_CF_001" }
   case object CloudFrontURLSigningCatastropheID extends AnomalyID { override val name: String = "PH_AWS_CF_002" }
+  case object CloudFrontInvalidPrivateKeyID     extends AnomalyID { override val name: String = "PH_AWS_CF_003" }
 }

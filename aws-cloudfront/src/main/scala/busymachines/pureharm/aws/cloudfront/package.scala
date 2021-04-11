@@ -48,7 +48,10 @@ package object cloudfront {
       import java.util.Base64
       import busymachines.pureharm.effects.implicits._
 
-      Either.catchNonFatal[String](new String(Base64.getDecoder.decode(o), StandardCharsets.UTF_8)).liftTo[F]
+      for {
+        decoded <- m.catchNonFatal(new String(Base64.getDecoder.decode(o), StandardCharsets.UTF_8))
+        _       <- if (!decoded.contains("BEGIN RSA PRIVATE KEY")) m.raiseError(InvalidCloudfrontPEMKey()) else m.unit
+      } yield decoded
     }
 
     sealed trait Format
@@ -62,10 +65,6 @@ package object cloudfront {
 
     case object PEM extends Format {
       override def toString: String = ".pem"
-    }
-
-    case object DER extends Format {
-      override def toString: String = ".der"
     }
   }
 

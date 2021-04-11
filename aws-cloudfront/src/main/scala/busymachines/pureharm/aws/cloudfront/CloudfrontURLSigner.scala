@@ -81,8 +81,6 @@ object CloudfrontURLSigner {
           format match {
             case CloudfrontPrivateKey.PEM =>
               com.amazonaws.auth.PEM.readPrivateKey(new ByteArrayInputStream(bytes)): PrivateKey
-            case CloudfrontPrivateKey.DER =>
-              com.amazonaws.auth.RSA.privateKeyFromPKCS8(bytes): PrivateKey
           }
         }
         .adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
