@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bump sbt-spiewak to `0.21.0`
 - bump sbt-scalafmt to `2.4.3`
 
-
 # 0.3.0
 
 - Reverse deprecation on configuration companion objects. But this is the last release that depends on pureharm-config.
