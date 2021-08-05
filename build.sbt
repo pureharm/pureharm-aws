@@ -97,13 +97,15 @@ val awsJavaSdkV2V       = "2.16.39"       //java — https://github.com/aws/aws-
 val pureharmCoreV       = "0.3.0"         //https://github.com/busymachines/pureharm-core/releases
 val pureharmEffectsV    = "0.5.0"         //https://github.com/busymachines/pureharm-effects/releases
 val pureharmJsonV       = "0.3.0-M1"      //https://github.com/busymachines/pureharm-json/releases
-val pureharmConfigV     = "0.4.0"         //https://github.com/busymachines/pureharm-config/releases
-val pureharmTestkitV    = "0.3.0"         //https://github.com/busymachines/pureharm-testkit/releases
-val fs2V                = "2.5.9"         //https://github.com/typelevel/fs2/releases
+val pureharmTestkitV    = "0.4.0"         //https://github.com/busymachines/pureharm-testkit/releases
+val fs2V                = "3.0.6"         //https://github.com/typelevel/fs2/releases
+val fs2CE2V             = "2.5.9"         //https://github.com/typelevel/fs2/releases
 val monixV              = "3.4.0"         //https://github.com/monix/monix/releases - used only for Java future conversion. Drop once we migrate to CE3, and use it from there
-val log4catsV           = "1.3.1"         //https://github.com/ChristopherDavenport/log4cats/releases
+val log4catsV           = "2.1.1"         //https://github.com/ChristopherDavenport/log4cats/releases
+val log4catsCE2V        = "1.3.1"         //https://github.com/ChristopherDavenport/log4cats/releases
 val logbackV            = "1.2.3"         //https://github.com/qos-ch/logback/releases
-val http4sV             = "0.22.1"        //https://github.com/http4s/http4s/releases
+val http4sV             = "0.23.0"        //https://github.com/http4s/http4s/releases
+val http4sCE2V          = "0.22.1"        //https://github.com/http4s/http4s/releases
 
 val amazonCloudFront         = "com.amazonaws"             % "aws-java-sdk-cloudfront"        % awsJavaSdkV         withSources()
 val amazonLogs               = "com.amazonaws"             % "aws-java-sdk-logs"              % awsJavaSdkV         withSources()
@@ -112,14 +114,20 @@ val amazonS3V2               = "software.amazon.awssdk"    % "s3"               
 val amazonSNSV2              = "software.amazon.awssdk"    % "sns"                            % awsJavaSdkV2V       withSources()
 val pureharmCoreAnomaly      = "com.busymachines"         %% "pureharm-core-anomaly"          % pureharmCoreV       withSources()
 val pureharmCoreSprout       = "com.busymachines"         %% "pureharm-core-sprout"           % pureharmCoreV       withSources()
-val pureharmEffectsCats      = "com.busymachines"         %% "pureharm-effects-cats-2"        % pureharmEffectsV    withSources()
+val pureharmEffectsCats      = "com.busymachines"         %% "pureharm-effects-cats"          % pureharmEffectsV    withSources()
+val pureharmEffectsCE2       = "com.busymachines"         %% "pureharm-effects-cats-2"        % pureharmEffectsV    withSources()
 val pureharmJsonCirce        = "com.busymachines"         %% "pureharm-json-circe"            % pureharmJsonV       withSources()
 val pureharmTestkit          = "com.busymachines"         %% "pureharm-testkit"               % pureharmTestkitV    withSources()
+val pureharmTestkitCE2       = "com.busymachines"         %% "pureharm-testkit-ce2"           % pureharmTestkitV    withSources()
 val monixCatnap              = "io.monix"                 %% "monix-catnap"                   % monixV              withSources()
 val fs2IO                    = "co.fs2"                   %% "fs2-io"                         % fs2V                withSources()
+val fs2IOCE2                 = "co.fs2"                   %% "fs2-io"                         % fs2CE2V             withSources()
 val http4sClient             = "org.http4s"               %% "http4s-blaze-client"            % http4sV             withSources()
+val http4sClientCE2          = "org.http4s"               %% "http4s-blaze-client"            % http4sCE2V             withSources()
 val log4catsCore             = "org.typelevel"            %% "log4cats-core"                  % log4catsV           withSources()
 val log4catsSlf4j            = "org.typelevel"            %% "log4cats-slf4j"                 % log4catsV           withSources()
+val log4catsCoreCE2          = "org.typelevel"            %% "log4cats-core"                  % log4catsCE2V        withSources()
+val log4catsSlf4jCE2         = "org.typelevel"            %% "log4cats-slf4j"                 % log4catsCE2V        withSources()
 val logbackClassic           = "ch.qos.logback"            % "logback-classic"                % logbackV            withSources()
 // format: on
 //=============================================================================
@@ -136,6 +144,11 @@ lazy val root = Project(id = "pureharm-aws", base = file("."))
     `aws-cloudfront`,
     `aws-logger`,
     `aws-sns`,
+    `aws-core-ce2`,
+    `aws-s3-ce2`,
+    `aws-cloudfront-ce2`,
+    `aws-logger-ce2`,
+    `aws-sns-ce2`,
   )
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -163,7 +176,6 @@ lazy val `aws-s3` = project
   .settings(
     name := "pureharm-aws-s3",
     libraryDependencies ++= Seq(
-      monixCatnap,
       fs2IO,
       pureharmCoreAnomaly,
       pureharmCoreSprout,
@@ -247,6 +259,117 @@ lazy val `aws-sns` = project
   )
   .dependsOn(
     `aws-core`
+  )
+
+//#############################################################################
+//###################### cats-effect 2 modules ################################
+//#############################################################################
+
+lazy val `aws-core-ce2` = project
+  .settings(commonSettings)
+  .settings(
+    name := "pureharm-aws-core-ce2",
+    libraryDependencies ++= Seq(
+      pureharmCoreSprout,
+      pureharmCoreAnomaly,
+      pureharmEffectsCE2,
+      amazonRegionsV2,
+    ),
+  )
+
+//#############################################################################
+
+lazy val `aws-s3-ce2` = project
+  .settings(commonSettings)
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(
+    name := "pureharm-aws-s3-ce2",
+    libraryDependencies ++= Seq(
+      monixCatnap,
+      fs2IOCE2,
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCE2,
+      amazonS3V2,
+      pureharmTestkitCE2 % ITT,
+      log4catsSlf4jCE2   % ITT,
+      logbackClassic     % ITT,
+    ),
+  )
+  .dependsOn(
+    `aws-core-ce2`
+  )
+
+//#############################################################################
+
+lazy val `aws-cloudfront-ce2` = project
+  .settings(commonSettings)
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(
+    name := "pureharm-aws-cloudfront-ce2",
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCE2,
+      amazonCloudFront,
+      pureharmTestkitCE2 % ITT,
+      log4catsSlf4jCE2   % ITT,
+      http4sClientCE2    % ITT,
+      logbackClassic     % ITT,
+    ),
+  )
+  .dependsOn(
+    `aws-core-ce2`,
+    `aws-s3-ce2`,
+  )
+
+//#############################################################################
+
+lazy val `aws-logger-ce2` = project
+  .settings(commonSettings)
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(
+    name := "pureharm-aws-logger-ce2",
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCE2,
+      amazonLogs,
+      log4catsCore,
+      pureharmTestkitCE2 % ITT,
+      log4catsSlf4jCE2   % ITT,
+      logbackClassic     % ITT,
+    ),
+  )
+  .dependsOn(
+    `aws-core-ce2`
+  )
+
+//#############################################################################
+
+lazy val `aws-sns-ce2` = project
+  .settings(commonSettings)
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
+  .settings(
+    name := "pureharm-aws-sns-ce2",
+    libraryDependencies ++= Seq(
+      pureharmCoreAnomaly,
+      pureharmCoreSprout,
+      pureharmEffectsCE2,
+      pureharmJsonCirce,
+      amazonSNSV2,
+      pureharmTestkitCE2 % ITT,
+      log4catsSlf4jCE2   % ITT,
+      http4sClientCE2    % ITT,
+      logbackClassic     % ITT,
+    ),
+  )
+  .dependsOn(
+    `aws-core-ce2`
   )
 
 //=============================================================================
