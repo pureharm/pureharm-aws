@@ -48,7 +48,7 @@ object CloudfrontURLSigner {
     import com.amazonaws.services.cloudfront.CloudFrontUrlSigner
     import com.amazonaws.services.cloudfront.util.SignerUtils
 
-    def signS3KeyCanned[F[_]: Sync](
+    def signS3KeyCanned[F[_]: Sync: BlockingShifter](
       privateKey: PrivateKey,
       config:     CloudfrontConfig,
     )(s3key:      S3FileKey): F[CloudfrontSignedURL] =
@@ -114,22 +114,24 @@ object CloudfrontURLSigner {
       keyPairID:  CloudfrontKeyPairID,
       baseURL:    String,
       expiresAt:  java.util.Date,
-    )(implicit F: Sync[F]): F[String] =
-      F.delay {
-        CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-          baseURL,
-          keyPairID,
-          privateKey,
-          expiresAt,
-        )
-      }.adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
+    )(implicit F: Sync[F], blocker: BlockingShifter[F]): F[String] =
+      blocker
+        .delay {
+          CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
+            baseURL,
+            keyPairID,
+            privateKey,
+            expiresAt,
+          )
+        }
+        .adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
 
     final class CloudfrontURLSignerImpl[F[_]](
-      private val privateKey:       PrivateKey,
-      private val config:           CloudfrontConfig,
-    )(
-      implicit private val F:       Sync[F],
-      implicit private val blocker: BlockingShifter[F],
+      privateKey: PrivateKey,
+      config:     CloudfrontConfig,
+    )(implicit
+      F:          Sync[F],
+      bs:         BlockingShifter[F],
     ) extends CloudfrontURLSigner[F] {
 
       override def signS3KeyCanned(s3key: S3FileKey): F[CloudfrontSignedURL] =

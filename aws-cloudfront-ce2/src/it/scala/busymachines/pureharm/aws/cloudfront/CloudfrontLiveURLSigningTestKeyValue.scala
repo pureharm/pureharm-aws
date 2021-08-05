@@ -6,9 +6,7 @@ import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.testkit._
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.http4s.client.Client
-import org.http4s.blaze.client._
-
-import scala.concurrent.duration._
+import org.http4s.ember.client._
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
@@ -67,15 +65,14 @@ final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTest {
     for {
       // config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       config      <- (??? : Resource[IO, S3Config])
-      blazeClient <-
-        BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
+      emberClient <- EmberClientBuilder.default[IO].build
       s3Client    <- AmazonS3Client.resource[IO](config)
       cfConfig    <- (??? : Resource[IO, CloudfrontConfig])
       // cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-value")
       _           <- Resource.eval(l.info(s"CFCONFIG: $cfConfig"))
       cfClient    <- CloudfrontURLSigner[IO](cfConfig)
       _ <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
-    } yield (blazeClient, config, s3Client, cfClient)
+    } yield (emberClient, config, s3Client, cfClient)
   }
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey[IO]("aws_live_test", "subfolder", "google_murray_bookchin.txt")

@@ -5,10 +5,8 @@ import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.testkit._
 import org.http4s.client.Client
-import org.http4s.blaze.client._
+import org.http4s.ember.client._
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-
-import scala.concurrent.duration._
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
@@ -69,15 +67,14 @@ final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTest {
     for {
       config      <- (??? : Resource[IO, S3Config])
       //config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
-      blazeClient <-
-        BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
+      emberClient <- EmberClientBuilder.default[IO].build
       s3Client    <- AmazonS3Client.resource[IO](config)
       // cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-path")
       cfConfig    <- (??? : Resource[IO, CloudfrontConfig])
       _           <- Resource.eval(l.info(s"CFCONFIG: $cfConfig"))
       cfClient    <- CloudfrontURLSigner[IO](cfConfig)
       _ <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
-    } yield (blazeClient, config, s3Client, cfClient)
+    } yield (emberClient, config, s3Client, cfClient)
   }
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey[IO]("aws_live_test", "subfolder", "google_murray_bookchin.txt")
@@ -86,30 +83,29 @@ final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTest {
     "GOOGLE_MURRAY_BOOKCHIN".getBytes(java.nio.charset.StandardCharsets.UTF_8)
   )
 
-  resource.test("s3 upload + signed url delivery via cloudfront") {
-    case (http4sClient, s3Config, s3Client, cfSigner) =>
-      for {
-        s3Key <- s3KeyIO
-        _     <- l.info(s"Uploaded file to s3: $s3Key")
-        _     <-
-          s3Client
-            .put(s3Config.bucket, s3Key, fileContent)
-            .onError { case e => l.error(e)(s"PUT failed w/: $e") }
-            .void
-            .handleErrorWith(_ => IO(fail("1. failed to upload file to s3")))
+  resource.test("s3 upload + signed url delivery via cloudfront") { case (http4sClient, s3Config, s3Client, cfSigner) =>
+    for {
+      s3Key <- s3KeyIO
+      _     <- l.info(s"Uploaded file to s3: $s3Key")
+      _     <-
+        s3Client
+          .put(s3Config.bucket, s3Key, fileContent)
+          .onError { case e => l.error(e)(s"PUT failed w/: $e") }
+          .void
+          .handleErrorWith(_ => IO(fail("1. failed to upload file to s3")))
 
-        checkingFile <- s3Client.get(s3Config.bucket, s3Key)
-        _            <- l.info(s"Fetched file from s3: $s3Key")
-        _            <- IO(assert(fileContent.toList == checkingFile.toList))
-        _            <- l.info(s"File from s3 is all OK: $s3Key")
+      checkingFile <- s3Client.get(s3Config.bucket, s3Key)
+      _            <- l.info(s"Fetched file from s3: $s3Key")
+      _            <- IO(assert(fileContent.toList == checkingFile.toList))
+      _            <- l.info(s"File from s3 is all OK: $s3Key")
 
-        signedURL       <- cfSigner.signS3KeyCanned(s3Key)
-        _               <- l.info(s"Signed url: $signedURL")
-        bytesFromSigned <- http4sClient.get(signedURL)(response => response.body.compile.toList)
-        _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
-        _               <- l.info(s"Expected #${fileContent.size} bytes")
-        _               <- IO(assert(fileContent.toList == bytesFromSigned))
-      } yield ()
+      signedURL       <- cfSigner.signS3KeyCanned(s3Key)
+      _               <- l.info(s"Signed url: $signedURL")
+      bytesFromSigned <- http4sClient.get(signedURL)(response => response.body.compile.toList)
+      _               <- l.info(s"Fetched  #${bytesFromSigned.size} bytes from: GET $signedURL")
+      _               <- l.info(s"Expected #${fileContent.size} bytes")
+      _               <- IO(assert(fileContent.toList == bytesFromSigned))
+    } yield ()
   }
 
 }

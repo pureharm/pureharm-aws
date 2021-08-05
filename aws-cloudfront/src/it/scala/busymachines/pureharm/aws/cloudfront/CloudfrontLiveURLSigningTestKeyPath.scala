@@ -5,11 +5,8 @@ import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.testkit._
 import org.http4s.client.Client
-import org.http4s.blaze.client._
+import org.http4s.ember.client._
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-
-import scala.concurrent.duration._
-import cats.effect.unsafe.HackToGetBlockingPool
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
@@ -70,16 +67,13 @@ final class CloudfrontLiveURLSigningTestKeyPath extends PureharmTest {
     for {
       config      <- (??? : Resource[IO, S3Config])
       //config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
-      blazeClient <-
-        BlazeClientBuilder[IO](HackToGetBlockingPool.blockingPoolFromIORuntime(runtime.implicitIORuntime))
-          .withResponseHeaderTimeout(10.seconds)
-          .resource
+      emberClient <- EmberClientBuilder.default[IO].build
       s3Client    <- AmazonS3Client.resource[IO](config)
       // cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-path")
       cfConfig    <- (??? : Resource[IO, CloudfrontConfig])
       _           <- Resource.eval(l.info(s"CFCONFIG: $cfConfig"))
       cfClient    <- CloudfrontURLSigner[IO](cfConfig)
-    } yield (blazeClient, config, s3Client, cfClient)
+    } yield (emberClient, config, s3Client, cfClient)
   }
 
   private val s3KeyIO: IO[S3FileKey] = S3FileKey[IO]("aws_live_test", "subfolder", "google_murray_bookchin.txt")
