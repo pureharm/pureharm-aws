@@ -32,10 +32,10 @@ val Scala3RC1 = "3.0.0-RC1"
 //see: https://github.com/xerial/sbt-sonatype#buildsbt
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
-ThisBuild / baseVersion  := "0.3"
-ThisBuild / organization := "com.busymachines"
+ThisBuild / baseVersion      := "0.3"
+ThisBuild / organization     := "com.busymachines"
 ThisBuild / organizationName := "BusyMachines"
-ThisBuild / homepage     := Option(url("https://github.com/busymachines/pureharm-aws"))
+ThisBuild / homepage         := Option(url("https://github.com/busymachines/pureharm-aws"))
 
 ThisBuild / scmInfo := Option(
   ScmInfo(
@@ -44,8 +44,8 @@ ThisBuild / scmInfo := Option(
   )
 )
 
-/** I want my email. So I put this here. To reduce a few lines of code,
-  * the sbt-spiewak plugin generates this (except email) from these two settings:
+/** I want my email. So I put this here. To reduce a few lines of code, the sbt-spiewak plugin generates this (except
+  * email) from these two settings:
   * {{{
   * ThisBuild / publishFullName   := "Loránd Szakács"
   * ThisBuild / publishGithubUser := "lorandszakacs"
@@ -60,7 +60,7 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / startYear := Some(2019)
+ThisBuild / startYear  := Some(2019)
 ThisBuild / licenses   := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 //until we get to 1.0.0, we keep strictSemVer false
@@ -257,19 +257,16 @@ lazy val `aws-sns` = project
 //=============================================================================
 
 lazy val commonSettings = Seq(
-  testFrameworks += new TestFramework("munit.Framework"),
-  Compile / unmanagedSourceDirectories ++= {
-    val major = if (isDotty.value) "-3" else "-2"
-    List(CrossType.Pure, CrossType.Full).flatMap(
-      _.sharedSrcDir(baseDirectory.value, "main").toList.map(f => file(f.getPath + major))
-    )
-  },
-  Test / unmanagedSourceDirectories ++= {
-    val major = if (isDotty.value) "-3" else "-2"
-    List(CrossType.Pure, CrossType.Full).flatMap(
-      _.sharedSrcDir(baseDirectory.value, "test").toList.map(f => file(f.getPath + major))
-    )
-  },
+  scalacOptions ++= scalaCompilerOptions(scalaVersion.value)
 )
+
+def scalaCompilerOptions(scalaVersion: String): Seq[String] =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, _)) =>
+      Seq[String](
+        //"-Xsource:3"
+      )
+    case _            => Seq.empty[String]
+  }
 
 def ITT: String = "it,test"
