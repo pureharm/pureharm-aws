@@ -113,11 +113,11 @@ object AmazonS3Client {
     internals.PureJavaS3.buildClient(config)
 
   private class AmazonS3ClientImpl[F[_]](
-    private val s3Client:         S3AsyncClient,
-    override val config:          S3Config,
-  )(
-    implicit private val F:       Async[F],
-    implicit private val shifter: BlockingShifter[F],
+    s3Client:            S3AsyncClient,
+    override val config: S3Config,
+  )(implicit
+    F:                   Async[F],
+    shifter:             BlockingShifter[F],
   ) extends AmazonS3Client[F] {
 
     override def initBucket(bucket: S3Bucket): F[Unit] =

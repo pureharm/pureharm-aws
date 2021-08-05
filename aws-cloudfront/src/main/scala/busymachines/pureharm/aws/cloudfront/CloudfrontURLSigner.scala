@@ -107,7 +107,7 @@ object CloudfrontURLSigner {
       baseURL:    String,
       expiresAt:  java.util.Date,
     )(implicit F: Sync[F]): F[String] =
-      F.delay {
+      F.blocking {
         CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
           baseURL,
           keyPairID,

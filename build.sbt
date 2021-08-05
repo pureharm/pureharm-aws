@@ -72,8 +72,7 @@ ThisBuild / spiewakMainBranches       := List("main")
 ThisBuild / Test / publishArtifact    := false
 
 ThisBuild / scalaVersion       := Scala213
-// ThisBuild / crossScalaVersions := List(Scala213, Scala3)
-ThisBuild / crossScalaVersions := List(Scala213)
+ThisBuild / crossScalaVersions := List(Scala213, Scala3)
 
 //required for binary compat checks
 ThisBuild / versionIntroduced := Map(
@@ -122,8 +121,8 @@ val pureharmTestkitCE2       = "com.busymachines"         %% "pureharm-testkit-c
 val monixCatnap              = "io.monix"                 %% "monix-catnap"                   % monixV              withSources()
 val fs2IO                    = "co.fs2"                   %% "fs2-io"                         % fs2V                withSources()
 val fs2IOCE2                 = "co.fs2"                   %% "fs2-io"                         % fs2CE2V             withSources()
-val http4sClient             = "org.http4s"               %% "http4s-blaze-client"            % http4sV             withSources()
-val http4sClientCE2          = "org.http4s"               %% "http4s-blaze-client"            % http4sCE2V             withSources()
+val http4sClient             = "org.http4s"               %% "http4s-ember-client"            % http4sV             withSources()
+val http4sClientCE2          = "org.http4s"               %% "http4s-ember-client"            % http4sCE2V             withSources()
 val log4catsCore             = "org.typelevel"            %% "log4cats-core"                  % log4catsV           withSources()
 val log4catsSlf4j            = "org.typelevel"            %% "log4cats-slf4j"                 % log4catsV           withSources()
 val log4catsCoreCE2          = "org.typelevel"            %% "log4cats-core"                  % log4catsCE2V        withSources()

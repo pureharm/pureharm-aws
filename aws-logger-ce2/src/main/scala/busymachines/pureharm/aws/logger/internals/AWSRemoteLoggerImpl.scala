@@ -35,12 +35,8 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
   *   Apr 2019
   */
 final private[logger] class AWSRemoteLoggerImpl[F[_]] private[logger] (
-  private val config:      CloudWatchLoggerConfig,
-  private val localLogger: SelfAwareStructuredLogger[F],
-  private val remote:      AWSRemoteLoggerImpl.AWSHelper[F],
-)(
-  implicit private val F:  Concurrent[F],
-  implicit private val cs: BlockingShifter[F],
+  localLogger: SelfAwareStructuredLogger[F],
+  remote:      AWSRemoteLoggerImpl.AWSHelper[F],
 ) extends SelfAwareStructuredLogger[F] {
   import AWSRemoteLoggerImpl.Level
 
@@ -125,7 +121,6 @@ private[logger] object AWSRemoteLoggerImpl {
     awsLogs:     AWSLogsAsync,
   ): AWSRemoteLoggerImpl[F] =
     new AWSRemoteLoggerImpl(
-      config      = config,
       localLogger = localLogger,
       remote      = new AWSHelper[F](config, localLogger, awsLogs),
     )

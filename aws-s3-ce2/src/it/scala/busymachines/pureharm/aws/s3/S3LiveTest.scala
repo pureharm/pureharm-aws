@@ -2,17 +2,14 @@
   *
   * See company homepage at: https://www.busymachines.com/
   *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
+  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at
   *
-  *     http://www.apache.org/licenses/LICENSE-2.0
+  * http://www.apache.org/licenses/LICENSE-2.0
   *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  * specific language governing permissions and limitations under the License.
   */
 package busymachines.pureharm.aws.s3
 
@@ -23,14 +20,15 @@ import busymachines.pureharm.testkit._
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
-  * Before running this ensure that you actually have the proper local environment
-  * variables. See the ``pureharm-aws/aws-s3/src/test/resources/reference.conf``
-  * for the environment variables that are used by this test.
+  * Before running this ensure that you actually have the proper local environment variables. See the
+  * ``pureharm-aws/aws-s3/src/test/resources/reference.conf`` for the environment variables that are used by this test.
   *
   * We can't commit to github the proper configuration to make this run.
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 22 May 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 22
+  *   May 2019
   */
 final class S3LiveTest extends PureharmTest {
   implicit override val testLogger: TestLogger = TestLogger(Slf4jLogger.getLogger[IO])
@@ -41,7 +39,7 @@ final class S3LiveTest extends PureharmTest {
   private val resource = ResourceFixture[(S3Config, AmazonS3Client[IO])] { _ =>
     for {
       // config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
-      config  <- (??? : Resource[IO, S3Config])
+      config   <- (??? : Resource[IO, S3Config])
       s3Client <- AmazonS3Client.resource[IO](config)
     } yield (config, s3Client)
   }
@@ -83,7 +81,7 @@ final class S3LiveTest extends PureharmTest {
       got <- client.get(config.bucket, f1S3Key)
       _   <- l.info(s"2 — after GET — we got back: ${new String(got, UTF_8)}")
       _   <- l.info(s"2 — after GET — we expect: ${new String(f1_contents, UTF_8)}")
-      _   <- IO(assert(f1_contents.toList == got.toList)).onError(_ => l.info("comparison failed :(("))
+      _   <- IO(assert(f1_contents.toList == got.toList)).onError { case _ => l.info("comparison failed :((") }
 
       metadata <- client.getMetadata(config.bucket, f1S3Key)
       _        <- l.info(s"3 — after GET metadata — we got back: $metadata")
