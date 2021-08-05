@@ -16,8 +16,10 @@
 
 package busymachines.pureharm.aws.sns
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 29 Nov 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 29
+  *   Nov 2019
   */
 sealed trait SNSPlatformEndpointHealthcheck extends Product with Serializable
 

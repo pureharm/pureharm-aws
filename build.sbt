@@ -18,9 +18,8 @@
 //============================== build details ================================
 //=============================================================================
 
-addCommandAlias("github-gen", "githubWorkflowGenerate")
-addCommandAlias("github-check", "githubWorkflowCheck")
 addCommandAlias("run-it", "IntegrationTest/test")
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val Scala213  = "2.13.5"

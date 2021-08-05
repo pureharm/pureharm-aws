@@ -18,8 +18,10 @@ package busymachines.pureharm.aws.s3
 
 import busymachines.pureharm.aws.core._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jul 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jul 2019
   */
 final case class S3Config(
   region:                AmazonRegion,

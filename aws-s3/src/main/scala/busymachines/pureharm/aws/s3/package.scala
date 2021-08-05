@@ -23,8 +23,10 @@ import cats.MonadThrow
 
 import scala.concurrent.duration.FiniteDuration
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jul 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jul 2019
   */
 package object s3 {
 

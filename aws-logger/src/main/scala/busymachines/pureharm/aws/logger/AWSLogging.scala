@@ -19,11 +19,12 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.effects._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 
-/** Because building these amazon thingies is not thread safe,
-  * we have to build a thread safe builder
+/** Because building these amazon thingies is not thread safe, we have to build a thread safe builder
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 09 Apr 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 09
+  *   Apr 2019
   */
 sealed trait AWSLogging[F[_]] {
   def getLogger(logger: SelfAwareStructuredLogger[F]): AWSLogger[F]

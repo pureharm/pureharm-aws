@@ -20,8 +20,10 @@ import busymachines.pureharm.sprout._
 
 import scala.concurrent.duration.FiniteDuration
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 04 Sep 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 04
+  *   Sep 2019
   */
 package object logger {
 

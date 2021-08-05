@@ -19,17 +19,19 @@ package busymachines.pureharm.aws.s3
 import busymachines.pureharm.effects.ConcurrentEffect
 import software.amazon.awssdk.services.s3.S3AsyncClient
 
-/** Convenience trait.
-  * Same as [[AmazonS3Client]] but uses the same bucket
+/** Convenience trait. Same as [[AmazonS3Client]] but uses the same bucket
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jul 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jul 2019
   */
 trait AmazonS3ClientForBucket[F[_]] {
 
   def bucket: S3Bucket
 
-  /** @see [[AmazonS3Client.initBucket]]
+  /** @see
+    *   [[AmazonS3Client.initBucket]]
     */
   def initBucket: F[Unit]
 
