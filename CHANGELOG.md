@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+### :warning: breaking changes :warning:
+- removed dependency on pureharm-config and config-readers from companion objects of config case classes. This means that you have to read them yourselves in client code depending on the method you choose. Recommended way is using [`pureharm-config-ciris`](https://github.com/busymachines/pureharm-config-ciris), or for a smooth transition depend on [`pureharm-config`](https://github.com/busymachines/pureharm-config) directly.
+- for cats-effect to compatibility use the modules suffixed w/ `-ce2`, modules without this suffix depend on cats-effect 3.
+
+### New Scala versions:
+- `2.13.6`
+- `3.0.1` for JVM + JS platforms
+- drop `3.0.0-RC2`, `3.0.0-RC3`
+
+### internals
+- bump scalafmt to `3.0.0-RC6` — from `2.7.5`
+- bump sbt to `1.5.5`
+- bump sbt-spiewak to `0.21.0`
+- bump sbt-scalafmt to `2.4.3`
+
+
 # 0.3.0
 
 - Reverse deprecation on configuration companion objects. But this is the last release that depends on pureharm-config.

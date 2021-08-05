@@ -17,7 +17,6 @@
 package busymachines.pureharm.aws.logger
 
 import busymachines.pureharm.aws.core._
-import busymachines.pureharm.config._
 
 /** @author
   *   Lorand Szakacs, https://github.com/lorandszakacs
@@ -56,81 +55,3 @@ final case class CloudWatchLoggerConfig(
   groupName:       CloudWatchGroupName,
   streamName:      CloudWatchStreamName,
 )
-
-object CloudWatchLoggerConfig {
-  import busymachines.pureharm.config.implicits._
-
-  implicit val cloudWatchConfigReader: ConfigReader[CloudWatchLoggerConfig] =
-    semiauto.deriveReader[CloudWatchLoggerConfig]
-}
-
-/** Config reading will behave the following way: 1) enabled = true, then we attempt to read a well-formed cloudwatch
-  * subobject
-  *
-  * {{{
-  * namespace {
-  *   enabled = true
-  *   cloudwatch {
-  *     //properly defined
-  *   }
-  * }
-  * }}}
-  *
-  * 2) enabled = false, then no attempt is made to read the cloudwatch object
-  *
-  * {{{
-  * namespace {
-  *   enabled = false
-  *   //cloudwatch object can be entirely elided
-  *   cloudwatch {
-  *     //doesn't matter if well formed, will be ignored anyway
-  *   }
-  * }
-  * }}}
-  */
-object AWSLoggerConfig extends ConfigLoader[AWSLoggerConfig] {
-  import busymachines.pureharm.config.implicits._
-
-  private object impl {
-
-    final private case class AWSLoggerConfigEnabledStatus(
-      enabled: Boolean
-    )
-
-    private object AWSLoggerConfigEnabledStatus {
-
-      implicit val configReader: ConfigReader[AWSLoggerConfigEnabledStatus] =
-        semiauto.deriveReader[AWSLoggerConfigEnabledStatus]
-    }
-
-    final private case class AWSLoggerConfigTemp(
-      cloudwatch: CloudWatchLoggerConfig
-    )
-
-    private object AWSLoggerConfigTemp {
-
-      implicit val configReader: ConfigReader[AWSLoggerConfigTemp] =
-        semiauto.deriveReader[AWSLoggerConfigTemp]
-    }
-
-    implicit private[AWSLoggerConfig] val awsLoggerConfigReaderFallback: ConfigReader[AWSLoggerConfig] = for {
-      es     <- AWSLoggerConfigEnabledStatus.configReader
-      config <-
-        if (es.enabled) {
-          AWSLoggerConfigTemp.configReader.map(t => EnabledAWSLoggerConfig(t.cloudwatch): AWSLoggerConfig)
-        }
-        else {
-          DisabledAWSLoggerConfigReader
-        }
-    } yield config
-
-    private object DisabledAWSLoggerConfigReader extends ConfigReader[AWSLoggerConfig] {
-      import pureconfig.ConfigCursor
-
-      override def from(cur: ConfigCursor): ConfigReader.Result[AWSLoggerConfig] =
-        Right(DisabledAWSLoggerConfig): ConfigReader.Result[AWSLoggerConfig]
-    }
-  }
-
-  implicit override val configReader: ConfigReader[AWSLoggerConfig] = impl.awsLoggerConfigReaderFallback
-}
