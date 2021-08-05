@@ -37,21 +37,23 @@ object AWSLogging {
 
   def apply[F[_]](implicit inst: AWSLogging[F]): AWSLogging[F] = inst
 
-  def resource[F[_]: Concurrent: Timer: BlockingShifter](
-    config: AWSLoggerConfig
+  def resource[F[_]: Async](
+    config:     AWSLoggerConfig,
+    supervisor: Supervisor[F],
   ): Resource[F, AWSLogging[F]] =
     config match {
       case enabled: EnabledAWSLoggerConfig =>
         for {
           awsLogs <- awsLogsResource(enabled.someCloudwatch)
         } yield new AWSLoggerFactoryImpl[F](
-          awsLogs = awsLogs,
-          config  = enabled.someCloudwatch,
+          awsLogs    = awsLogs,
+          config     = enabled.someCloudwatch,
+          supervisor = supervisor,
         ): AWSLogging[F]
       case DisabledAWSLoggerConfig => dummyLFResource
     }
 
-  def local[F[_]: Sync]: AWSLogging[F] = new DummyLoggerFactory[F]
+  def local[F[_]]: AWSLogging[F] = new DummyLoggerFactory[F]
 
   import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
   import com.amazonaws.services.logs.AWSLogsAsyncClientBuilder
@@ -71,18 +73,19 @@ object AWSLogging {
     lc
   }
 
-  private def dummyLFResource[F[_]: Sync]: Resource[F, AWSLogging[F]] =
+  private def dummyLFResource[F[_]]: Resource[F, AWSLogging[F]] =
     Resource.pure(new DummyLoggerFactory[F])
 
-  private class DummyLoggerFactory[F[_]](implicit private val F: Sync[F]) extends AWSLogging[F] {
+  private class DummyLoggerFactory[F[_]] extends AWSLogging[F] {
 
     override def getLogger(localLogger: SelfAwareStructuredLogger[F]): AWSLogger[F] =
       new AWSLogger.DummyAWSLoggerImpl[F](localLogger)
   }
 
-  private class AWSLoggerFactoryImpl[F[_]: Concurrent: Timer: BlockingShifter](
-    private val awsLogs: AWSLogsAsync,
-    private val config:  CloudWatchLoggerConfig,
+  private class AWSLoggerFactoryImpl[F[_]: Async](
+    awsLogs:    AWSLogsAsync,
+    config:     CloudWatchLoggerConfig,
+    supervisor: Supervisor[F],
   ) extends AWSLogging[F] {
     import busymachines.pureharm.aws.logger.internals.AWSRemoteLoggerImpl
 
@@ -91,6 +94,7 @@ object AWSLogging {
         config      = config,
         localLogger = localLogger,
         awsLogs     = awsLogs,
+        supervisor  = supervisor,
       )
 
       new AWSLogger.AWSLoggerImpl[F](remote = remote, local = localLogger)

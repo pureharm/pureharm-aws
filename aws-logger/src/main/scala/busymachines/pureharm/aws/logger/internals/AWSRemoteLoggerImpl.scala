@@ -38,9 +38,8 @@ final private[logger] class AWSRemoteLoggerImpl[F[_]] private[logger] (
   private val config:      CloudWatchLoggerConfig,
   private val localLogger: SelfAwareStructuredLogger[F],
   private val remote:      AWSRemoteLoggerImpl.AWSHelper[F],
-)(
-  implicit private val F:  Concurrent[F],
-  implicit private val cs: BlockingShifter[F],
+)(implicit
+  private val F:           Async[F]
 ) extends SelfAwareStructuredLogger[F] {
   import AWSRemoteLoggerImpl.Level
 
@@ -119,15 +118,16 @@ private[logger] object AWSRemoteLoggerImpl {
 
   import com.amazonaws.services.logs.AWSLogsAsync
 
-  def apply[F[_]: Concurrent: Timer: BlockingShifter](
+  def apply[F[_]: Async](
     config:      CloudWatchLoggerConfig,
     localLogger: SelfAwareStructuredLogger[F],
     awsLogs:     AWSLogsAsync,
+    supervisor:  Supervisor[F],
   ): AWSRemoteLoggerImpl[F] =
     new AWSRemoteLoggerImpl(
       config      = config,
       localLogger = localLogger,
-      remote      = new AWSHelper[F](config, localLogger, awsLogs),
+      remote      = new AWSHelper[F](config, localLogger, awsLogs, supervisor),
     )
 
   sealed trait Level extends Product with Serializable
@@ -143,11 +143,12 @@ private[logger] object AWSRemoteLoggerImpl {
   import com.amazonaws.services.logs.model._
   import scala.jdk.CollectionConverters._
 
-  final private[logger] class AWSHelper[F[_]: Timer](
-    private val config:     CloudWatchLoggerConfig,
-    private val logger:     SelfAwareStructuredLogger[F],
-    private val awsLogs:    AWSLogsAsync,
-  )(implicit private val F: Concurrent[F], private val shifter: BlockingShifter[F]) {
+  final private[logger] class AWSHelper[F[_]](
+    config:     CloudWatchLoggerConfig,
+    logger:     SelfAwareStructuredLogger[F],
+    awsLogs:    AWSLogsAsync,
+    supervisor: Supervisor[F],
+  )(implicit F: Async[F]) {
 
     private[logger] def logs2Cloud(l: Level, msg: String): F[Unit] =
       logWithLevel(l, msg)
@@ -199,9 +200,8 @@ private[logger] object AWSRemoteLoggerImpl {
 
       //This is where the magic happens!
       //N.B. we start a fiber off of logF to ensure
-      //forkAndForget semantics, and the shifter ensures
-      //that the fiber shifts the work on the blocking IO pool
-      shifter.blockOn(nonFailingF.start).void
+      //forkAndForget semantics
+      nonFailingF.supervise(supervisor).void
     }
 
     private def describeLogStreams: F[DescribeLogStreamsResult] = {
