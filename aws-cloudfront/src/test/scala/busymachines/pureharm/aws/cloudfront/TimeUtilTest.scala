@@ -21,8 +21,10 @@ import scala.concurrent.duration._
 
 import busymachines.pureharm.testkit._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 05 May 2020
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 05
+  *   May 2020
   */
 class TimeUtilTest extends PureharmTest {
 

@@ -20,22 +20,24 @@ import busymachines.pureharm.effects._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 /** Logger that also logs to AWS, not only to the local machine.
   *
-  * Can only be built using the [[AWSLoggerFactory]] for
-  * thread safety, and resource safety reasons
+  * Can only be built using the [[AWSLoggerFactory]] for thread safety, and resource safety reasons
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 09 Apr 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 09
+  *   Apr 2019
   */
 sealed trait AWSLogger[F[_]] extends SelfAwareStructuredLogger[F]
 
 object AWSLogger {
   import busymachines.pureharm.aws.logger.internals.AWSRemoteLoggerImpl
 
-  /** Logger that uses standard SFL4j stuff to log locally,
-    * and then, logs to amazon as well.
+  /** Logger that uses standard SFL4j stuff to log locally, and then, logs to amazon as well.
     *
-    * @author Lorand Szakacs, https://github.com/lorandszakacs
-    * @since 09 Apr 2019
+    * @author
+    *   Lorand Szakacs, https://github.com/lorandszakacs
+    * @since 09
+    *   Apr 2019
     */
   final private[logger] class AWSLoggerImpl[F[_]: Sync](
     private val remote: AWSRemoteLoggerImpl[F],
@@ -115,12 +117,13 @@ object AWSLogger {
     override def isErrorEnabled: F[Boolean] = local.isErrorEnabled
   }
 
-  /** Unfortunately we can't do PhantomTypes for Logger[F] :(
-    * so we have to be really lame about just delegating to a
+  /** Unfortunately we can't do PhantomTypes for Logger[F] :( so we have to be really lame about just delegating to a
     * logger
     *
-    * @author Lorand Szakacs, https://github.com/lorandszakacs
-    * @since 23 Apr 2019
+    * @author
+    *   Lorand Szakacs, https://github.com/lorandszakacs
+    * @since 23
+    *   Apr 2019
     */
   final private[logger] class DummyAWSLoggerImpl[F[_]](
     private val local: SelfAwareStructuredLogger[F]

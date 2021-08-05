@@ -21,8 +21,7 @@ import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 
-/** Logger that only logs to remote (except failures while trying
-  * to connect to AWS, which it logs locally).
+/** Logger that only logs to remote (except failures while trying to connect to AWS, which it logs locally).
   *
   * Composed with a fully local logger to implement an [[busymachines.pureharm.aws.logger.AWSLogger]]
   *
@@ -30,8 +29,10 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
   *   used to log any failures of logging to the cloud
   *
   * -----
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 09 Apr 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 09
+  *   Apr 2019
   */
 final private[logger] class AWSRemoteLoggerImpl[F[_]] private[logger] (
   private val config:      CloudWatchLoggerConfig,
@@ -173,9 +174,8 @@ private[logger] object AWSRemoteLoggerImpl {
         _ <- logToClouds(List(log))
       } yield ()
 
-    /** FIXME: Super rough implementation. REVISE
-      * Requires actual study of AWS logging to see if there's
-      * anything to be improved here.
+    /** FIXME: Super rough implementation. REVISE Requires actual study of AWS logging to see if there's anything to be
+      * improved here.
       */
     private def logToClouds(logs: List[InputLogEvent]): F[Unit] = {
       val logF: F[Unit] =

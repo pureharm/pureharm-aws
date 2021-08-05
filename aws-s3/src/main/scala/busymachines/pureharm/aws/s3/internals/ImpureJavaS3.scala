@@ -21,8 +21,10 @@ import busymachines.pureharm.aws.s3._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jul 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jul 2019
   */
 object ImpureJavaS3 {
 

@@ -63,9 +63,9 @@ object CloudfrontURLSigner {
         )
       } yield CloudfrontSignedURL(signed)
 
-    /** We have to load private key from fuck-all the way where AWS stores it :/
-      * it necessarily needs to be in .DER format.
-      * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
+    /** We have to load private key from fuck-all the way where AWS stores it :/ it necessarily needs to be in .DER
+      * format. See
+      * [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
     def loadPrivateKeyFromMemory[F[_]](
       format:  CloudfrontPrivateKey.Format,
@@ -85,9 +85,9 @@ object CloudfrontURLSigner {
         }
         .adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
 
-    /** We have to load private key from fuck-all the way where AWS stores it :/
-      * it necessarily needs to be in .DER format.
-      * See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
+    /** We have to load private key from fuck-all the way where AWS stores it :/ it necessarily needs to be in .DER
+      * format. See
+      * [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
     def loadPrivateKeyFromPath[F[_]](
       kp: CloudfrontPrivateKeyFilePath

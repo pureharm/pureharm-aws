@@ -19,9 +19,11 @@ package busymachines.pureharm.aws.logger
 import busymachines.pureharm.aws.core._
 import busymachines.pureharm.config._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 09 Apr 2019
-  *        ---
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 09
+  *   Apr 2019
+  * ---
   */
 sealed trait AWSLoggerConfig extends Product with Serializable {
   def enabled:    AWSLoggingEnabled
@@ -44,7 +46,7 @@ case object DisabledAWSLoggerConfig extends AWSLoggerConfig {
   *   if a log cannot be sent within this time to AWS, then timeout.
   *
   * @param region
-  *  the amazon region of the CloudWatch you are configuring
+  *   the amazon region of the CloudWatch you are configuring
   */
 final case class CloudWatchLoggerConfig(
   timeout:         CloudWatchTimeoutDuration,
@@ -62,15 +64,15 @@ object CloudWatchLoggerConfig {
     semiauto.deriveReader[CloudWatchLoggerConfig]
 }
 
-/** Config reading will behave the following way:
-  * 1) enabled = true, then we attempt to read a well-formed cloudwatch subobject
+/** Config reading will behave the following way: 1) enabled = true, then we attempt to read a well-formed cloudwatch
+  * subobject
   *
   * {{{
   * namespace {
-  *    enabled = true
-  *    cloudwatch {
-  *      //properly defined
-  *    }
+  *   enabled = true
+  *   cloudwatch {
+  *     //properly defined
+  *   }
   * }
   * }}}
   *

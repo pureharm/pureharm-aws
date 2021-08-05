@@ -20,14 +20,15 @@ import busymachines.pureharm.effects.{internals => _, _}
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jul 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jul 2019
   */
 trait AmazonS3Client[F[_]] {
 
-  /** Creates a bucket if it doesn't already exist.
-    * Does not change existing buckets, does not
-    * fail if bucket already exist.
+  /** Creates a bucket if it doesn't already exist. Does not change existing buckets, does not fail if bucket already
+    * exist.
     */
   def initBucket(bucket: S3Bucket): F[Unit]
 
@@ -57,18 +58,13 @@ trait AmazonS3Client[F[_]] {
 
   def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL]
 
-  /** Here until the API is more complete,
-    * please use with care especially
-    * because of all the thread management
+  /** Here until the API is more complete, please use with care especially because of all the thread management
     *
-    * N.B.
-    * DO NOT close this manually, unless you know
-    * what you're doing. This should be handled
-    * by the Resource[F, AmazonS3Client] constructor
-    * in the companion object.
+    * N.B. DO NOT close this manually, unless you know what you're doing. This should be handled by the Resource[F,
+    * AmazonS3Client] constructor in the companion object.
     *
-    * @see [[busymachines.pureharm.aws.s3.internals.ImpureJavaS3]]
-    *      for hints on how to use everything.
+    * @see
+    *   [[busymachines.pureharm.aws.s3.internals.ImpureJavaS3]] for hints on how to use everything.
     */
   def unsafeJavaClient: S3AsyncClient
 
@@ -95,14 +91,12 @@ object AmazonS3Client {
       s3Client <- Resource.make(buildSDKClient(config).pure[F])(c => F.delay(c.close()))
     } yield this.withFixedBucket[F](config.bucket, new AmazonS3ClientImpl[F](s3Client, config))
 
-  /** Please use [[resource]], there's no reasonable way to close the
-    * underlying S3Client
+  /** Please use [[resource]], there's no reasonable way to close the underlying S3Client
     */
   def unsafe[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3Client[F] =
     new AmazonS3ClientImpl(buildSDKClient(config), config)
 
-  /** Please use [[resource]], there's no reasonable way to close the
-    * underlying S3Client
+  /** Please use [[resource]], there's no reasonable way to close the underlying S3Client
     */
   def unsafeWithFixedBucket[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3ClientForBucket[F] =
     this.withFixedBucket(config.bucket, this.unsafe[F](config))

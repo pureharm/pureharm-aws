@@ -22,8 +22,10 @@ import busymachines.pureharm.effects.implicits._
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 29 Nov 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 29
+  *   Nov 2019
   */
 final class SNSMobilePushNotificationsOps[F[_]](
   private val jSNSClient:      SnsClient

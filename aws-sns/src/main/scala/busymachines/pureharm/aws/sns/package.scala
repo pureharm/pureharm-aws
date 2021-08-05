@@ -18,16 +18,17 @@ package busymachines.pureharm.aws
 
 import busymachines.pureharm.sprout._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 19 Nov 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 19
+  *   Nov 2019
   */
 package object sns {
 
   object SNSDeviceToken extends SproutSub[String]
 
   /** @see
-    *   Section "Token"
-    *   https://docs.aws.amazon.com/sns/latest/api/API_CreatePlatformEndpoint.html
+    *   Section "Token" https://docs.aws.amazon.com/sns/latest/api/API_CreatePlatformEndpoint.html
     */
   type SNSDeviceToken = SNSDeviceToken.Type
 
@@ -39,18 +40,15 @@ package object sns {
 
   object SNSAccessKeyID extends SproutSub[String]
 
-  /** Standard AWS AccessKeyID, of different type, so it's harder
-    * to accidentally mix up with the AccessKey used for S3,
-    * in case they have different values. Since these are read
-    * from a config, they can easily be set to have the same value,
-    * but our code ought to be agnostic of this knowledge.
+  /** Standard AWS AccessKeyID, of different type, so it's harder to accidentally mix up with the AccessKey used for S3,
+    * in case they have different values. Since these are read from a config, they can easily be set to have the same
+    * value, but our code ought to be agnostic of this knowledge.
     */
   type SNSAccessKeyID = SNSAccessKeyID.Type
 
   object SNSSecretAccessKey extends SproutSub[String]
 
-  /** Standard AWS SecretAccessKey, same reasoning as behind
-    * [[SNSAccessKeyID]]
+  /** Standard AWS SecretAccessKey, same reasoning as behind [[SNSAccessKeyID]]
     */
   type SNSSecretAccessKey = SNSSecretAccessKey.Type
 }
