@@ -44,7 +44,7 @@ trait AmazonS3Client[F[_]] {
 
   def getMetadata(bucket: S3Bucket, key: S3FileKey): F[S3Metadata]
 
-  def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit]
+  def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F]): F[Unit]
 
   def getStream(bucket: S3Bucket, key: S3FileKey, chunkSize: Int = 1024 * 512): S3BinaryStream[F]
 
@@ -77,14 +77,14 @@ object AmazonS3Client {
 
   import busymachines.pureharm.effects.implicits._
 
-  def resource[F[_]: BlockingShifter](
+  def resource[F[_]](
     config:     S3Config
   )(implicit F: Async[F]): Resource[F, AmazonS3Client[F]] =
     for {
       s3Client <- Resource.make(buildSDKClient(config).pure[F])(c => F.delay(c.close()))
     } yield new AmazonS3ClientImpl(s3Client, config)
 
-  def resourceWithFixedBucket[F[_]: BlockingShifter](
+  def resourceWithFixedBucket[F[_]](
     config:     S3Config
   )(implicit F: Async[F]): Resource[F, AmazonS3ClientForBucket[F]] =
     for {
@@ -93,12 +93,12 @@ object AmazonS3Client {
 
   /** Please use [[resource]], there's no reasonable way to close the underlying S3Client
     */
-  def unsafe[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3Client[F] =
+  def unsafe[F[_]: Async](config: S3Config): AmazonS3Client[F] =
     new AmazonS3ClientImpl(buildSDKClient(config), config)
 
   /** Please use [[resource]], there's no reasonable way to close the underlying S3Client
     */
-  def unsafeWithFixedBucket[F[_]: Async: BlockingShifter](config: S3Config): AmazonS3ClientForBucket[F] =
+  def unsafeWithFixedBucket[F[_]: Async](config: S3Config): AmazonS3ClientForBucket[F] =
     this.withFixedBucket(config.bucket, this.unsafe[F](config))
 
   def withFixedBucket[F[_]](bucket: S3Bucket, client: AmazonS3Client[F]): AmazonS3ClientForBucket[F] =
@@ -113,11 +113,10 @@ object AmazonS3Client {
     internals.PureJavaS3.buildClient(config)
 
   private class AmazonS3ClientImpl[F[_]](
-    private val s3Client:         S3AsyncClient,
-    override val config:          S3Config,
-  )(
-    implicit private val F:       Async[F],
-    implicit private val shifter: BlockingShifter[F],
+    private val s3Client: S3AsyncClient,
+    override val config:  S3Config,
+  )(implicit
+    private val F:        Async[F]
   ) extends AmazonS3Client[F] {
 
     override def initBucket(bucket: S3Bucket): F[Unit] =
@@ -137,43 +136,42 @@ object AmazonS3Client {
       } yield ()
 
     override def listBuckets: F[List[S3Bucket]] =
-      shifter.blockOn(internals.ImpureJavaS3.listBuckets(s3Client))
+      internals.ImpureJavaS3.listBuckets(s3Client)
 
     override def createBucket(bucket: S3Bucket): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.createBucket(s3Client)(bucket, config.region))
+      internals.ImpureJavaS3.createBucket(s3Client)(bucket, config.region)
 
     override def deleteBucket(bucket: S3Bucket): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.deleteBucket(s3Client)(bucket))
+      internals.ImpureJavaS3.deleteBucket(s3Client)(bucket)
 
     override def put(bucket: S3Bucket, key: S3FileKey, content: S3BinaryContent): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void)
+      internals.ImpureJavaS3.put(s3Client)(bucket, key, content).void
 
     override def get(bucket: S3Bucket, key: S3FileKey): F[S3BinaryContent] =
-      shifter.blockOn(internals.ImpureJavaS3.get(s3Client)(bucket, key))
+      internals.ImpureJavaS3.get(s3Client)(bucket, key)
 
     override def getMetadata(bucket: S3Bucket, key: S3FileKey): F[S3Metadata] =
-      shifter.blockOn(internals.ImpureJavaS3.getMetadata[F](s3Client)(bucket, key))
+      internals.ImpureJavaS3.getMetadata[F](s3Client)(bucket, key)
 
-    override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F])(implicit
-      F:                           ConcurrentEffect[F]
-    ): F[Unit] = shifter.blockOn(internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void)
+    override def putStream(bucket: S3Bucket, key: S3FileKey, content: S3BinaryStream[F]): F[Unit] =
+      internals.ImpureJavaS3.putStream[F](s3Client)(bucket, key, content)(F).void
 
     override def getStream(bucket: S3Bucket, key: S3FileKey, chunkSize: Int): S3BinaryStream[F] = {
       import fs2._
-      Stream.eval(shifter.blockOn(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key, chunkSize))).flatten
+      Stream.eval(internals.ImpureJavaS3.getStream[F](s3Client)(bucket, key, chunkSize)).flatten
     }
 
     override def delete(bucket: S3Bucket, key: S3FileKey): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.delete(s3Client)(bucket, key))
+      internals.ImpureJavaS3.delete(s3Client)(bucket, key)
 
     override def list(bucket: S3Bucket, prefix: S3Path): F[List[S3FileKey]] =
-      shifter.blockOn(internals.ImpureJavaS3.list(s3Client)(bucket, prefix))
+      internals.ImpureJavaS3.list(s3Client)(bucket, prefix)
 
     override def exists(bucket: S3Bucket, key: S3FileKey): F[Boolean] =
-      shifter.blockOn(internals.ImpureJavaS3.exists(s3Client)(bucket, key))
+      internals.ImpureJavaS3.exists(s3Client)(bucket, key)
 
     override def copy(fromBucket: S3Bucket, fromKey: S3FileKey, toBucket: S3Bucket, toKey: S3FileKey): F[Unit] =
-      shifter.blockOn(internals.ImpureJavaS3.copy(s3Client)(fromBucket, fromKey, toBucket, toKey))
+      internals.ImpureJavaS3.copy(s3Client)(fromBucket, fromKey, toBucket, toKey)
 
     override def downloadURL(bucket: S3Bucket, key: S3FileKey): F[S3DownloadURL] =
       AmazonS3Client.downloadURL(config.region, bucket, key).pure[F]
@@ -199,7 +197,7 @@ object AmazonS3Client {
     override def getMetadata(key: S3FileKey): F[S3Metadata] =
       client.getMetadata(bucket, key)
 
-    override def putStream(key: S3FileKey, content: S3BinaryStream[F])(implicit F: ConcurrentEffect[F]): F[Unit] =
+    override def putStream(key: S3FileKey, content: S3BinaryStream[F]): F[Unit] =
       client.putStream(bucket, key, content)
 
     override def getStream(key: S3FileKey, chunkSize: Int): S3BinaryStream[F] =

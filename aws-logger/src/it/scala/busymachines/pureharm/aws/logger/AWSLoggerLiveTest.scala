@@ -43,11 +43,9 @@ final class AWSLoggerLiveTest extends PureharmTest {
   private val resource = ResourceFixture[AWSLogging[IO]] { (_: TestOptions) =>
     for {
       //AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
-      config  <- (??? : Resource[IO, AWSLoggerConfig])
-      logFact <- AWSLogging.resource[IO](config)
-      _       <-
-        runtime.contextShift.shift
-          .to[Resource[IO, *]] //shifting so that first parts of test are not run on scalatest-threads
+      config     <- (??? : Resource[IO, AWSLoggerConfig])
+      supervisor <- Supervisor[IO]
+      logFact    <- AWSLogging.resource[IO](config, supervisor)
     } yield logFact
   }
 
@@ -61,7 +59,7 @@ final class AWSLoggerLiveTest extends PureharmTest {
       _            <- logger.info(s"pureharm — logger test $randomNumber — info")
       _            <- logger.warn(s"pureharm — logger test $randomNumber — warn")
       _            <- logger.error(s"pureharm — logger test $randomNumber — error")
-      _            <- Timer[IO].sleep(5.seconds) // we wait to ensure that the logs are sent
+      _            <- Clock[IO].sleep(5.seconds) // we wait to ensure that the logs are sent
     } yield ()
   }
 }

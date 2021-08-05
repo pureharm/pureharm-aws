@@ -54,8 +54,8 @@ object ImpureJavaS3 {
           .contentType(mimeType)
           .build()
 
-      reqBody <- Sync[F].delay(AsyncRequestBody.fromBytes(content))
-      ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].delay(
+      reqBody <- Sync[F].blocking(AsyncRequestBody.fromBytes(content))
+      ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].blocking(
         client.putObject(putRequest, reqBody)
       )
       _ <- Interop.toF(ff)
@@ -68,7 +68,7 @@ object ImpureJavaS3 {
     key:     S3FileKey,
     content: S3BinaryStream[F],
   )(implicit
-    F:       ConcurrentEffect[F]
+    F:       Async[F]
   ): F[S3FileKey] =
     for {
       jpath <- S3FileKey.asJPath[F](key)
@@ -91,9 +91,9 @@ object ImpureJavaS3 {
           .map(lob => lob.foldRight(Array.empty[Byte])((e, acc) => e ++ acc))
       }
 
-      reqBody <- Sync[F].delay(AsyncRequestBody.fromBytes(bytes))
+      reqBody <- Sync[F].blocking(AsyncRequestBody.fromBytes(bytes))
 
-      ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].delay(
+      ff: F[Interop.JCFuture[PutObjectResponse]] = Sync[F].blocking(
         client.putObject(putRequest, reqBody)
       )
       _ <- Interop.toF(ff)
@@ -106,7 +106,7 @@ object ImpureJavaS3 {
     for {
       transformer <- asyncBytesTransformer[F]
       getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
-      content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
+      content     <- Interop.toF(Sync[F].blocking(client.getObject(getReq, transformer)))
     } yield content
 
   def getMetadata[F[_]: Async](client: S3AsyncClient)(
@@ -115,13 +115,13 @@ object ImpureJavaS3 {
   ): F[S3Metadata] =
     for {
       getReq  <- HeadObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
-      content <- Interop.toF(Sync[F].delay(client.headObject(getReq)))
+      content <- Interop.toF(Sync[F].blocking(client.headObject(getReq)))
     } yield S3Metadata(
       contentLength = S3ContentLengthBytes(content.contentLength()),
       javaMetadata  = content,
     )
 
-  def getStream[F[_]: Async: BlockingShifter](client: S3AsyncClient)(
+  def getStream[F[_]: Async](client: S3AsyncClient)(
     bucket:    S3Bucket,
     key:       S3FileKey,
     chunkSize: Int,
@@ -129,7 +129,7 @@ object ImpureJavaS3 {
     for {
       transformer <- streamTransformer[F](chunkSize)
       getReq      <- GetObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
-      content     <- Interop.toF(Sync[F].delay(client.getObject(getReq, transformer)))
+      content     <- Interop.toF(Sync[F].blocking(client.getObject(getReq, transformer)))
     } yield content
 
   def delete[F[_]: Async](client: S3AsyncClient)(
@@ -138,7 +138,7 @@ object ImpureJavaS3 {
   ): F[Unit] =
     for {
       delReq <- DeleteObjectRequest.builder().bucket(bucket).key(key).bucket(bucket).build().pure[F]
-      _      <- Interop.toF(Sync[F].delay(client.deleteObject(delReq)))
+      _      <- Interop.toF(Sync[F].blocking(client.deleteObject(delReq)))
     } yield ()
 
   def list[F[_]: Async](client: S3AsyncClient)(
@@ -150,7 +150,7 @@ object ImpureJavaS3 {
       listReq <- ListObjectsRequest.builder().bucket(bucket).prefix(prefix).build().pure[F]
       keys    <-
         Interop
-          .toF(Sync[F].delay(client.listObjects(listReq)))
+          .toF(Sync[F].blocking(client.listObjects(listReq)))
           .flatMap(_.contents().asScala.toList.traverse(obj => S3FileKey[F](obj.key())))
     } yield keys
   }
@@ -161,8 +161,9 @@ object ImpureJavaS3 {
   ): F[Boolean] =
     for {
       headReq <- HeadObjectRequest.builder().bucket(bucket).key(key).build().pure[F]
-      exists  <- Interop.toF(Sync[F].delay(client.headObject(headReq))).map(_ => true).recover { case _: S3Exception =>
-        false
+      exists  <- Interop.toF(Sync[F].blocking(client.headObject(headReq))).map(_ => true).recover {
+        case _: S3Exception =>
+          false
       }
     } yield exists
 
@@ -175,7 +176,7 @@ object ImpureJavaS3 {
     import java.net.URLEncoder
     import java.nio.charset.StandardCharsets
     for {
-      urlEncodedSource <- Sync[F].delay(URLEncoder.encode(s"$fromBucket/$fromKey", StandardCharsets.UTF_8.toString))
+      urlEncodedSource <- Sync[F].blocking(URLEncoder.encode(s"$fromBucket/$fromKey", StandardCharsets.UTF_8.toString))
       copyReq          <-
         CopyObjectRequest
           .builder()
@@ -184,7 +185,7 @@ object ImpureJavaS3 {
           .destinationKey(toKey)
           .build()
           .pure[F]
-      _                <- Interop.toF(Sync[F].delay(client.copyObject(copyReq)))
+      _                <- Interop.toF(Sync[F].blocking(client.copyObject(copyReq)))
     } yield ()
   }
 
@@ -193,7 +194,7 @@ object ImpureJavaS3 {
       .builder()
       .build()
 
-    Interop.toF(Sync[F].delay(client.listBuckets(req))).map { resp =>
+    Interop.toF(Sync[F].blocking(client.listBuckets(req))).map { resp =>
       import scala.jdk.CollectionConverters._
       resp.buckets().asScala.toList.map(b => S3Bucket(b.name()))
     }
@@ -214,7 +215,7 @@ object ImpureJavaS3 {
       )
       .build()
 
-    Interop.toF(Sync[F].delay(client.createBucket(req))).void
+    Interop.toF(Sync[F].blocking(client.createBucket(req))).void
   }
 
   def deleteBucket[F[_]: Async](client: S3AsyncClient)(
@@ -225,14 +226,14 @@ object ImpureJavaS3 {
       .bucket(bucket)
       .build()
 
-    Interop.toF(Sync[F].delay(client.deleteBucket(req))).void
+    Interop.toF(Sync[F].blocking(client.deleteBucket(req))).void
   }
 
   //bytes transformer
 
   private def asyncBytesTransformer[F[_]: Sync]: F[AsyncResponseTransformer[GetObjectResponse, S3BinaryContent]] =
     for {
-      bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])
+      bf <- Sync[F].blocking(AsyncResponseTransformer.toBytes[GetObjectResponse])
     } yield new AsyncBytesTransformer(bf)
 
   private class AsyncBytesTransformer(
@@ -251,14 +252,14 @@ object ImpureJavaS3 {
     override def exceptionOccurred(error: Throwable): Unit = impl.exceptionOccurred(error)
   }
 
-  private def streamTransformer[F[_]: Sync: BlockingShifter](
+  private def streamTransformer[F[_]: Sync](
     chunkSize: Int
   ): F[AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]]] =
     for {
-      bf <- Sync[F].delay(AsyncResponseTransformer.toBytes[GetObjectResponse])
+      bf <- Sync[F].blocking(AsyncResponseTransformer.toBytes[GetObjectResponse])
     } yield new StreamTransformer[F](chunkSize, bf)
 
-  private class StreamTransformer[F[_]: Sync: BlockingShifter](
+  private class StreamTransformer[F[_]: Sync](
     val chunkSize:    Int,
     private val impl: AsyncResponseTransformer[GetObjectResponse, ResponseBytes[GetObjectResponse]],
   ) extends AsyncResponseTransformer[GetObjectResponse, S3BinaryStream[F]] {
@@ -269,9 +270,8 @@ object ImpureJavaS3 {
       impl.prepare().thenApply { cf =>
         //
         import fs2.io
-        val inputStream = Sync[F].delay(cf.asInputStream())
-        implicit val cs: ContextShift[F] = BlockingShifter[F].contextShift
-        io.readInputStream(fis = inputStream, chunkSize = chunkSize, BlockingShifter[F].blocker, closeAfterUse = false)
+        val inputStream = Sync[F].blocking(cf.asInputStream())
+        io.readInputStream(fis = inputStream, chunkSize = chunkSize, closeAfterUse = false)
       }
 
     override def onResponse(response: GetObjectResponse): Unit = impl.onResponse(response)

@@ -27,5 +27,5 @@ private[s3] object Interop {
   type JCFuture[T] = java.util.concurrent.CompletableFuture[T]
 
   def toF[F[_]: Async, A](fa: F[JCFuture[A]]): F[A] =
-    monix.catnap.FutureLift[F, JCFuture].apply(fa)
+    Async[F].fromCompletableFuture(fa)
 }

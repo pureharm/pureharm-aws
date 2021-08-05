@@ -9,6 +9,7 @@ import org.http4s.client.Client
 import org.http4s.blaze.client._
 
 import scala.concurrent.duration._
+import cats.effect.unsafe.HackToGetBlockingPool
 
 /** --- IGNORED BY DEFAULT — test expects proper live amazon config ---
   *
@@ -68,13 +69,14 @@ final class CloudfrontLiveURLSigningTestKeyValue extends PureharmTest {
       // config      <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
       config      <- (??? : Resource[IO, S3Config])
       blazeClient <-
-        BlazeClientBuilder[IO](runtime.blocker.blockingContext).withResponseHeaderTimeout(10.seconds).resource
+        BlazeClientBuilder[IO](HackToGetBlockingPool.blockingPoolFromIORuntime(runtime.implicitIORuntime))
+          .withResponseHeaderTimeout(10.seconds)
+          .resource
       s3Client    <- AmazonS3Client.resource[IO](config)
       cfConfig    <- (??? : Resource[IO, CloudfrontConfig])
       // cfConfig    <- CloudfrontConfig.fromNamespaceR[IO]("test-live.pureharm.aws.cloudfront-key-value")
       _           <- Resource.eval(l.info(s"CFCONFIG: $cfConfig"))
       cfClient    <- CloudfrontURLSigner[IO](cfConfig)
-      _ <- runtime.contextShift.shift.to[Resource[IO, *]] //shifting so that logs are not run on scalatest threads
     } yield (blazeClient, config, s3Client, cfClient)
   }
 

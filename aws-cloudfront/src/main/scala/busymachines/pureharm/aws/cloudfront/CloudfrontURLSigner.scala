@@ -31,7 +31,7 @@ trait CloudfrontURLSigner[F[_]] {
 object CloudfrontURLSigner {
   import java.security.PrivateKey
 
-  def apply[F[_]: Sync: BlockingShifter](config: CloudfrontConfig): Resource[F, CloudfrontURLSigner[F]] = {
+  def apply[F[_]: Sync](config: CloudfrontConfig): Resource[F, CloudfrontURLSigner[F]] = {
     val privateKeyF: F[PrivateKey] = config match {
       case kf: CloudfrontConfig.WithKeyFile    =>
         impl.loadPrivateKeyFromPath[F](kf.privateKeyFilePath)
@@ -68,22 +68,19 @@ object CloudfrontURLSigner {
       * [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       */
     def loadPrivateKeyFromMemory[F[_]](
-      format:  CloudfrontPrivateKey.Format,
-      kp:      CloudfrontPrivateKey,
+      format: CloudfrontPrivateKey.Format,
+      kp:     CloudfrontPrivateKey,
     )(implicit
-      F:       Sync[F],
-      blocker: BlockingShifter[F],
+      F:      Sync[F]
     ): F[PrivateKey] =
-      blocker
-        .delay {
-          import java.io.ByteArrayInputStream
-          val bytes = kp.utf8Bytes
-          format match {
-            case CloudfrontPrivateKey.PEM =>
-              com.amazonaws.auth.PEM.readPrivateKey(new ByteArrayInputStream(bytes)): PrivateKey
-          }
+      F.blocking {
+        import java.io.ByteArrayInputStream
+        val bytes = kp.utf8Bytes
+        format match {
+          case CloudfrontPrivateKey.PEM =>
+            com.amazonaws.auth.PEM.readPrivateKey(new ByteArrayInputStream(bytes)): PrivateKey
         }
-        .adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
+      }.adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
 
     /** We have to load private key from fuck-all the way where AWS stores it :/ it necessarily needs to be in .DER
       * format. See
@@ -92,14 +89,9 @@ object CloudfrontURLSigner {
     def loadPrivateKeyFromPath[F[_]](
       kp: CloudfrontPrivateKeyFilePath
     )(implicit
-      F:       Sync[F],
-      blocker: BlockingShifter[F],
+      F: Sync[F]
     ): F[PrivateKey] =
-      //using this instead of blocker.delay, to ensure that the error is adapted
-      //on the same thread loading the private key happens
-      blocker.blockOn {
-        F.delay(SignerUtils.loadPrivateKey(kp.toFile)).adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
-      }
+      F.blocking(SignerUtils.loadPrivateKey(kp.toFile)).adaptError { case e => CloudFrontKeyReadingCatastrophe(e) }
 
     /** See [[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CFPrivateDistJavaDevelopment.html]]
       * Creates that url from the distributionDomain + S3FileKey
@@ -125,11 +117,10 @@ object CloudfrontURLSigner {
       }.adaptError { case e => CloudFrontURLSigningCatastrophe(e) }
 
     final class CloudfrontURLSignerImpl[F[_]](
-      private val privateKey:       PrivateKey,
-      private val config:           CloudfrontConfig,
-    )(
-      implicit private val F:       Sync[F],
-      implicit private val blocker: BlockingShifter[F],
+      private val privateKey: PrivateKey,
+      private val config:     CloudfrontConfig,
+    )(implicit
+      private val F:          Sync[F]
     ) extends CloudfrontURLSigner[F] {
 
       override def signS3KeyCanned(s3key: S3FileKey): F[CloudfrontSignedURL] =

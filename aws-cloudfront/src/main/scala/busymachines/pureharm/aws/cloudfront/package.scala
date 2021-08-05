@@ -17,7 +17,7 @@
 package busymachines.pureharm.aws
 
 import busymachines.pureharm.sprout._
-import cats.effect.MonadThrow
+import busymachines.pureharm.effects._
 
 import scala.concurrent.duration.FiniteDuration
 

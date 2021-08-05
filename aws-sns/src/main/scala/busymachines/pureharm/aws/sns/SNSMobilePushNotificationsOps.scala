@@ -28,10 +28,9 @@ import software.amazon.awssdk.services.sns.model._
   *   Nov 2019
   */
 final class SNSMobilePushNotificationsOps[F[_]](
-  private val jSNSClient:      SnsClient
+  private val jSNSClient: SnsClient
 )(implicit
-  private val F:               Sync[F],
-  private val blockingShifter: BlockingShifter[F],
+  private val F:          Sync[F]
 ) {
 
   def healthcheckSNSEndpoint(
@@ -43,8 +42,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
       .endpointArn(endpointARN)
       .build()
 
-    blockingShifter
-      .blockOn(F.delay(jSNSClient.getEndpointAttributes(req)))
+    F.blocking(jSNSClient.getEndpointAttributes(req))
       .flatMap(healthcheckResponseParser(deviceToken))
       .recoverWith(healthcheckErrorParser)
   }
@@ -59,8 +57,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
       .token(deviceToken)
       .build()
 
-    blockingShifter
-      .blockOn(F.delay(jSNSClient.createPlatformEndpoint(cpeReq)))
+    F.blocking(jSNSClient.createPlatformEndpoint(cpeReq))
       .flatMap(createEndpointARNPublishResponseParser)
       .recoverWith(createEndpointARNErrorParser)
   }
@@ -75,8 +72,7 @@ final class SNSMobilePushNotificationsOps[F[_]](
       .message(SNSMessageEncoder[Message].encode(message))
       .build()
 
-    blockingShifter
-      .blockOn(F.delay(jSNSClient.publish(request)))
+    F.blocking(jSNSClient.publish(request))
       .void
       .recoverWith(publishErrorParser)
   }
@@ -136,11 +132,11 @@ object SNSMobilePushNotificationsOps {
   import software.amazon.awssdk.auth.credentials._
   import software.amazon.awssdk.services.sns._
 
-  def resource[F[_]: Sync: BlockingShifter](
+  def resource[F[_]: Sync](
     config: SNSMobilePushConfig
   ): Resource[F, SNSMobilePushNotificationsOps[F]] = Resource.eval(this.create[F](config))
 
-  def create[F[_]: Sync: BlockingShifter](
+  def create[F[_]: Sync](
     config: SNSMobilePushConfig
   ): F[SNSMobilePushNotificationsOps[F]] =
     Sync[F]
