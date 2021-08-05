@@ -2,17 +2,14 @@
   *
   * See company homepage at: https://www.busymachines.com/
   *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
+  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at
   *
-  *     http://www.apache.org/licenses/LICENSE-2.0
+  * http://www.apache.org/licenses/LICENSE-2.0
   *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  * specific language governing permissions and limitations under the License.
   */
 package busymachines.pureharm.aws.logger
 
@@ -26,14 +23,16 @@ import scala.concurrent.duration._
 
 /** test expects proper live amazon config
   *
-  * Before running this ensure that you actually have the proper local environment
-  * variables. See the ``pureharm-aws/aws-logger/src/test/resources/reference.conf``
-  * for the environment variables that are used by this test.
+  * Before running this ensure that you actually have the proper local environment variables. See the
+  * ``pureharm-aws/aws-logger/src/test/resources/reference.conf`` for the environment variables that are used by this
+  * test.
   *
   * We can't commit to github the proper configuration to make this run.
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 04 Sep 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 04
+  *   Sep 2019
   */
 final class AWSLoggerLiveTest extends PureharmTest {
 
@@ -43,7 +42,8 @@ final class AWSLoggerLiveTest extends PureharmTest {
 
   private val resource = ResourceFixture[AWSLogging[IO]] { (_: TestOptions) =>
     for {
-      config  <- AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
+      //AWSLoggerConfig.fromNamespaceR[IO]("test-live.pureharm.aws.logger")
+      config  <- (??? : Resource[IO, AWSLoggerConfig])
       logFact <- AWSLogging.resource[IO](config)
       _       <-
         runtime.contextShift.shift

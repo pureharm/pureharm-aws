@@ -29,7 +29,6 @@ package object core {
   type AmazonRegion = AmazonRegion.Type
 
   object AmazonRegion extends SproutRefinedSubThrow[String] {
-    import busymachines.pureharm.config._
     import software.amazon.awssdk.regions.Region
     import scala.jdk.CollectionConverters._
 
@@ -45,10 +44,5 @@ package object core {
       def toSDKRegion: Region = AmazonRegion.toSDKRegion(v)
       def asString:    String = oldType(v)
     }
-
-    import pureconfig.error._
-
-    implicit val pureharmAmazonRegionConfigReader: ConfigReader[AmazonRegion] =
-      ConfigReader[String].emap(value => this.apply[Attempt](value).leftMap(ExceptionThrown.apply))
   }
 }

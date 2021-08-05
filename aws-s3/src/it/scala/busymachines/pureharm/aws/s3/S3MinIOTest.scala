@@ -2,17 +2,14 @@
   *
   * See company homepage at: https://www.busymachines.com/
   *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
+  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at
   *
-  *     http://www.apache.org/licenses/LICENSE-2.0
+  * http://www.apache.org/licenses/LICENSE-2.0
   *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  * specific language governing permissions and limitations under the License.
   */
 package busymachines.pureharm.aws.s3
 
@@ -23,13 +20,14 @@ import busymachines.pureharm.testkit._
 
 /** —-- test expects a minIO server to run on localport 9000 ---
   *
-  * Before running this ensure that you actually have started the local
-  * docker
+  * Before running this ensure that you actually have started the local docker
   *
   * We can't commit to github the proper configuration to make this run.
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 22 May 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 22
+  *   May 2019
   */
 final class S3MinIOTest extends PureharmTest {
   private val UTF_8 = java.nio.charset.StandardCharsets.UTF_8
@@ -38,7 +36,8 @@ final class S3MinIOTest extends PureharmTest {
 
   private val resource = ResourceFixture[(S3Config, AmazonS3Client[IO])] { _ =>
     for {
-      config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3.minio")
+      // config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3.minio")
+      config   <- (??? : Resource[IO, S3Config])
       s3Client <- AmazonS3Client.resource[IO](config)
       _        <- Resource.eval(l.info(s"creating minio bucket"))
       _        <- Resource.eval(s3Client.deleteBucket(config.bucket).attempt.void) // just in case

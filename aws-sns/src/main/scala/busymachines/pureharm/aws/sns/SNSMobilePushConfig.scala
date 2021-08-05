@@ -17,7 +17,6 @@
 package busymachines.pureharm.aws.sns
 
 import busymachines.pureharm.aws.core.AmazonRegion
-import pureconfig.ConfigReader
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -34,11 +33,3 @@ case class SNSMobilePushConfig(
   arnEndpointCreationRetries: Int,
   arnEndpointCreationTimeout: FiniteDuration,
 )
-
-import busymachines.pureharm.config._
-
-object SNSMobilePushConfig extends ConfigLoader[SNSMobilePushConfig] {
-  import busymachines.pureharm.config.implicits._
-
-  implicit override val configReader: ConfigReader[SNSMobilePushConfig] = semiauto.deriveReader[SNSMobilePushConfig]
-}

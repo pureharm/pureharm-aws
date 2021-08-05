@@ -40,7 +40,8 @@ final class S3LiveTest extends PureharmTest {
 
   private val resource = ResourceFixture[(S3Config, AmazonS3Client[IO])] { _ =>
     for {
-      config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
+      // config   <- S3Config.fromNamespaceR[IO]("test-live.pureharm.aws.s3")
+      config  <- (??? : Resource[IO, S3Config])
       s3Client <- AmazonS3Client.resource[IO](config)
     } yield (config, s3Client)
   }
